@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+
+  <!-- Permite funcionar bem no celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>O Mentiroso do Bar</title>
+
+  <!-- Importando o CSS principal -->
+  <!-- Você vai criar este arquivo em: src/css/style.css -->
+  <link rel="stylesheet" href="src/css/style.css" />
+</head>
+
+<body>
+  <!-- 
+    A DIV abaixo será o container principal onde as telas serão exibidas.
+    A UI do jogo é totalmente controlada por ui.js e game.js 
+  -->
+  <div id="app"></div>
+
+  <!-- 
+    Agora carregamos os módulos JS.
+    A ordem é importante: utilidades → perfis → storage → ui → game
+    Como estamos usando "type=module", cada arquivo pode usar export/import.
+  -->
+
+  <script type="module" src="src/js/utils.js"></script>
+  <script type="module" src="src/js/profiles.js"></script>
+  <script type="module" src="src/js/storage.js"></script>
+  <script type="module" src="src/js/ui.js"></script>
+  <script type="module" src="src/js/game.js"></script>
+
+</body>
+</html>

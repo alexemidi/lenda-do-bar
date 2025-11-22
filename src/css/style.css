@@ -1,0 +1,325 @@
+/* =========================================================
+   ESTILO GLOBAL
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 10px;
+  background: #111;
+  color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* Container principal do app (telas) */
+#app {
+  width: 100%;
+  max-width: 420px;
+  background: #181818;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+}
+
+
+/* =========================================================
+   TEXTOS / TÍTULOS
+   ========================================================= */
+
+h1 {
+  text-align: center;
+  margin-top: 0;
+  font-size: 1.6rem;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.3rem;
+  margin-top: 0;
+}
+
+p {
+  font-size: 0.95rem;
+}
+
+
+/* =========================================================
+   BOTÕES
+   ========================================================= */
+
+button {
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin: 5px 0;
+}
+
+/* Botões principais (começar, confirmar, etc.) */
+button.primary {
+  background: #2ecc71;
+  color: #111;
+  font-weight: bold;
+  width: 100%;
+}
+
+/* Botões secundários (selecionar, voltar, etc.) */
+button.secondary {
+  background: #3498db;
+  color: #fff;
+}
+
+/* Botões perigosos (remover, excluir, novo jogo) */
+button.danger {
+  background: #e74c3c;
+  color: #fff;
+}
+
+/* Botão desativado */
+button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   TELAS DO JOGO
+   Cada tela tem a classe .screen
+   Apenas a tela ativa tem display: block
+   ========================================================= */
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+
+/* =========================================================
+   TELA DE SELEÇÃO (SLOTS)
+   ========================================================= */
+
+.slot {
+  display: flex;
+  align-items: center;
+  background: #222;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  gap: 6px;
+}
+
+.slot-name {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+
+/* =========================================================
+   LISTA DE JOGADORES SALVOS
+   ========================================================= */
+
+.players-list {
+  max-height: 250px;
+  overflow-y: auto;
+  margin: 10px 0;
+}
+
+.player-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.player-row button {
+  flex: 1;
+}
+
+.btn-delete {
+  flex: 0 0 auto;
+  padding: 0 10px;
+}
+
+
+/* =========================================================
+   ENTRADA DE NOVO JOGADOR
+   ========================================================= */
+
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #111;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+
+/* =========================================================
+   STATUS DO JOGO (fala atual)
+   ========================================================= */
+
+#status {
+  margin: 10px 0;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.15rem;  /* maior para leitura */
+  min-height: 2.6em;   /* segura espaço mesmo sem texto */
+}
+
+
+/* =========================================================
+   LOG DO JOGO
+   ========================================================= */
+
+#log {
+  margin-top: 10px;
+  height: 150px;
+  border: 1px solid #444;
+  padding: 8px;
+  overflow-y: auto;
+  background: #000;
+  font-size: 0.85rem;
+  white-space: pre-line;
+  border-radius: 6px;
+}
+
+
+/* =========================================================
+   CARDS DOS JOGADORES DURANTE A PARTIDA
+   ========================================================= */
+
+.game-players {
+  margin: 10px 0;
+}
+
+/* Card compacto */
+.game-player {
+  background: #222;
+  padding: 4px 8px;        /* card pequeno */
+  border-radius: 6px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Aparência do jogador morto */
+.game-player.dead {
+  opacity: 0.4;
+  text-decoration: line-through;
+  color: #e74c3c;
+}
+
+/* Lado esquerdo do card: emoji + nome */
+.gp-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.gp-emoji {
+  font-size: 1.25rem; /* emoji maior */
+}
+
+/* Nome do jogador (varia com o tamanho) */
+.player-name.short {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.player-name.medium {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.player-name.long {
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+/* Lado direito do card: contador + botão */
+.gp-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.gp-shots {
+  font-size: 1rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   MESA E INDICAÇÃO DO JOGADOR DA VEZ
+   ========================================================= */
+
+#mesaInfo {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+#starterInfo {
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #f1c40f;
+  font-weight: bold;
+}
+
+
+/* =========================================================
+   BOTÕES DA PARTE DE BAIXO (tela do jogo)
+   ========================================================= */
+
+.top-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.top-actions button {
+  flex: 1;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE MELHOR PARA CELULAR
+   ========================================================= */
+
+@media (max-width: 400px) {
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.2rem; }
+
+  .gp-emoji {
+    font-size: 1.2rem;
+  }
+
+  .player-name.short {
+    font-size: 1rem;
+  }
+}
