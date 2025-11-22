@@ -1,24 +1,23 @@
-/* =========================================================
-   ESTILO GLOBAL
-   ========================================================= */
-
+/* ===============================
+   RESET E BASE
+================================*/
 * {
   box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  padding: 10px;
+  font-family: Arial, sans-serif;
   background: #111;
   color: #f5f5f5;
-  font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
+  align-items: center;
   min-height: 100vh;
+  margin: 0;
+  padding: 10px;
 }
 
-/* Container principal do app (telas) */
-#app {
+.container {
   width: 100%;
   max-width: 420px;
   background: #181818;
@@ -27,32 +26,26 @@ body {
   box-shadow: 0 0 10px #000;
 }
 
-
-/* =========================================================
-   TEXTOS / TÍTULOS
-   ========================================================= */
-
-h1 {
+h1, h2 {
   text-align: center;
   margin-top: 0;
+}
+
+h1 {
   font-size: 1.6rem;
 }
 
 h2 {
-  text-align: center;
   font-size: 1.3rem;
-  margin-top: 0;
 }
 
 p {
   font-size: 0.95rem;
 }
 
-
-/* =========================================================
+/* ===============================
    BOTÕES
-   ========================================================= */
-
+================================*/
 button {
   padding: 8px 10px;
   border: none;
@@ -62,7 +55,6 @@ button {
   margin: 5px 0;
 }
 
-/* Botões principais (começar, confirmar, etc.) */
 button.primary {
   background: #2ecc71;
   color: #111;
@@ -70,31 +62,24 @@ button.primary {
   width: 100%;
 }
 
-/* Botões secundários (selecionar, voltar, etc.) */
 button.secondary {
   background: #3498db;
   color: #fff;
 }
 
-/* Botões perigosos (remover, excluir, novo jogo) */
 button.danger {
   background: #e74c3c;
   color: #fff;
 }
 
-/* Botão desativado */
 button[disabled] {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-
-/* =========================================================
-   TELAS DO JOGO
-   Cada tela tem a classe .screen
-   Apenas a tela ativa tem display: block
-   ========================================================= */
-
+/* ===============================
+   TELAS
+================================*/
 .screen {
   display: none;
 }
@@ -103,10 +88,12 @@ button[disabled] {
   display: block;
 }
 
-
-/* =========================================================
-   TELA DE SELEÇÃO (SLOTS)
-   ========================================================= */
+/* ===============================
+   SEÇÃO: SLOTS / SELEÇÃO
+================================*/
+.slots {
+  margin: 10px 0;
+}
 
 .slot {
   display: flex;
@@ -123,11 +110,14 @@ button[disabled] {
   font-size: 0.95rem;
 }
 
+.slot button {
+  font-size: 0.85rem;
+  padding: 6px 8px;
+}
 
-/* =========================================================
+/* ===============================
    LISTA DE JOGADORES SALVOS
-   ========================================================= */
-
+================================*/
 .players-list {
   max-height: 250px;
   overflow-y: auto;
@@ -144,16 +134,14 @@ button[disabled] {
   flex: 1;
 }
 
-.btn-delete {
+.player-row .btn-delete {
   flex: 0 0 auto;
   padding: 0 10px;
 }
 
-
-/* =========================================================
-   ENTRADA DE NOVO JOGADOR
-   ========================================================= */
-
+/* ===============================
+   INPUT PARA CADASTRAR JOGADOR
+================================*/
 .input-row {
   display: flex;
   gap: 8px;
@@ -170,24 +158,113 @@ button[disabled] {
   font-size: 0.95rem;
 }
 
+/* ===============================
+   TELA DE JOGO: PLAYER CARDS
+================================*/
+.game-players {
+  margin: 10px 0;
+}
 
-/* =========================================================
-   STATUS DO JOGO (fala atual)
-   ========================================================= */
+/* CARD DO JOGADOR */
+.game-player {
+  background: #222;
+  padding: 4px 8px;       /* menor, mais compacto */
+  border-radius: 6px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
 
+/* JOGADOR MORTO */
+.game-player.dead {
+  opacity: 0.45;
+  text-decoration: line-through;
+  color: #e74c3c;
+}
+
+/* esquerda: emoji + nome */
+.gp-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* direita: tiros + botão */
+.gp-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* emoji */
+.gp-emoji {
+  font-size: 1.4rem;
+}
+
+/* contador 0/6 */
+.gp-shots {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* nome */
+.player-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-name.short {
+  font-size: 1.05rem;
+  font-weight: bold;
+}
+
+.player-name.medium {
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.player-name.long {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+/* ===============================
+   INFO DA MESA E STATUS
+================================*/
+#mesaInfo {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+#starterInfo {
+  text-align: center;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  opacity: 0.9;
+  font-weight: bold;
+  color: #f1c40f;
+}
+
+/* fala atual */
 #status {
   margin: 10px 0;
   font-weight: bold;
   text-align: center;
-  font-size: 1.15rem;  /* maior para leitura */
-  min-height: 2.6em;   /* segura espaço mesmo sem texto */
+  font-size: 1.15rem;   /* maior para leitura */
+  min-height: 2.8em;    /* espaço para 2 linhas */
 }
 
-
-/* =========================================================
+/* ===============================
    LOG DO JOGO
-   ========================================================= */
-
+================================*/
 #log {
   margin-top: 10px;
   height: 150px;
@@ -200,101 +277,9 @@ button[disabled] {
   border-radius: 6px;
 }
 
-
-/* =========================================================
-   CARDS DOS JOGADORES DURANTE A PARTIDA
-   ========================================================= */
-
-.game-players {
-  margin: 10px 0;
-}
-
-/* Card compacto */
-.game-player {
-  background: #222;
-  padding: 4px 8px;        /* card pequeno */
-  border-radius: 6px;
-  margin-bottom: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Aparência do jogador morto */
-.game-player.dead {
-  opacity: 0.4;
-  text-decoration: line-through;
-  color: #e74c3c;
-}
-
-/* Lado esquerdo do card: emoji + nome */
-.gp-left {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.gp-emoji {
-  font-size: 1.25rem; /* emoji maior */
-}
-
-/* Nome do jogador (varia com o tamanho) */
-.player-name.short {
-  font-size: 1.1rem;
-  font-weight: bold;
-}
-
-.player-name.medium {
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.player-name.long {
-  font-size: 0.95rem;
-  font-weight: bold;
-}
-
-/* Lado direito do card: contador + botão */
-.gp-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.gp-shots {
-  font-size: 1rem;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-
-/* =========================================================
-   MESA E INDICAÇÃO DO JOGADOR DA VEZ
-   ========================================================= */
-
-#mesaInfo {
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.05rem;
-  margin-bottom: 4px;
-}
-
-#starterInfo {
-  text-align: center;
-  font-size: 1rem;
-  margin-bottom: 10px;
-  color: #f1c40f;
-  font-weight: bold;
-}
-
-
-/* =========================================================
-   BOTÕES DA PARTE DE BAIXO (tela do jogo)
-   ========================================================= */
-
+/* ===============================
+   AÇÕES NO TOPO
+================================*/
 .top-actions {
   display: flex;
   justify-content: space-between;
@@ -304,22 +289,4 @@ button[disabled] {
 
 .top-actions button {
   flex: 1;
-}
-
-
-/* =========================================================
-   RESPONSIVIDADE MELHOR PARA CELULAR
-   ========================================================= */
-
-@media (max-width: 400px) {
-  h1 { font-size: 1.4rem; }
-  h2 { font-size: 1.2rem; }
-
-  .gp-emoji {
-    font-size: 1.2rem;
-  }
-
-  .player-name.short {
-    font-size: 1rem;
-  }
 }

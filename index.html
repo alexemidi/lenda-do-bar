@@ -1,36 +1,69 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-
-  <!-- Permite funcionar bem no celular -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta charset="UTF-8">
   <title>O Mentiroso do Bar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Importando o CSS principal -->
-  <!-- Você vai criar este arquivo em: src/css/style.css -->
-  <link rel="stylesheet" href="src/css/style.css" />
+  <!-- CSS (vamos criar depois em src/css/style.css) -->
+  <link rel="stylesheet" href="src/css/style.css">
 </head>
-
 <body>
-  <!-- 
-    A DIV abaixo será o container principal onde as telas serão exibidas.
-    A UI do jogo é totalmente controlada por ui.js e game.js 
-  -->
-  <div id="app"></div>
+  <div class="container">
+    <!-- TELA 1: INÍCIO -->
+    <div id="screen-start" class="screen active">
+      <h1>O Mentiroso do Bar</h1>
+      <p style="text-align:center;">
+        Seleciona de 2 a 4 jogadores e comece a partida.
+      </p>
+      <button class="primary" id="btnGoSetup">Jogar</button>
+    </div>
 
-  <!-- 
-    Agora carregamos os módulos JS.
-    A ordem é importante: utilidades → perfis → storage → ui → game
-    Como estamos usando "type=module", cada arquivo pode usar export/import.
-  -->
+    <!-- TELA 2: CONFIGURAÇÃO DE JOGADORES -->
+    <div id="screen-setup" class="screen">
+      <h2>Selecionar jogadores</h2>
+      <p>Escolha de 2 a 4 jogadores para a partida.</p>
+      <div class="slots" id="slotsContainer"></div>
+      <button class="primary" id="btnStartGame" disabled>Iniciar partida</button>
+      <button class="danger" id="btnBackToStart">Voltar</button>
+    </div>
 
-  <script type="module" src="src/js/utils.js"></script>
-  <script type="module" src="src/js/profiles.js"></script>
-  <script type="module" src="src/js/storage.js"></script>
-  <script type="module" src="src/js/ui.js"></script>
+    <!-- TELA 3: SELEÇÃO / CADASTRO DE JOGADOR -->
+    <div id="screen-select-player" class="screen">
+      <h2>Escolher jogador</h2>
+      <div class="input-row">
+        <input type="text" id="newPlayerName" placeholder="Novo jogador">
+        <button class="secondary" id="btnAddPlayer">+ Adicionar</button>
+      </div>
+      <p>Jogadores salvos:</p>
+      <div class="players-list" id="savedPlayersList"></div>
+      <button class="danger" id="btnBackToSetup">Cancelar</button>
+    </div>
+
+    <!-- TELA 4: JOGO -->
+    <div id="screen-game" class="screen">
+      <h2>O Mentiroso do Bar</h2>
+      <div id="mesaInfo">Mesa de ?</div>
+      <div id="starterInfo"></div>
+      <div class="game-players" id="gamePlayersContainer"></div>
+      <div id="status">Clique no botão de um jogador para atirar.</div>
+      <div id="log"></div>
+      <div class="top-actions">
+        <button class="secondary" id="btnRestartGame">Reiniciar partida</button>
+        <button class="danger" id="btnNewGame">Nova seleção</button>
+      </div>
+    </div>
+
+    <!-- TELA 5: VITÓRIA -->
+    <div id="screen-win" class="screen">
+      <h2>Parabéns!</h2>
+      <p id="winMessage" style="text-align:center; margin-bottom:16px;"></p>
+      <button class="primary" id="btnWinRepeat">Repetir jogadores</button>
+      <button class="secondary" id="btnWinSetup">Voltar para seleção</button>
+    </div>
+  </div>
+
+   <!-- JS principal (módulo) -->
   <script type="module" src="src/js/game.js"></script>
-
 </body>
 </html>

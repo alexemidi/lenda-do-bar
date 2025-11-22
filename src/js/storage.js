@@ -1,119 +1,64 @@
-/* =========================================================
-   STORAGE.JS — Gerenciamento de jogadores no localStorage
-   ========================================================= */
-
-/*
-  Este arquivo cuida de:
-  - carregar e salvar jogadores armazenados no celular
-  - evitar nomes duplicados
-  - remover nomes não usados
-  - manter compatibilidade com versões futuras do jogo
-
-  Ele exporta funções simples para o restante do projeto:
-  - loadPlayers()
-  - savePlayers()
-  - addPlayer(name)
-  - deletePlayer(name)
-  - getAvailablePlayers(slots)
-*/
-
-
-/* =========================================================
-   CHAVE DO LOCALSTORAGE
-   ========================================================= */
+// src/js/storage.js
+// Responsável por salvar/carregar jogadores no localStorage.
 
 const STORAGE_KEY = "mentiroso_de_bar_players";
 
-let playersCache = []; // cache interno em memória
-
-
-/* =========================================================
-   CARREGAR JOGADORES SALVOS
-   ========================================================= */
-
+/**
+ * Lê a lista de jogadores salvos no localStorage.
+ * Retorna sempre um array de strings.
+ */
 export function loadPlayers() {
   const data = localStorage.getItem(STORAGE_KEY);
-
-  if (!data) {
-    playersCache = [];
-    return playersCache;
-  }
-
+  if (!data) return [];
   try {
     const parsed = JSON.parse(data);
-    playersCache = Array.isArray(parsed) ? parsed : [];
-  } catch {
-    playersCache = [];
+    if (Array.isArray(parsed)) {
+      return parsed;
+    }
+    return [];
+  } catch (e) {
+    console.error("Erro ao ler jogadores do localStorage:", e);
+    return [];
   }
-
-  return playersCache;
 }
 
-
-/* =========================================================
-   SALVAR NO LOCALSTORAGE
-   ========================================================= */
-
-export function savePlayers() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(playersCache));
+/**
+ * Salva a lista completa de jogadores no localStorage.
+ */
+export function savePlayers(players) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+  } catch (e) {
+    console.error("Erro ao salvar jogadores no localStorage:", e);
+  }
 }
 
-
-/* =========================================================
-   ADICIONAR NOVO JOGADOR
-   ========================================================= */
-
+/**
+ * Adiciona um jogador novo (se ainda não existir).
+ * Retorna o array atualizado.
+ */
 export function addPlayer(name) {
-  // ignora strings vazias
-  if (!name || typeof name !== "string") return false;
-
-  name = name.trim();
-
-  // impede duplicatas
-  if (playersCache.includes(name)) return false;
-
-  playersCache.push(name);
-  savePlayers();
-  return true;
+  const players = loadPlayers();
+  if (!players.includes(name)) {
+    players.push(name);
+    savePlayers(players);
+  }
+  return players;
 }
 
-
-/* =========================================================
-   REMOVER JOGADOR DEFINITIVAMENTE
-   ========================================================= */
-
+/**
+ * Remove um jogador da lista.
+ * Retorna o array atualizado.
+ */
 export function deletePlayer(name) {
-  playersCache = playersCache.filter(n => n !== name);
-  savePlayers();
+  const players = loadPlayers().filter(p => p !== name);
+  savePlayers(players);
+  return players;
 }
 
-
-/* =========================================================
-   OBTER LISTA DE JOGADORES DISPONÍVEIS
-   ========================================================= */
-
-/*
-  Filtra jogadores já usados nos slots da partida atual.
-  Assim não aparece "Alex" duas vezes.
-*/
-
-export function getAvailablePlayers(slots) {
-  const usados = new Set(slots.filter(Boolean));
-  return playersCache.filter(name => !usados.has(name));
+/**
+ * Remove todos os jogadores salvos.
+ */
+export function clearPlayers() {
+  savePlayers([]);
 }
-
-
-/* =========================================================
-   EXPORT DEFAULT (opcional)
-   Permite importar como:
-   import storage from './storage.js'
-   storage.loadPlayers()
-   ========================================================= */
-
-export default {
-  loadPlayers,
-  savePlayers,
-  addPlayer,
-  deletePlayer,
-  getAvailablePlayers
-};

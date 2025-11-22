@@ -1,14 +1,8 @@
-/* =========================================================
-   PERFIS DE EMOJI PARA JOGADORES E NARRADORES
-   ========================================================= */
+// src/js/profiles.js
+// Aqui ficam só os dados: emojis, perfis de jogador e de narrador.
 
-/*
-  Mantemos os emojis separados para facilitar:
-  - mudar um emoji depois
-  - usar em logs e interface
-*/
-
-export const playerEmojis = {
+// Emojis dos perfis de jogador
+export const emojiPerfil = {
   Marrento: "😎",
   Covarde: "🫣",
   Piadista: "😜",
@@ -17,25 +11,16 @@ export const playerEmojis = {
   Esfomeado: "😋"
 };
 
-export const narratorEmojis = {
+// Emojis dos narradores
+export const emojiNarrador = {
   Sabio: "🧙‍♂️",
   Piadista: "🤡",
   Entediado: "😑",
   Covarde: "😱"
 };
 
-
-/* =========================================================
-   PERFIS DE JOGADORES (FALAS)
-   ========================================================= */
-
-/*
-  Cada jogador tem:
-  - 3 frases "before" (antes do tiro)
-  - 3 frases "afterSurvive" (se sobreviver ao tiro)
-*/
-
-export const playerProfiles = {
+// Perfis de jogador (falas antes/depois do tiro)
+export const perfisJogador = {
   Marrento: {
     before: [
       "Vamos ver se a sorte está do meu lado.",
@@ -48,7 +33,6 @@ export const playerProfiles = {
       "Se a morte quiser me levar, vai ter que marcar horário."
     ]
   },
-
   Covarde: {
     before: [
       "Alguém quer ir no meu lugar?",
@@ -61,7 +45,6 @@ export const playerProfiles = {
       "Sobrevivi, mas minha alma ficou pelo caminho."
     ]
   },
-
   Piadista: {
     before: [
       "Se eu morrer, pelo menos não pago a conta.",
@@ -76,7 +59,6 @@ export const playerProfiles = {
       "Podem aplaudir, mas sem exagero, tô acostumado."
     ]
   },
-
   Entediado: {
     before: [
       "Tanto faz o resultado, eu tô em paz.",
@@ -89,7 +71,6 @@ export const playerProfiles = {
       "Mais um dia emprestado do universo."
     ]
   },
-
   Raivoso: {
     before: [
       "Tá rindo do quê? Na próxima eu pego a MINHA arma.",
@@ -102,7 +83,6 @@ export const playerProfiles = {
       "Sobrevivi. Agora sim vocês têm motivo pra se preocupar."
     ]
   },
-
   Esfomeado: {
     before: [
       "Depois disso aqui, alguém traz um petisco.",
@@ -117,104 +97,75 @@ export const playerProfiles = {
   }
 };
 
-
-/* =========================================================
-   PERFIS DE NARRADORES (INTRO, MESA, MORTE, VITÓRIA)
-   ========================================================= */
-
-/*
-  Cada narrador tem:
-  - intro        → falada no começo da partida
-  - mesaIntro    → falas diferentes para Mesa de K, Q ou A
-  - killLines    → falas ao morrer alguém (com interações específicas)
-  - winner       → falas ao final do jogo
-*/
-
-export const narratorProfiles = {
+// Perfis de narrador (falas de intro, mesa, morte e fim de jogo)
+export const narradores = {
   Sabio: {
-    intro:
-      "Lembrem-se: em cada mentira há risco, e em cada risco pode faltar um gole no próximo brinde.",
-
+    intro: "Lembrem-se: em cada mentira há risco, e em cada risco pode faltar um gole no próximo brinde.",
     mesaIntro: {
       K: "Mesa de Rei: o poder é fachada, as balas não se curvam a coroas.",
       Q: "Mesa de Rainha: subestimar a realeza sempre cobra seu preço.",
       A: "Mesa de Ás: o momento em que sorte e imprudência se confundem."
     },
-
     killLines: {
       Esfomeado: "Até a fome cobra a conta uma hora.",
       Marrento: "A arrogância sempre encontra o próprio fim.",
       Covarde: "Fugir do risco não adiou o inevitável, só deixou mais doloroso.",
       default: "Mais uma lição escrita em chumbo para quem quiser aprender."
     },
-
     winner: [
       "{nome}, mentiu melhor do que todos, mas lembre-se: até a sorte cansa.",
       "Hoje o título é seu, {nome}. Só não esqueça que toda vitória tem um preço."
     ]
   },
-
   Piadista: {
     intro: "Não vale dedo no olho nem nas partes baixas… vocês sabem bem por quê.",
-
     mesaIntro: {
       K: "Mesa de Rei: Respeita a autoridade.",
       Q: "Mesa de Rainha: Cuidado! Ela é mais perigosa que a arma.",
       A: "Mesa de Ás: Modo hard ativado, meus consagrados."
     },
-
     killLines: {
       Piadista: "Eita! O estressadinho levou um sossega leão.",
       Raivoso: "Pelo menos agora ele não tá gritando com ninguém.",
       Marrento: "Agora o jogo tá uma bosta, a pessoa mais sexy foi embora.",
       default: "Parem de cair assim, tô ficando sem piada nova."
     },
-
     winner: [
       "{nome}, parabéns, mentiu tão bem que até eu quase acreditei.",
       "A mesa aplaude, {nome}. Ah não, é só o gelo batendo no copo mesmo."
     ]
   },
-
   Entediado: {
     intro: "Se alguém morrer, me avisem. Posso não estar prestando atenção.",
-
     mesaIntro: {
       K: "Mesa de Rei. Grande coisa.",
       Q: "Mesa de Rainha. Tentem não passar tanta vergonha.",
       A: "Mesa de Ás. Pelo menos muda o desenho."
     },
-
     killLines: {
       Piadista: "Até que enfim calou a boca.",
       Esfomeado: "No céu tem pão? E morreu... Próximo.",
       Entediado: "Pelo menos agora ele não precisa fingir interesse.",
       default: "Mais um que caiu. Nada novo."
     },
-
     winner: [
       "Parabéns, {nome}. Você venceu. Agora posso ir embora?",
       "{nome} ganhou. Se alguém se importar, finge que comemora."
     ]
   },
-
   Covarde: {
-    intro:
-      "Galera, só lembrando: aponta essa arma pra longe de mim, por favor.",
-
+    intro: "Galera, só lembrando: aponta essa arma pra longe de mim, por favor.",
     mesaIntro: {
       K: "Mesa de Rei: Se comportem.",
       Q: "Mesa de Rainha: Tentem pelo menos não fazer nada idiota… é difícil, eu sei.",
       A: "Mesa de Ás: alguém segura minha mão? Por segurança psicológica."
     },
-
     killLines: {
       Covarde: "Eu sabia! Eu devia ter ido embora!",
       Raivoso: "Será que ele morreu mesmo? Ainda tá com cara de bravo.",
       Entediado: "Ele caiu tão devagar que eu achei que tava só alongando!",
       default: "Cuidado! Ele quase me acertou."
     },
-
     winner: [
       "Vitória do {nome}! Ótimo… agora que tal jogo da velha? É mais seguro.",
       "Parabéns, {nome}… agora vamos embora antes que alguém tente outra rodada."
