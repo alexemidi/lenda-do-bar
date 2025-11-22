@@ -1,10 +1,10 @@
 // src/js/utils.js
-// Funções utilitárias genéricas: não conhecem DOM nem HTML.
+// Funções utilitárias usadas no jogo. Comentários diretos e funcionais.
 
-/**
- * Embaralha um array (retorna uma cópia).
- * Algoritmo de Fisher–Yates.
- */
+/* ============================================================
+   1) Embaralhar array (Fisher–Yates)
+   - usado para randomizar perfis dos jogadores
+   ============================================================ */
 export function shuffleArray(array) {
   const arr = array.slice();
   for (let i = arr.length - 1; i > 0; i--) {
@@ -14,13 +14,11 @@ export function shuffleArray(array) {
   return arr;
 }
 
-/**
- * Calcula um tempo de leitura em milissegundos
- * com base no tamanho da frase.
- * - base: 3000ms
- * - +20ms por caractere
- * - mínimo 3000, máximo 4000
- */
+/* ============================================================
+   2) Tempo de leitura
+   - usado para timing de falas do narrador e falas dos players
+   - mínimo 3s, máximo 4s
+   ============================================================ */
 export function calcularTempoLeitura(frase) {
   const base = 3000;
   const extra = frase.length * 20;
@@ -28,40 +26,39 @@ export function calcularTempoLeitura(frase) {
   return Math.max(3000, Math.min(4000, total));
 }
 
-/**
- * Dado um array de jogadores e um índice,
- * retorna o índice do próximo jogador vivo (player.vivo === true).
- * Se não achar ninguém, retorna o próprio índice.
- */
+/* ============================================================
+   3) Próximo jogador vivo
+   - avança para o próximo player que ainda está vivo
+   - retorna o índice do próximo vivo
+   ============================================================ */
 export function getNextAliveIndex(players, fromIndex) {
-  const n = players.length;
-  if (n === 0) return null;
-  let i = (fromIndex + 1) % n;
+  const total = players.length;
+  if (!total) return null;
+
+  let i = (fromIndex + 1) % total;
+
+  // loop até voltar para o mesmo índice
   while (i !== fromIndex) {
     if (players[i].vivo) return i;
-    i = (i + 1) % n;
+    i = (i + 1) % total;
   }
-  return fromIndex;
+
+  return fromIndex; // se nenhum outro vivo
 }
 
-/**
- * Formata o nome para exibição:
- * - até 10 caracteres: normal
- * - até 20: normal
- * - mais de 20: corta e coloca "..."
- */
+/* ============================================================
+   4) Nome exibido na interface
+   - corta nomes longos para evitar quebrar layout
+   ============================================================ */
 export function formatDisplayName(name) {
-  if (name.length <= 10) return name;
   if (name.length <= 20) return name;
   return name.slice(0, 20) + "...";
 }
 
-/**
- * Retorna uma classe de tamanho para estilizar o nome:
- * - short: até 10
- * - medium: até 20
- * - long: acima de 20
- */
+/* ============================================================
+   5) Classe para tamanho do nome
+   - útil para aplicar classes CSS diferentes (short/medium/long)
+   ============================================================ */
 export function getNameLengthClass(name) {
   if (name.length <= 10) return "short";
   if (name.length <= 20) return "medium";

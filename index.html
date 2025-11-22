@@ -1,69 +1,110 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>O Mentiroso do Bar</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- CSS (vamos criar depois em src/css/style.css) -->
-  <link rel="stylesheet" href="src/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="src/css/style.css" />
 </head>
 <body>
   <div class="container">
-    <!-- TELA 1: INÍCIO -->
-    <div id="screen-start" class="screen active">
-      <h1>O Mentiroso do Bar</h1>
-      <p style="text-align:center;">
-        Seleciona de 2 a 4 jogadores e comece a partida.
-      </p>
-      <button class="primary" id="btnGoSetup">Jogar</button>
+
+    <!-- TELA 1 — START -->
+    <div id="screen-start" class="screen active" role="region" aria-label="Tela inicial">
+      <h1 class="app-title">O Mentiroso do Bar</h1>
+      <p class="lead" style="text-align:center;">Selecione de 2 a 4 jogadores e comece a partida.</p>
+      <button class="primary" id="btnGoSetup" type="button">Jogar</button>
     </div>
 
-    <!-- TELA 2: CONFIGURAÇÃO DE JOGADORES -->
-    <div id="screen-setup" class="screen">
-      <h2>Selecionar jogadores</h2>
-      <p>Escolha de 2 a 4 jogadores para a partida.</p>
-      <div class="slots" id="slotsContainer"></div>
-      <button class="primary" id="btnStartGame" disabled>Iniciar partida</button>
-      <button class="danger" id="btnBackToStart">Voltar</button>
+    <!-- TELA 2 — SETUP -->
+    <div id="screen-setup" class="screen" role="region" aria-label="Configurar jogadores">
+      <h2 class="screen-title">Selecionar jogadores</h2>
+      <p class="screen-desc">Escolha de 2 a 4 jogadores para a partida.</p>
+
+      <div class="slots" id="slotsContainer" aria-live="polite"></div>
+
+      <div class="controls-row">
+        <button class="primary" id="btnStartGame" disabled type="button">Iniciar partida</button>
+        <button class="danger" id="btnBackToStart" type="button">Voltar</button>
+      </div>
     </div>
 
-    <!-- TELA 3: SELEÇÃO / CADASTRO DE JOGADOR -->
-    <div id="screen-select-player" class="screen">
-      <h2>Escolher jogador</h2>
+    <!-- TELA 3 — SELECT PLAYER -->
+    <div id="screen-select-player" class="screen" role="region" aria-label="Selecionar jogador salvo">
+      <h2 class="screen-title">Escolher jogador</h2>
+
       <div class="input-row">
-        <input type="text" id="newPlayerName" placeholder="Novo jogador">
-        <button class="secondary" id="btnAddPlayer">+ Adicionar</button>
+        <input type="text" id="newPlayerName" placeholder="Novo jogador" aria-label="Nome do jogador" />
+        <button class="secondary" id="btnAddPlayer" type="button">+ Adicionar</button>
       </div>
-      <p>Jogadores salvos:</p>
-      <div class="players-list" id="savedPlayersList"></div>
-      <button class="danger" id="btnBackToSetup">Cancelar</button>
+
+      <p class="screen-desc">Jogadores salvos:</p>
+      <div class="players-list" id="savedPlayersList" aria-live="polite"></div>
+
+      <div class="controls-row">
+        <button class="danger" id="btnBackToSetup" type="button">Cancelar</button>
+      </div>
     </div>
 
-    <!-- TELA 4: JOGO -->
-    <div id="screen-game" class="screen">
-      <h2>O Mentiroso do Bar</h2>
-      <div id="mesaInfo">Mesa de ?</div>
-      <div id="starterInfo"></div>
-      <div class="game-players" id="gamePlayersContainer"></div>
-      <div id="status">Clique no botão de um jogador para atirar.</div>
-      <div id="log"></div>
+    <!-- TELA 4 — MESA (intro com animação) -->
+    <div id="screen-mesa" class="screen" role="region" aria-label="Nova mesa">
+      <h2 class="intro-title">Nova Mesa</h2>
+
+      <div class="intro-wrapper">
+        <div class="intro-card" id="introCard" aria-hidden="true">
+          <div class="intro-face intro-back" aria-hidden="true"></div>
+          <div class="intro-face intro-front" aria-hidden="true"></div>
+        </div>
+
+        <div id="mesaNarrator" class="intro-text" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- TELA 5 — JOGO (carta central única, mesaInfo acima, starter abaixo) -->
+    <div id="screen-game" class="screen" role="region" aria-label="Tela de jogo">
+      <!-- Mesa info (acima da carta central) -->
+      <div class="mesa-top">
+        <div id="mesaInfo" class="mesa-info" aria-live="polite">Mesa de ?</div>
+      </div>
+
+      <!-- Carta central (dinâmica) -->
+      <div class="game-card" id="mesaCard" aria-hidden="false">
+        <div class="game-face" id="mesaCardFace" role="img" aria-label="Carta da mesa"></div>
+      </div>
+
+      <!-- Texto "Agora é a vez de" abaixo da carta -->
+      <div id="starterInfo" class="starter-info" aria-live="polite"></div>
+
+      <!-- Jogadores -->
+      <div class="game-players" id="gamePlayersContainer" aria-live="polite"></div>
+
+      <!-- Status / falas -->
+      <div id="status" class="status" aria-live="polite"></div>
+
+      <!-- Log -->
+      <div id="log" class="log" aria-live="off"></div>
+
+      <!-- Ações -->
       <div class="top-actions">
-        <button class="secondary" id="btnRestartGame">Reiniciar partida</button>
-        <button class="danger" id="btnNewGame">Nova seleção</button>
+        <button class="secondary" id="btnRestartGame" type="button">Reiniciar partida</button>
+        <button class="danger" id="btnNewGame" type="button">Nova seleção</button>
       </div>
     </div>
 
-    <!-- TELA 5: VITÓRIA -->
-    <div id="screen-win" class="screen">
-      <h2>Parabéns!</h2>
-      <p id="winMessage" style="text-align:center; margin-bottom:16px;"></p>
-      <button class="primary" id="btnWinRepeat">Repetir jogadores</button>
-      <button class="secondary" id="btnWinSetup">Voltar para seleção</button>
+    <!-- TELA 6 — WIN -->
+    <div id="screen-win" class="screen" role="region" aria-label="Tela de vitória">
+      <h2 class="screen-title">Parabéns!</h2>
+      <p id="winMessage" class="win-message" aria-live="polite"></p>
+
+      <div class="controls-row">
+        <button class="primary" id="btnWinRepeat" type="button">Repetir jogadores</button>
+        <button class="secondary" id="btnWinSetup" type="button">Voltar para seleção</button>
+      </div>
     </div>
+
   </div>
 
-   <!-- JS principal (módulo) -->
+  <!-- usa seus módulos já existentes: ui.js, utils.js, profiles.js, storage.js -->
   <script type="module" src="src/js/game.js"></script>
 </body>
 </html>

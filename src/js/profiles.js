@@ -1,7 +1,6 @@
 // src/js/profiles.js
-// Aqui ficam só os dados: emojis, perfis de jogador e de narrador.
+// Perfis de jogadores e narradores — falas conforme código original.
 
-// Emojis dos perfis de jogador
 export const emojiPerfil = {
   Marrento: "😎",
   Covarde: "🫣",
@@ -11,15 +10,13 @@ export const emojiPerfil = {
   Esfomeado: "😋"
 };
 
-// Emojis dos narradores
 export const emojiNarrador = {
   Sabio: "🧙‍♂️",
-  Piadista: "🤡",
-  Entediado: "😑",
-  Covarde: "😱"
+  Piadista: "🤭",
+  Entediado: "😒",
+  Covarde: "😨"
 };
 
-// Perfis de jogador (falas antes/depois do tiro)
 export const perfisJogador = {
   Marrento: {
     before: [
@@ -33,6 +30,7 @@ export const perfisJogador = {
       "Se a morte quiser me levar, vai ter que marcar horário."
     ]
   },
+
   Covarde: {
     before: [
       "Alguém quer ir no meu lugar?",
@@ -45,6 +43,7 @@ export const perfisJogador = {
       "Sobrevivi, mas minha alma ficou pelo caminho."
     ]
   },
+
   Piadista: {
     before: [
       "Se eu morrer, pelo menos não pago a conta.",
@@ -59,6 +58,7 @@ export const perfisJogador = {
       "Podem aplaudir, mas sem exagero, tô acostumado."
     ]
   },
+
   Entediado: {
     before: [
       "Tanto faz o resultado, eu tô em paz.",
@@ -71,6 +71,7 @@ export const perfisJogador = {
       "Mais um dia emprestado do universo."
     ]
   },
+
   Raivoso: {
     before: [
       "Tá rindo do quê? Na próxima eu pego a MINHA arma.",
@@ -83,6 +84,7 @@ export const perfisJogador = {
       "Sobrevivi. Agora sim vocês têm motivo pra se preocupar."
     ]
   },
+
   Esfomeado: {
     before: [
       "Depois disso aqui, alguém traz um petisco.",
@@ -97,7 +99,6 @@ export const perfisJogador = {
   }
 };
 
-// Perfis de narrador (falas de intro, mesa, morte e fim de jogo)
 export const narradores = {
   Sabio: {
     intro: "Lembrem-se: em cada mentira há risco, e em cada risco pode faltar um gole no próximo brinde.",
@@ -117,6 +118,7 @@ export const narradores = {
       "Hoje o título é seu, {nome}. Só não esqueça que toda vitória tem um preço."
     ]
   },
+
   Piadista: {
     intro: "Não vale dedo no olho nem nas partes baixas… vocês sabem bem por quê.",
     mesaIntro: {
@@ -135,6 +137,7 @@ export const narradores = {
       "A mesa aplaude, {nome}. Ah não, é só o gelo batendo no copo mesmo."
     ]
   },
+
   Entediado: {
     intro: "Se alguém morrer, me avisem. Posso não estar prestando atenção.",
     mesaIntro: {
@@ -153,6 +156,7 @@ export const narradores = {
       "{nome} ganhou. Se alguém se importar, finge que comemora."
     ]
   },
+
   Covarde: {
     intro: "Galera, só lembrando: aponta essa arma pra longe de mim, por favor.",
     mesaIntro: {
@@ -168,7 +172,7 @@ export const narradores = {
     },
     winner: [
       "Vitória do {nome}! Ótimo… agora que tal jogo da velha? É mais seguro.",
-      "Parabéns, {nome}… agora vamos embora antes que alguém tente outra rodada."
+      "Parabéns do {nome}… agora vamos embora antes que alguém tente outra rodada."
     ]
   }
 };

@@ -1,6 +1,5 @@
 // src/js/game.js
-// Orquestrador: seleção de jogadores + montagem da partida +
-// tiro com falas + narrador + mesa (K/Q/A).
+// Lógica principal do jogo, com animação de mesa em 4s (back -> front -> back -> front).
 
 import {
   perfisJogador,
@@ -13,7 +12,6 @@ import {
   shuffleArray,
   calcularTempoLeitura,
   formatDisplayName,
-  getNameLengthClass,
   getNextAliveIndex
 } from "./utils.js";
 
@@ -27,6 +25,7 @@ import {
   screenStart,
   screenSetup,
   screenSelectPlayer,
+  screenMesa,
   screenGame,
   screenWin,
   btnGoSetup,
@@ -47,49 +46,40 @@ import {
   statusEl,
   logEl,
   winMessageEl,
+  mesaNarrator,
+  mesaCardIntro,
   showScreen
 } from "./ui.js";
 
-// ===== ESTADO =====
-
-// seleção de jogadores
-let slots = [];            // array de 4 posições (null ou nome)
+/* ===========================================================
+   Estado global
+   =========================================================== */
+let slots = [];
 let currentSlotIndex = null;
-let savedPlayers = [];     // nomes cadastrados (espelho do localStorage)
+let savedPlayers = [];
 
-// partida em andamento
-let gamePlayers = [];      // jogadores da partida (objetos completos)
-let narradorPerfil = null; // "Sabio", "Piadista", etc.
-let starterIndex = null;   // índice de quem começa a mão
-let isShooting = false;    // trava pra não clicar em vários tiros ao mesmo tempo
+let gamePlayers = [];
+let narradorPerfil = null;
+let starterIndex = null;
+let isShooting = false;
 
-// mesa (K / Q / A)
 const mesaOrdem = ["K", "Q", "A"];
 let currentMesaIndex = 0;
 let mesaShotsCount = 0;
 
-// ===== INICIALIZAÇÃO GERAL =====
-
+/* ===========================================================
+   Inicialização
+   =========================================================== */
 function init() {
-  console.log("game.js inicializado.");
-
   savedPlayers = loadPlayers();
-  console.log("Jogadores salvos:", savedPlayers);
-
   initSlots();
   setupEvents();
-
-  const startParagraph = screenStart.querySelector("p");
-  if (startParagraph) {
-    startParagraph.textContent =
-      "Selecione de 2 a 4 jogadores e comece a partida.";
-  }
-
   showScreen(screenStart);
 }
 
-// ===== SLOTS DE SELEÇÃO =====
-
+/* ===========================================================
+   Slots UI
+   =========================================================== */
 function initSlots() {
   slots = [null, null, null, null];
   renderSlots();
@@ -98,92 +88,90 @@ function initSlots() {
 
 function renderSlots() {
   slotsContainer.innerHTML = "";
-
   slots.forEach((name, index) => {
     const div = document.createElement("div");
     div.className = "slot";
 
     const span = document.createElement("div");
     span.className = "slot-name";
-    span.textContent = name ? name : "Selecione um jogador";
+    span.textContent = name || "Selecione um jogador";
     div.appendChild(span);
 
     const btnSelect = document.createElement("button");
     btnSelect.textContent = "Selecionar";
     btnSelect.className = "secondary";
-    btnSelect.addEventListener("click", () => {
+    btnSelect.onclick = () => {
       currentSlotIndex = index;
       showPlayerSelectScreen();
-    });
+    };
     div.appendChild(btnSelect);
 
-    const btnClear = document.createElement("button");
-    btnClear.textContent = "Remover";
-    btnClear.className = "danger";
-    btnClear.addEventListener("click", () => {
+    const btnRemove = document.createElement("button");
+    btnRemove.textContent = "Remover";
+    btnRemove.className = "danger";
+    btnRemove.onclick = () => {
       slots[index] = null;
       renderSlots();
       updateStartGameButton();
-    });
-    div.appendChild(btnClear);
+    };
+    div.appendChild(btnRemove);
 
     slotsContainer.appendChild(div);
   });
 }
 
 function updateStartGameButton() {
-  const filled = slots.filter(name => !!name).length;
+  const filled = slots.filter(n => n).length;
   btnStartGame.disabled = filled < 2;
 }
 
-// ===== LISTA DE JOGADORES SALVOS =====
-
+/* ===========================================================
+   Seleção / storage
+   =========================================================== */
 function renderSavedPlayersList() {
   savedPlayersList.innerHTML = "";
 
   const usados = new Set(slots.filter(Boolean));
-  const disponiveis = savedPlayers.filter(name => !usados.has(name));
+  const disponiveis = savedPlayers.filter(n => !usados.has(n));
 
-  if (disponiveis.length === 0) {
+  if (!disponiveis.length) {
     const p = document.createElement("p");
-    p.textContent = "Nenhum jogador disponível. Cadastre novos nomes.";
+    p.textContent = "Nenhum jogador disponível.";
     savedPlayersList.appendChild(p);
     return;
   }
 
-  disponiveis.forEach((name) => {
+  disponiveis.forEach(name => {
     const row = document.createElement("div");
     row.className = "player-row";
 
-    const btnSelect = document.createElement("button");
-    btnSelect.textContent = name;
-    btnSelect.addEventListener("click", () => {
+    const btn = document.createElement("button");
+    btn.textContent = name;
+    btn.onclick = () => {
       if (currentSlotIndex !== null) {
         slots[currentSlotIndex] = name;
+        currentSlotIndex = null;
         renderSlots();
         updateStartGameButton();
       }
-      currentSlotIndex = null;
       showScreen(screenSetup);
-    });
-    row.appendChild(btnSelect);
+    };
+    row.appendChild(btn);
 
-    const btnDelete = document.createElement("button");
-    btnDelete.textContent = "X";
-    btnDelete.className = "danger btn-delete";
-    btnDelete.title = "Excluir jogador da lista";
-    btnDelete.addEventListener("click", () => {
+    const del = document.createElement("button");
+    del.textContent = "X";
+    del.className = "danger btn-delete";
+    del.onclick = () => {
       if (confirm(`Remover "${name}" da lista de jogadores?`)) {
         savedPlayers = savedPlayers.filter(n => n !== name);
         savePlayers(savedPlayers);
-
         slots = slots.map(s => (s === name ? null : s));
         renderSlots();
         updateStartGameButton();
         renderSavedPlayersList();
       }
-    });
-    row.appendChild(btnDelete);
+    };
+    row.appendChild(del);
 
     savedPlayersList.appendChild(row);
   });
@@ -196,13 +184,13 @@ function showPlayerSelectScreen() {
   newPlayerNameInput.focus();
 }
 
-// ===== ARMA E JOGADORES DA PARTIDA =====
-
+/* ===========================================================
+   Entidades
+   =========================================================== */
 function criarArma() {
-  const NUM_CAMARAS = 6;
   return {
-    numCamaras: NUM_CAMARAS,
-    balaPos: Math.floor(Math.random() * NUM_CAMARAS),
+    numCamaras: 6,
+    balaPos: Math.floor(Math.random() * 6),
     posAtual: 0,
     ativa: true
   };
@@ -220,21 +208,23 @@ function criarGamePlayer(nome, perfilNome) {
   };
 }
 
-function getPerfilEmoji(perfil) {
-  return emojiPerfil[perfil] || "";
-}
-
 function getCardEmoji(player) {
-  return player.vivo ? getPerfilEmoji(player.perfil) : "💀";
+  return player.vivo ? emojiPerfil[player.perfil] : "💀";
 }
 
-// ===== MESA (K / Q / A) =====
-
+/* ===========================================================
+   Mesa (sorteio, UI e animação)
+   =========================================================== */
 function updateMesaUI() {
   const carta = mesaOrdem[currentMesaIndex];
-  const nomesMesa = { K: "Reis", Q: "Damas", A: "As" };
-  const nome = nomesMesa[carta] || "";
-  mesaInfoEl.textContent = `Mesa de ${carta} - ${nome}`;
+  if (mesaInfoEl) mesaInfoEl.textContent = `Mesa de ${carta}`;
+
+  const mesaCardFace = document.getElementById("mesaCardFace");
+  if (mesaCardFace) {
+    const map = { K: "king-hearts.png", Q: "queen-diamonds.png", A: "ace-spades.png" };
+    const file = map[carta] || "card-back.png";
+    mesaCardFace.style.backgroundImage = `url("src/assets/imgs/${file}")`;
+  }
 }
 
 function initMesa() {
@@ -243,7 +233,6 @@ function initMesa() {
   updateMesaUI();
 }
 
-// retorna true se mudou de mesa
 function registrarDisparoMesa() {
   mesaShotsCount++;
   if (mesaShotsCount >= 3) {
@@ -255,87 +244,59 @@ function registrarDisparoMesa() {
   return false;
 }
 
-// ===== NARRADOR =====
-
+/* ===========================================================
+   Narrador
+   =========================================================== */
 function narradorIntro() {
   if (!narradorPerfil) return 0;
   const narr = narradores[narradorPerfil];
   if (!narr || !narr.intro) return 0;
+
   const emoji = emojiNarrador[narradorPerfil] || "";
   const msg = `Narrador ${emoji}: "${narr.intro}"`;
-  log(msg);
   statusEl.textContent = msg;
+  log(msg);
   return calcularTempoLeitura(msg);
 }
 
 function narradorMesaIntro(isInicial) {
   if (!narradorPerfil) return 0;
   const narr = narradores[narradorPerfil];
-  if (!narr || !narr.mesaIntro) return 0;
 
   const carta = mesaOrdem[currentMesaIndex];
-  const line = narr.mesaIntro[carta];
+  const line = narr.mesaIntro?.[carta];
   if (!line) return 0;
 
   const emoji = emojiNarrador[narradorPerfil] || "";
   const msg = `Narrador ${emoji}: "${line}"`;
-  log(msg);
   statusEl.textContent = msg;
+  log(msg);
   return calcularTempoLeitura(msg);
 }
 
 function narradorKill(player) {
-  if (!narradorPerfil) return 0;
   const narr = narradores[narradorPerfil];
-  if (!narr || !narr.killLines) return 0;
+  if (!narr) return 0;
 
   const lines = narr.killLines;
   const template = lines[player.perfil] || lines.default;
-  if (!template) return 0;
-
-  const text = template.replace("{nome}", player.nome);
+  const txt = template.replace("{nome}", player.nome);
   const emoji = emojiNarrador[narradorPerfil] || "";
-  const msg = `Narrador ${emoji}: "${text}"`;
-  log(msg);
+
+  const msg = `Narrador ${emoji}: "${txt}"`;
   statusEl.textContent = msg;
+  log(msg);
+
   return calcularTempoLeitura(msg);
 }
 
-function getNarradorWinnerLine(nome) {
-  if (!narradorPerfil) return null;
-  const narr = narradores[narradorPerfil];
-  if (!narr || !narr.winner || narr.winner.length === 0) return null;
-  const idx = Math.floor(Math.random() * narr.winner.length);
-  return narr.winner[idx].replace("{nome}", nome);
-}
-
-// ===== INFO "AGORA É A VEZ DE..." =====
-
-function updateStarterInfo() {
-  if (starterIndex === null || !gamePlayers.length) {
-    starterInfoEl.textContent = "";
-    return;
-  }
-  if (!gamePlayers[starterIndex] || !gamePlayers[starterIndex].vivo) {
-    const idx = gamePlayers.findIndex(p => p.vivo);
-    if (idx === -1) {
-      starterInfoEl.textContent = "";
-      return;
-    }
-    starterIndex = idx;
-  }
-  const p = gamePlayers[starterIndex];
-  starterInfoEl.textContent = `Agora é a vez de: ${p.nome}`;
-}
-
-// ===== LOG =====
-
+/* ===========================================================
+   Render / Log
+   =========================================================== */
 function log(msg) {
   logEl.textContent += msg + "\n";
   logEl.scrollTop = logEl.scrollHeight;
 }
-
-// ===== RENDER DOS JOGADORES =====
 
 function renderGamePlayers() {
   gamePlayersContainer.innerHTML = "";
@@ -343,41 +304,35 @@ function renderGamePlayers() {
   gamePlayers.forEach((player, index) => {
     const div = document.createElement("div");
     div.className = "game-player";
-    if (!player.vivo) {
-      div.classList.add("dead");
-    }
+    if (!player.vivo) div.classList.add("dead");
 
     const left = document.createElement("div");
     left.className = "gp-left";
 
-    const emojiSpan = document.createElement("span");
-    emojiSpan.className = "gp-emoji";
-    emojiSpan.textContent = getCardEmoji(player);
-    left.appendChild(emojiSpan);
+    const emoji = document.createElement("span");
+    emoji.className = "gp-emoji";
+    emoji.textContent = getCardEmoji(player);
+    left.appendChild(emoji);
 
-    const nameSpan = document.createElement("span");
-    nameSpan.classList.add("player-name");
-    const nameClass = getNameLengthClass(player.nome);
-    nameSpan.classList.add(nameClass);
-    nameSpan.textContent = formatDisplayName(player.nome);
-    left.appendChild(nameSpan);
+    const name = document.createElement("span");
+    name.className = "player-name";
+    name.textContent = formatDisplayName(player.nome);
+    left.appendChild(name);
 
     const right = document.createElement("div");
     right.className = "gp-right";
 
-    const shotsSpan = document.createElement("span");
-    shotsSpan.className = "gp-shots";
-    shotsSpan.textContent = `${player.tiros}/${player.arma.numCamaras}`;
-    right.appendChild(shotsSpan);
+    const shots = document.createElement("span");
+    shots.className = "gp-shots";
+    shots.textContent = `${player.tiros}/${player.arma.numCamaras}`;
+    right.appendChild(shots);
 
-    const btnShoot = document.createElement("button");
-    btnShoot.textContent = "Atirar";
-    btnShoot.className = "danger";
-    btnShoot.disabled = !player.vivo || isShooting;
-    btnShoot.addEventListener("click", () => {
-      shoot(index);
-    });
-    right.appendChild(btnShoot);
+    const btn = document.createElement("button");
+    btn.textContent = "Atirar";
+    btn.className = "danger";
+    btn.disabled = !player.vivo || isShooting;
+    btn.onclick = () => shoot(index);
+    right.appendChild(btn);
 
     div.appendChild(left);
     div.appendChild(right);
@@ -386,8 +341,9 @@ function renderGamePlayers() {
   });
 }
 
-// ===== TIRO (FALAS + MESA + NARRADOR NA MORTE) =====
-
+/* ===========================================================
+   Tiro (fluxo)
+   =========================================================== */
 function shoot(index) {
   if (isShooting) return;
 
@@ -396,94 +352,67 @@ function shoot(index) {
 
   const arma = player.arma;
   if (!arma.ativa) {
-    statusEl.textContent = `${player.nome} já usou a arma dele.`;
+    statusEl.textContent = `${player.nome} já usou a arma.`;
     return;
   }
 
-  const perfil = perfisJogador[player.perfil] || perfisJogador.Marrento;
+  const perfil = perfisJogador[player.perfil];
 
-  // fala antes do tiro
-  const beforePhrases = perfil.before;
-  const fraseBefore = beforePhrases[player.beforeIndex % beforePhrases.length];
-  player.beforeIndex = (player.beforeIndex + 1) % beforePhrases.length;
-
-  const emoji = getPerfilEmoji(player.perfil);
+  // fala antes
+  const fraseBefore = perfil.before[player.beforeIndex];
+  player.beforeIndex = (player.beforeIndex + 1) % perfil.before.length;
+  const emoji = emojiPerfil[player.perfil];
   const msgBefore = `${player.nome} ${emoji}: "${fraseBefore}"`;
-  statusEl.textContent = msgBefore;
-  log(msgBefore);
 
   isShooting = true;
+  statusEl.textContent = msgBefore;
+  log(msgBefore);
   renderGamePlayers();
 
-  const morreu = (arma.posAtual === arma.balaPos);
-  const tempoLeitura = calcularTempoLeitura(fraseBefore);
+  const morreu = arma.posAtual === arma.balaPos;
+  const tempoBefore = calcularTempoLeitura(fraseBefore);
 
   setTimeout(() => {
     const efeito = morreu ? "💥 BUUM!" : "*CLIQUE*";
     statusEl.textContent = efeito;
     log(efeito);
 
-    const tempoEfeito = 700;
-
     setTimeout(() => {
       player.tiros++;
 
-      // vamos decidir se a mesa muda DEPOIS de decidir se morreu ou não,
-      // mas ainda não chamar narrador da mesa aqui.
       let mesaMudou = false;
 
       if (morreu) {
         player.vivo = false;
         arma.ativa = false;
-        const msgHit = `${player.nome} levou o tiro! 💀`;
-        log(msgHit);
-        statusEl.textContent = msgHit;
 
-        // registra o disparo só depois do resultado
+        const msgHit = `${player.nome} levou o tiro! 💀`;
+        statusEl.textContent = msgHit;
+        log(msgHit);
+
         mesaMudou = registrarDisparoMesa();
 
-        // atualiza turno/visual
-        const nextIdx = getNextAliveIndex(gamePlayers, index);
-        starterIndex = nextIdx;
+        const next = getNextAliveIndex(gamePlayers, index);
+        starterIndex = next;
         updateStarterInfo();
         renderGamePlayers();
 
-        // sequência do narrador:
-        // 1) fala da morte
-        // 2) se a mesa mudou, depois que ele termina, fala da nova mesa
         const tempoKill = narradorKill(player);
-        const killDelay = tempoKill || 0;
 
         if (mesaMudou) {
           setTimeout(() => {
-            const tempoMesa = narradorMesaIntro(false);
-            const mesaDelay = tempoMesa || 0;
-
-            setTimeout(() => {
-              const acabou = checarFimDeJogo();
-              if (!acabou) {
-                isShooting = false;
-                renderGamePlayers();
-              }
-            }, mesaDelay);
-          }, killDelay);
+            const tMesa = narradorMesaIntro(false);
+            setTimeout(() => finishShot(), tMesa);
+          }, tempoKill);
         } else {
-          setTimeout(() => {
-            const acabou = checarFimDeJogo();
-            if (!acabou) {
-              isShooting = false;
-              renderGamePlayers();
-            }
-          }, killDelay);
+          setTimeout(() => finishShot(), tempoKill);
         }
 
       } else {
-        // NÃO MORREU
         arma.posAtual = (arma.posAtual + 1) % arma.numCamaras;
 
-        const afterPhrases = perfil.afterSurvive;
-        const fraseAfter = afterPhrases[player.afterIndex % afterPhrases.length];
-        player.afterIndex = (player.afterIndex + 1) % afterPhrases.length;
+        const fraseAfter = perfil.afterSurvive[player.afterIndex];
+        player.afterIndex = (player.afterIndex + 1) % perfil.afterSurvive.length;
 
         const msgAfter = `${player.nome} ${emoji}: "${fraseAfter}"`;
         statusEl.textContent = msgAfter;
@@ -491,157 +420,220 @@ function shoot(index) {
 
         mesaMudou = registrarDisparoMesa();
 
-        const nextIdx = getNextAliveIndex(gamePlayers, index);
-        starterIndex = nextIdx;
+        const next = getNextAliveIndex(gamePlayers, index);
+        starterIndex = next;
         updateStarterInfo();
         renderGamePlayers();
 
         const tempoAfter = calcularTempoLeitura(fraseAfter);
-        const afterDelay = tempoAfter || 0;
 
         if (mesaMudou) {
-          // espera o tempo da fala do jogador, depois o narrador anuncia a mesa
           setTimeout(() => {
-            const tempoMesa = narradorMesaIntro(false);
-            const mesaDelay = tempoMesa || 0;
-
-            setTimeout(() => {
-              const acabou = checarFimDeJogo();
-              if (!acabou) {
-                isShooting = false;
-                renderGamePlayers();
-              }
-            }, mesaDelay);
-          }, afterDelay);
+            const tMesa = narradorMesaIntro(false);
+            setTimeout(() => finishShot(), tMesa);
+          }, tempoAfter);
         } else {
-          setTimeout(() => {
-            const acabou = checarFimDeJogo();
-            if (!acabou) {
-              isShooting = false;
-              renderGamePlayers();
-            }
-          }, afterDelay);
+          setTimeout(() => finishShot(), tempoAfter);
         }
       }
-    }, tempoEfeito);
-  }, tempoLeitura);
+    }, 700);
+
+  }, tempoBefore);
 }
 
-// ===== FIM DE JOGO =====
+function finishShot() {
+  const acabou = checarFimDeJogo();
+  if (!acabou) {
+    isShooting = false;
+    renderGamePlayers();
+  }
+}
 
+/* ===========================================================
+   Fim de jogo / vitória
+   =========================================================== */
 function checarFimDeJogo() {
   const vivos = gamePlayers.filter(p => p.vivo);
   if (vivos.length <= 1) {
     isShooting = false;
+
     const vencedor = vivos[0] || null;
 
     if (vencedor) {
-      const linhaNarrador = getNarradorWinnerLine(vencedor.nome);
-      if (linhaNarrador) {
-        const emojiN = emojiNarrador[narradorPerfil] || "";
-        const msg = `Narrador ${emojiN}: "${linhaNarrador}"`;
-        statusEl.textContent = msg;
-        log(msg);
-        setTimeout(() => {
-          showWinScreen(vencedor.nome);
-        }, 2000);
+      const narr = narradores[narradorPerfil];
+      let linha = null;
+      if (narr && narr.winner?.length) {
+        linha = narr.winner[Math.floor(Math.random() * narr.winner.length)];
+        linha = linha.replace("{nome}", vencedor.nome);
+      }
+
+      if (linha) {
+        statusEl.textContent = linha;
+        log(linha);
+        setTimeout(() => showWinScreen(vencedor.nome), 2000);
       } else {
         const msg = `${vencedor.nome} venceu a rodada!`;
         statusEl.textContent = msg;
         log(msg);
-        setTimeout(() => {
-          showWinScreen(vencedor.nome);
-        }, 1200);
+        setTimeout(() => showWinScreen(vencedor.nome), 1200);
       }
+
     } else {
-      const msg = "Ninguém sobreviveu nessa rodada... 😵";
+      const msg = "Ninguém sobreviveu...";
       statusEl.textContent = msg;
       log(msg);
-      setTimeout(() => {
-        showWinScreen(null);
-      }, 1200);
+      setTimeout(() => showWinScreen(null), 1200);
     }
+
     return true;
   }
   return false;
 }
 
-function showWinScreen(vencedorNome) {
-  if (vencedorNome) {
-    winMessageEl.textContent =
-      `${vencedorNome} venceu a rodada! O melhor mentiroso do bar da mesa. 🍻`;
-  } else {
-    winMessageEl.textContent =
-      "Dessa vez ninguém levou o título... só bala. 😵";
-  }
+function showWinScreen(nome) {
+  winMessageEl.textContent = nome
+    ? `${nome} venceu a rodada! 🍻`
+    : "Dessa vez ninguém levou o título...";
   showScreen(screenWin);
 }
 
-// ===== INICIAR / REINICIAR PARTIDA =====
-
+/* ===========================================================
+   Start game + sincronização da animação de intro (4s)
+   =========================================================== */
 function startGame() {
-  const nomesSelecionados = slots.filter(Boolean);
-  if (nomesSelecionados.length < 2) {
-    alert("Selecione pelo menos 2 jogadores para iniciar.");
+  const nomes = slots.filter(Boolean);
+  if (nomes.length < 2) {
+    alert("Selecione ao menos 2 jogadores.");
     return;
   }
 
-  const todosPerfis = Object.keys(perfisJogador);
-  const perfisEmbaralhados = shuffleArray(todosPerfis);
-  const perfisEscolhidos = perfisEmbaralhados.slice(0, nomesSelecionados.length);
-
-  gamePlayers = nomesSelecionados.map((nome, idx) =>
-    criarGamePlayer(nome, perfisEscolhidos[idx])
-  );
-
-  console.log("Jogadores da partida:", gamePlayers);
-
+  // escolhe narrador aleatório
   const narrKeys = Object.keys(narradores);
   narradorPerfil = narrKeys[Math.floor(Math.random() * narrKeys.length)];
-  console.log("Narrador sorteado:", narradorPerfil);
 
-  starterIndex = Math.floor(Math.random() * gamePlayers.length);
-  updateStarterInfo();
+  // sorteia a mesa ANTES da animação para manter sincronização
+  initMesa();
 
-  logEl.textContent = "";
-  mesaInfoEl.textContent = "Mesa de ?";
+  // prepara o introCard (mostra back inicialmente, e front será a carta sorteada)
+  const carta = mesaOrdem[currentMesaIndex];
+  const map = { K: "king-hearts.png", Q: "queen-diamonds.png", A: "ace-spades.png" };
+  const file = map[carta] || "card-back.png";
 
-  renderGamePlayers();
-  showScreen(screenGame);
+  // atualiza a face da intro (front) e o back
+  if (mesaCardIntro) {
+    const front = mesaCardIntro.querySelector(".intro-front");
+    const back = mesaCardIntro.querySelector(".intro-back");
+    if (front) front.style.backgroundImage = `url("src/assets/imgs/${file}")`;
+    if (back) back.style.backgroundImage = `url("src/assets/imgs/card-back.png")`;
 
-  // Intro do narrador + primeira mesa, travando os tiros
-  isShooting = true;
+    // garante que a classe animating reforce o reflow para poder reiniciar a animação
+    mesaCardIntro.classList.remove("animating");
+    void mesaCardIntro.offsetWidth;
+    mesaCardIntro.classList.add("animating");
+  }
 
-  const tempoIntro = narradorIntro() || 3000;
+  // mostra tela da mesa com a animação rodando
+  showScreen(screenMesa);
 
-  setTimeout(() => {
-    initMesa();
-    const tempoMesa = narradorMesaIntro(true) || 3000;
+  // narrador na tela da mesa
+  if (mesaNarrator) mesaNarrator.textContent = narradores[narradorPerfil]?.intro || "";
 
+  // tempo do narrador + animação: queremos esperar a animação de 4s terminar antes de ir ao jogo
+  const tempoIntroNarr = narradorIntro() || 1400;
+  // ANIM é 4000ms conforme pedido
+  const ANIM = 4000;
+  const waitFor = Math.max(tempoIntroNarr, ANIM) + 200;
+
+  // quando a animação terminar (animationend) — avançar para o jogo
+  let handled = false;
+  const onAnimEnd = (ev) => {
+    // filtra apenas quando o container termina sua animação
+    if (ev.target !== mesaCardIntro) return;
+    if (handled) return;
+    handled = true;
+
+    // remove classe e listener
+    mesaCardIntro.classList.remove("animating");
+    mesaCardIntro.removeEventListener("animationend", onAnimEnd);
+
+    // limpa narrador intro text
+    if (mesaNarrator) mesaNarrator.textContent = "";
+
+    // avança para montar o jogo
+    startGameCore(nomes);
+  };
+
+  if (mesaCardIntro) {
+    mesaCardIntro.addEventListener("animationend", onAnimEnd);
+    // fallback: caso animationend não dispare (navegador estranho), usa timeout
     setTimeout(() => {
-      isShooting = false;
-      renderGamePlayers();
-    }, tempoMesa);
-  }, tempoIntro);
+      if (!handled) onAnimEnd({ target: mesaCardIntro });
+    }, waitFor + 300);
+  } else {
+    // sem elemento de animação, ir direto (defensivo)
+    setTimeout(() => startGameCore(nomes), Math.max(tempoIntroNarr, ANIM));
+  }
 }
 
-// ===== EVENTOS =====
+function startGameCore(nomesSelecionados) {
+  const todosPerfis = Object.keys(perfisJogador);
+  const embaralhados = shuffleArray(todosPerfis);
+  const perfisUsados = embaralhados.slice(0, nomesSelecionados.length);
 
+  gamePlayers = nomesSelecionados.map((n, i) =>
+    criarGamePlayer(n, perfisUsados[i])
+  );
+
+  starterIndex = Math.floor(Math.random() * gamePlayers.length);
+
+  logEl.textContent = "";
+  renderGamePlayers();
+
+  // mostra tela do jogo
+  showScreen(screenGame);
+
+  // garante que carta central mostre a MESMA carta sorteada
+  updateMesaUI();
+
+  // exibe starter abaixo da carta (com nome em negrito)
+  updateStarterInfo();
+
+  isShooting = false;
+  renderGamePlayers();
+}
+
+/* ===========================================================
+   Helpers UI
+   =========================================================== */
+function updateStarterInfo() {
+  if (starterIndex === null) {
+    starterInfoEl.textContent = "";
+    return;
+  }
+  const p = gamePlayers[starterIndex];
+  // destaque nome em negrito — inserimos via innerHTML mas com cuidado (nome vem do usuário)
+  if (p) {
+    // escape simples: substituir < > para evitar injeção básica (nunca confie em conteúdo externo)
+    const safeName = String(p.nome).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    starterInfoEl.innerHTML = `Agora é a vez de: <b>${safeName}</b>`;
+  } else {
+    starterInfoEl.textContent = "";
+  }
+}
+
+/* ===========================================================
+   Eventos
+   =========================================================== */
 function setupEvents() {
-  btnGoSetup.addEventListener("click", () => {
-    showScreen(screenSetup);
-  });
+  btnGoSetup.onclick = () => showScreen(screenSetup);
+  btnBackToStart.onclick = () => showScreen(screenStart);
 
-  btnBackToStart.addEventListener("click", () => {
-    showScreen(screenStart);
-  });
-
-  btnBackToSetup.addEventListener("click", () => {
+  btnBackToSetup.onclick = () => {
     currentSlotIndex = null;
     showScreen(screenSetup);
-  });
+  };
 
-  btnAddPlayer.addEventListener("click", () => {
+  btnAddPlayer.onclick = () => {
     const name = newPlayerNameInput.value.trim();
     if (!name) return;
 
@@ -651,37 +643,35 @@ function setupEvents() {
 
     if (currentSlotIndex !== null) {
       slots[currentSlotIndex] = name;
+      currentSlotIndex = null;
       renderSlots();
       updateStartGameButton();
-      currentSlotIndex = null;
       showScreen(screenSetup);
     } else {
       renderSavedPlayersList();
     }
 
     newPlayerNameInput.value = "";
-  });
+  };
 
-  btnStartGame.addEventListener("click", () => {
-    startGame();
-  });
+  btnStartGame.onclick = startGame;
+  btnRestartGame.onclick = startGame;
+  btnNewGame.onclick = () => showScreen(screenSetup);
 
-  btnRestartGame.addEventListener("click", () => {
-    startGame();
-  });
-
-  btnNewGame.addEventListener("click", () => {
-    showScreen(screenSetup);
-  });
-
-  btnWinRepeat.addEventListener("click", () => {
-    startGame();
-  });
-
-  btnWinSetup.addEventListener("click", () => {
-    showScreen(screenSetup);
-  });
+  btnWinRepeat.onclick = startGame;
+  btnWinSetup.onclick = () => showScreen(screenSetup);
 }
 
-// ===== INICIALIZAÇÃO =====
+/* ===========================================================
+   Bootstrap
+   =========================================================== */
 init();
+
+/* ===========================================================
+   Exports (úteis para debug)
+   =========================================================== */
+export {
+  startGame,
+  renderSavedPlayersList,
+  renderGamePlayers
+};
