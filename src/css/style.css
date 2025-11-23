@@ -121,7 +121,7 @@ button[disabled] { opacity: .5; cursor: not-allowed; }
 
 /* quando .animating aplicado ao container, animar a rotação (4s conforme pedido) */
 .intro-card.animating {
-  animation: introFlipSequence 4s ease-in-out forwards;
+  animation: introFlipSequence 6s ease-in-out forwards;
   transform-style: preserve-3d;
 }
 

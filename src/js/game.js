@@ -1,5 +1,6 @@
 // src/js/game.js
-// Lógica principal do jogo, com animação de mesa em 4s (back -> front -> back -> front).
+// Lógica principal do jogo com correção: após o 3º disparo espera a fala, vai para a tela "mesa" (intro) e volta ao jogo.
+// Usa os módulos: profiles.js, utils.js, storage.js, ui.js
 
 import {
   perfisJogador,
@@ -238,10 +239,75 @@ function registrarDisparoMesa() {
   if (mesaShotsCount >= 3) {
     mesaShotsCount = 0;
     currentMesaIndex = (currentMesaIndex + 1) % mesaOrdem.length;
-    updateMesaUI();
+    // updateMesaUI will be called by caller after transition returns to game
     return true;
   }
   return false;
+}
+
+/* Função que executa a transição para tela 'mesa' (intro) e volta ao jogo.
+   Preserva o estado dos jogadores. */
+function gotoMesaTransitionAndReturn() {
+  // prepara imagens do introCard (front = carta sorteada, back = verso)
+  const carta = mesaOrdem[currentMesaIndex];
+  const map = { K: "king-hearts.png", Q: "queen-diamonds.png", A: "ace-spades.png" };
+  const file = map[carta] || "card-back.png";
+
+  if (mesaCardIntro) {
+    const front = mesaCardIntro.querySelector(".intro-front");
+    const back = mesaCardIntro.querySelector(".intro-back");
+    if (front) front.style.backgroundImage = `url("src/assets/imgs/${file}")`;
+    if (back) back.style.backgroundImage = `url("src/assets/imgs/card-back.png")`;
+  }
+
+  // mostrar a tela da mesa
+  if (mesaNarrator) mesaNarrator.textContent = narradores[narradorPerfil]?.intro || "";
+  showScreen(screenMesa);
+
+  // iniciar animação
+  if (mesaCardIntro) {
+    mesaCardIntro.classList.remove("animating");
+    void mesaCardIntro.offsetWidth;
+    mesaCardIntro.classList.add("animating");
+  }
+
+  // garantir retorno ao jogo quando a animação acabar
+  let handled = false;
+  const onEnd = (ev) => {
+    if (ev && ev.target !== mesaCardIntro) return;
+    if (handled) return;
+    handled = true;
+
+    if (mesaCardIntro) {
+      mesaCardIntro.classList.remove("animating");
+      mesaCardIntro.removeEventListener("animationend", onEnd);
+    }
+    if (mesaNarrator) mesaNarrator.textContent = "";
+
+    // atualizar a carta central da tela do jogo para a MESMA carta sorteada
+    updateMesaUI();
+
+    // voltar para a tela de jogo
+    showScreen(screenGame);
+
+    // atualizar starter e UI
+    updateStarterInfo();
+    renderGamePlayers();
+
+    // permitir tiros novamente (se não tiver acabado)
+    isShooting = false;
+  };
+
+  if (mesaCardIntro) {
+    mesaCardIntro.addEventListener("animationend", onEnd);
+    // fallback caso animationend não ocorra (timeout levemente maior que animação)
+    setTimeout(() => {
+      if (!handled) onEnd({ target: mesaCardIntro });
+    }, 4300);
+  } else {
+    // sem animação: retorno imediato
+    setTimeout(onEnd, 300);
+  }
 }
 
 /* ===========================================================
@@ -253,7 +319,7 @@ function narradorIntro() {
   if (!narr || !narr.intro) return 0;
 
   const emoji = emojiNarrador[narradorPerfil] || "";
-  const msg = `Narrador ${emoji}: "${narr.intro}"`;
+  const msg = `${emoji} ${narr.intro}`;
   statusEl.textContent = msg;
   log(msg);
   return calcularTempoLeitura(msg);
@@ -342,7 +408,7 @@ function renderGamePlayers() {
 }
 
 /* ===========================================================
-   Tiro (fluxo)
+   Tiro (fluxo) — ajustado para manejar transição de mesa após 3 disparos
    =========================================================== */
 function shoot(index) {
   if (isShooting) return;
@@ -358,7 +424,7 @@ function shoot(index) {
 
   const perfil = perfisJogador[player.perfil];
 
-  // fala antes
+  // fala before
   const fraseBefore = perfil.before[player.beforeIndex];
   player.beforeIndex = (player.beforeIndex + 1) % perfil.before.length;
   const emoji = emojiPerfil[player.perfil];
@@ -375,11 +441,12 @@ function shoot(index) {
   setTimeout(() => {
     const efeito = morreu ? "💥 BUUM!" : "*CLIQUE*";
     statusEl.textContent = efeito;
-    log(efeito);
+    log(`${efeito}`);
 
     setTimeout(() => {
       player.tiros++;
 
+      // registrar se a mesa mudou (3 disparos)
       let mesaMudou = false;
 
       if (morreu) {
@@ -392,23 +459,37 @@ function shoot(index) {
 
         mesaMudou = registrarDisparoMesa();
 
+        // define próximo starter
         const next = getNextAliveIndex(gamePlayers, index);
         starterIndex = next;
         updateStarterInfo();
         renderGamePlayers();
 
+        // tempo da fala do narrador sobre a morte
         const tempoKill = narradorKill(player);
 
+        // checar se fim de jogo (alguém venceu) — se sim, interrompe transição de mesa
+        const acabou = checarFimDeJogo();
+        if (acabou) {
+          // partida acabou — nada mais a fazer
+          return;
+        }
+
         if (mesaMudou) {
+          // espera o tempo do narrador, depois vai para tela da mesa e retorna
           setTimeout(() => {
-            const tMesa = narradorMesaIntro(false);
-            setTimeout(() => finishShot(), tMesa);
+            gotoMesaTransitionAndReturn();
           }, tempoKill);
         } else {
-          setTimeout(() => finishShot(), tempoKill);
+          // não mudou de mesa — permite continuar após tempo do narrador
+          setTimeout(() => {
+            isShooting = false;
+            renderGamePlayers();
+          }, tempoKill);
         }
 
       } else {
+        // sobreviveu
         arma.posAtual = (arma.posAtual + 1) % arma.numCamaras;
 
         const fraseAfter = perfil.afterSurvive[player.afterIndex];
@@ -420,6 +501,7 @@ function shoot(index) {
 
         mesaMudou = registrarDisparoMesa();
 
+        // define próximo starter
         const next = getNextAliveIndex(gamePlayers, index);
         starterIndex = next;
         updateStarterInfo();
@@ -427,26 +509,25 @@ function shoot(index) {
 
         const tempoAfter = calcularTempoLeitura(fraseAfter);
 
+        // checar fim de jogo (por segurança — normalmente não muda aqui)
+        const acabou = checarFimDeJogo();
+        if (acabou) return;
+
         if (mesaMudou) {
+          // esperar tempoAfter, então ir para tela da mesa e retornar
           setTimeout(() => {
-            const tMesa = narradorMesaIntro(false);
-            setTimeout(() => finishShot(), tMesa);
+            gotoMesaTransitionAndReturn();
           }, tempoAfter);
         } else {
-          setTimeout(() => finishShot(), tempoAfter);
+          // não mudou de mesa — volta ao estado normal após tempoAfter
+          setTimeout(() => {
+            isShooting = false;
+            renderGamePlayers();
+          }, tempoAfter);
         }
       }
     }, 700);
-
   }, tempoBefore);
-}
-
-function finishShot() {
-  const acabou = checarFimDeJogo();
-  if (!acabou) {
-    isShooting = false;
-    renderGamePlayers();
-  }
 }
 
 /* ===========================================================
@@ -498,7 +579,7 @@ function showWinScreen(nome) {
 }
 
 /* ===========================================================
-   Start game + sincronização da animação de intro (4s)
+   Start game + sincronização intro
    =========================================================== */
 function startGame() {
   const nomes = slots.filter(Boolean);
@@ -511,66 +592,51 @@ function startGame() {
   const narrKeys = Object.keys(narradores);
   narradorPerfil = narrKeys[Math.floor(Math.random() * narrKeys.length)];
 
-  // sorteia a mesa ANTES da animação para manter sincronização
+  // sorteia a mesa ANTES da animação
   initMesa();
 
-  // prepara o introCard (mostra back inicialmente, e front será a carta sorteada)
+  // preparar introCard (front = carta sorteada)
   const carta = mesaOrdem[currentMesaIndex];
   const map = { K: "king-hearts.png", Q: "queen-diamonds.png", A: "ace-spades.png" };
   const file = map[carta] || "card-back.png";
 
-  // atualiza a face da intro (front) e o back
   if (mesaCardIntro) {
     const front = mesaCardIntro.querySelector(".intro-front");
     const back = mesaCardIntro.querySelector(".intro-back");
     if (front) front.style.backgroundImage = `url("src/assets/imgs/${file}")`;
     if (back) back.style.backgroundImage = `url("src/assets/imgs/card-back.png")`;
 
-    // garante que a classe animating reforce o reflow para poder reiniciar a animação
     mesaCardIntro.classList.remove("animating");
     void mesaCardIntro.offsetWidth;
     mesaCardIntro.classList.add("animating");
   }
 
-  // mostra tela da mesa com a animação rodando
   showScreen(screenMesa);
-
-  // narrador na tela da mesa
   if (mesaNarrator) mesaNarrator.textContent = narradores[narradorPerfil]?.intro || "";
 
-  // tempo do narrador + animação: queremos esperar a animação de 4s terminar antes de ir ao jogo
-  const tempoIntroNarr = narradorIntro() || 1400;
-  // ANIM é 4000ms conforme pedido
-  const ANIM = 4000;
-  const waitFor = Math.max(tempoIntroNarr, ANIM) + 200;
+  const tempoIntroNarr = narradorIntro() || 1500;
+  const ANIM = 10000;
+  const waitFor = Math.max(tempoIntroNarr, ANIM) + 500;
 
-  // quando a animação terminar (animationend) — avançar para o jogo
   let handled = false;
   const onAnimEnd = (ev) => {
-    // filtra apenas quando o container termina sua animação
     if (ev.target !== mesaCardIntro) return;
     if (handled) return;
     handled = true;
-
-    // remove classe e listener
-    mesaCardIntro.classList.remove("animating");
-    mesaCardIntro.removeEventListener("animationend", onAnimEnd);
-
-    // limpa narrador intro text
+    if (mesaCardIntro) {
+      mesaCardIntro.classList.remove("animating");
+      mesaCardIntro.removeEventListener("animationend", onAnimEnd);
+    }
     if (mesaNarrator) mesaNarrator.textContent = "";
-
-    // avança para montar o jogo
     startGameCore(nomes);
   };
 
   if (mesaCardIntro) {
     mesaCardIntro.addEventListener("animationend", onAnimEnd);
-    // fallback: caso animationend não dispare (navegador estranho), usa timeout
     setTimeout(() => {
       if (!handled) onAnimEnd({ target: mesaCardIntro });
     }, waitFor + 300);
   } else {
-    // sem elemento de animação, ir direto (defensivo)
     setTimeout(() => startGameCore(nomes), Math.max(tempoIntroNarr, ANIM));
   }
 }
@@ -589,13 +655,11 @@ function startGameCore(nomesSelecionados) {
   logEl.textContent = "";
   renderGamePlayers();
 
-  // mostra tela do jogo
   showScreen(screenGame);
 
-  // garante que carta central mostre a MESMA carta sorteada
+  // carta central exibe a carta sorteada anteriormente
   updateMesaUI();
 
-  // exibe starter abaixo da carta (com nome em negrito)
   updateStarterInfo();
 
   isShooting = false;
@@ -611,11 +675,9 @@ function updateStarterInfo() {
     return;
   }
   const p = gamePlayers[starterIndex];
-  // destaque nome em negrito — inserimos via innerHTML mas com cuidado (nome vem do usuário)
   if (p) {
-    // escape simples: substituir < > para evitar injeção básica (nunca confie em conteúdo externo)
     const safeName = String(p.nome).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    starterInfoEl.innerHTML = `Agora é a vez de: <b>${safeName}</b>`;
+    starterInfoEl.innerHTML = `<b>${safeName}</b> começa essa bagaça!`;
   } else {
     starterInfoEl.textContent = "";
   }
@@ -668,7 +730,7 @@ function setupEvents() {
 init();
 
 /* ===========================================================
-   Exports (úteis para debug)
+   Exports
    =========================================================== */
 export {
   startGame,
