@@ -145,7 +145,7 @@ export const narradores = {
     },
     killLines: {
       Piadista: "Eita! O estressadinho levou um sossega leão.",
-      Raivoso: "Pelo menos agora ele não tá gritando com ninguém.",
+      Nordestino: "Pelo menos agora ele não tá gritando com ninguém.",
       Marrento: "Agora o jogo tá uma bosta, a pessoa mais sexy foi embora.",
       default: "Parem de cair assim, tô ficando sem piada nova."
     },
@@ -183,7 +183,7 @@ export const narradores = {
     },
     killLines: {
       Covarde: "Eu sabia! Eu devia ter ido embora!",
-      Raivoso: "Será que ele morreu mesmo? Ainda tá com cara de bravo.",
+      Nordestino: "Será que ele morreu mesmo? Ainda tá com cara de bravo.",
       Entediado: "Ele caiu tão devagar que eu achei que tava só alongando!",
       default: "Cuidado! Ele quase me acertou."
     },
