@@ -6,7 +6,7 @@ export const emojiPerfil = {
   Covarde: "🫣",
   Piadista: "😜",
   Entediado: "🙄",
-  Raivoso: "😠",
+  Nordestino: "😠",
   Esfomeado: "😋"
 };
 
@@ -92,7 +92,7 @@ export const perfisJogador = {
       "Vamo simbora, que hoje tem risca faca."
     ],
     afterSurvive: [
-      "Rapadura é doce, mas né é mole não.",
+      "Rapadura é doce, mas né mole não.",
       "Tá pensando que beiço de jegue é arroz doce.",
       "Sobrevivi? Eita porra… agora sim o bicho vai pegar.",
       "Oxe, essa foi por um triz!",

@@ -278,6 +278,7 @@ function gotoMesaTransitionAndReturn() {
     if (handled) return;
     handled = true;
 
+    // cleanup anim class + listener
     if (mesaCardIntro) {
       mesaCardIntro.classList.remove("animating");
       mesaCardIntro.removeEventListener("animationend", onEnd);
@@ -287,15 +288,16 @@ function gotoMesaTransitionAndReturn() {
     // atualizar a carta central da tela do jogo para a MESMA carta sorteada
     updateMesaUI();
 
+    // --- CORREÇÃO IMPORTANTE ---
+    // Liberar os tiros ANTES de renderizar a UI, assim os botões voltarão habilitados.
+    isShooting = false;
+
     // voltar para a tela de jogo
     showScreen(screenGame);
 
     // atualizar starter e UI
     updateStarterInfo();
     renderGamePlayers();
-
-    // permitir tiros novamente (se não tiver acabado)
-    isShooting = false;
   };
 
   if (mesaCardIntro) {
@@ -306,7 +308,9 @@ function gotoMesaTransitionAndReturn() {
     }, 4300);
   } else {
     // sem animação: retorno imediato
-    setTimeout(onEnd, 300);
+    setTimeout(() => {
+      if (!handled) onEnd();
+    }, 300);
   }
 }
 
@@ -364,6 +368,9 @@ function log(msg) {
   logEl.scrollTop = logEl.scrollHeight;
 }
 
+/* ============================
+   renderGamePlayers (modificado)
+   ============================ */
 function renderGamePlayers() {
   gamePlayersContainer.innerHTML = "";
 
@@ -380,9 +387,29 @@ function renderGamePlayers() {
     emoji.textContent = getCardEmoji(player);
     left.appendChild(emoji);
 
+    // Nome do jogador com regras de fonte e truncamento
     const name = document.createElement("span");
     name.className = "player-name";
-    name.textContent = formatDisplayName(player.nome);
+
+    // Regras:
+    // - se <= 15 chars => Fonte P. dos jogadores (grande)
+    // - se > 15 chars  => Fonte M. dos jogadores (médio)
+    // Truncamento com "..." é feito pelo CSS se o texto exceder o espaço.
+    const rawName = String(player.nome || "");
+    const len = rawName.length;
+
+    if (len <= 15) {
+      // Fonte P. dos jogadores
+      name.classList.add("player-name-large"); // /* Fonte P. dos jogadores */
+    } else {
+      // Fonte M. dos jogadores
+      name.classList.add("player-name-medium"); // /* Fonte M. dos jogadores */
+    }
+
+    // sempre colocamos o nome completo no title para tooltip
+    name.textContent = rawName;
+    name.title = rawName;
+
     left.appendChild(name);
 
     const right = document.createElement("div");
