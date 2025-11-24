@@ -22,6 +22,10 @@ import {
   addPlayer
 } from "./storage.js";
 
+// ---------- ÁUDIO ----------
+import { initSounds, playSound } from "./sounds.js";
+// ---------------------------
+
 import {
   screenStart,
   screenSetup,
@@ -640,6 +644,16 @@ function startGame() {
 
   showScreen(screenMesa);
   if (mesaNarrator) mesaNarrator.textContent = narradores[narradorPerfil]?.intro || "";
+
+  // ---------- AQUI: tocar audio da intro da mesa ----------
+  // inicializa (se ainda não) e toca o som 'intro' quando a tela da mesa aparece
+  try {
+    initSounds(); // garante que os objetos de áudio estejam prontos (associado ao clique do usuário)
+    playSound("intro");
+  } catch (e) {
+    console.warn("Erro ao tocar intro:", e);
+  }
+  // -------------------------------------------------------
 
   const tempoIntroNarr = narradorIntro() || 1500;
   const ANIM = 10000;
