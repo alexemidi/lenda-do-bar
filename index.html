@@ -191,8 +191,8 @@
                 <p><b>2. A Rodada:</b> O app sorteia a carta da mesa (ex: Rei). O jogador da vez deve jogar de 1 a 3 cartas viradas para baixo e anunciar: "Um Rei", "Dois Reis", etc.</p>
                 <p><b>3. O Blefe:</b> Ele pode estar mentindo! Se o próximo jogador acreditar, ele segue jogando. Se duvidar, ele grita "MENTIROSO!".</p>
                 <p><b>4. O Desafio:</b> 
-                   <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
-                   <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
+                    <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
+                    <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
                 </p>
                 <p><b>5. O Disparo:</b> O app simula uma roleta russa. Se fizer "Click", o jogo segue. Se fizer "POW!", o jogador morre (e bebe). As cartas reembaralham a cada disparo.</p>
                 <p><b>6. Rotação:</b> Após 3 disparos (de qualquer um), a mesa muda (K > Q > A).</p>
@@ -740,7 +740,9 @@ const App = {
 
     runRotationAnim(isIntro = false) {
         this.goTo('rotation');
-        AudioSys.playLoop('intro');
+        // ALTERAÇÃO: Toca apenas uma vez (sem loop) pois dura 6s
+        AudioSys.play('intro'); 
+
         const cardFace = document.getElementById('rot-card-front');
         cardFace.style.backgroundImage = `url('${CONFIG.paths.img}${CONFIG.cards[STATE.game.mesaCard]}')`;
 
@@ -762,7 +764,8 @@ const App = {
 
         // tempo da intro/rotação: 6000ms
         setTimeout(() => {
-            AudioSys.stopLoop();
+            // ALTERAÇÃO: Removido stopLoop() para deixar o áudio terminar naturalmente
+            
             // garantir que flipper termine com face para cima (CSS já roda pra 540deg)
             // Forçar estado final (apenas garantia visual)
             flipper.style.transform = 'rotateY(540deg)';
