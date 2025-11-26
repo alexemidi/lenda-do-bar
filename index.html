@@ -1,111 +1,1072 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>O Mentiroso do Bar</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="src/css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Mentiroso do Bar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Rye&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- VARIÁVEIS E TEMA (PALETA SALOON) --- */
+        :root {
+            --bg-wood: #1a120b;
+            --bg-felt: #2c3e50;
+            --paper: #e6dcc3;
+            --paper-dark: #cbb892;
+            --gold: #ffb700;
+            --blood: #8a0303;
+            --ink: #2b2b2b;
+            --shadow: rgba(0,0,0,0.6);
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+        
+        body {
+            font-family: 'Roboto Slab', serif;
+            background-color: var(--bg-wood);
+            background-image: radial-gradient(circle, #2e2218 0%, #0d0905 100%);
+            color: var(--paper);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 15px;
+        }
+
+        h1, h2, h3, button.western-btn {
+            font-family: 'Rye', serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        #app-container { width: 100%; max-width: 450px; position: relative; }
+
+        .screen { display: none; animation: fadeIn 0.4s ease-out; }
+        .screen.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .shake-screen { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 
+            10%, 90% { transform: translate3d(-1px, 0, 0); } 
+            20%, 80% { transform: translate3d(2px, 0, 0); } 
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 
+            40%, 60% { transform: translate3d(4px, 0, 0); } 
+        }
+
+        .paper-panel {
+            background: var(--paper);
+            color: var(--ink);
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 0 0 2px #5c4a35, 0 0 0 8px #1a120b, 0 10px 20px var(--shadow);
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .paper-panel::after, .paper-panel::before {
+            content: ''; position: absolute; top: 10px; width: 8px; height: 8px; 
+            background: #3e2723; border-radius: 50%; box-shadow: 0 1px 0 rgba(255,255,255,0.3);
+        }
+        .paper-panel::before { left: 10px; }
+        .paper-panel::after { right: 10px; }
+
+        .scroll-content { max-height: 320px; overflow-y: auto; padding-right: 5px; }
+        .scroll-content::-webkit-scrollbar { width: 6px; }
+        .scroll-content::-webkit-scrollbar-thumb { background: #8d6e63; border-radius: 3px; }
+
+        button { cursor: pointer; border: none; outline: none; transition: transform 0.1s; }
+        button:active { transform: scale(0.97); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+
+        .western-btn {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            background: linear-gradient(to bottom, #5d4037, #3e2723);
+            color: #ffecd2;
+            border: 2px solid #8d6e63;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 0 #000;
+            box-shadow: 0 4px 0 #281813;
+        }
+        .western-btn.primary { background: linear-gradient(to bottom, #d4af37, #aa8c2c); color: #2e2218; border-color: #fdd835; }
+        .western-btn.danger { background: linear-gradient(to bottom, #c62828, #8e0000); border-color: #e57373; }
+        .western-btn.secondary { background: linear-gradient(to bottom, #455a64, #263238); border-color: #78909c; }
+        .western-btn.small { padding: 5px 10px; font-size: 0.9rem; width: auto; }
+
+        .slot-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 4px; border: 1px dashed #8d6e63; }
+        .slot-name { flex: 1; font-weight: bold; font-size: 1.1rem; }
+        .tiny-btn { width: 32px; height: 32px; font-weight: bold; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.3); color: white; }
+        .bg-blue { background: #455a64; }
+        .bg-red { background: #c62828; }
+
+        .mesa-info { text-align: center; margin-bottom: 10px; }
+
+        .card-wrapper-padding { padding: 15px; overflow: visible; }
+        .card-display { width: 100px; height: 140px; margin: 0 auto 15px; background-color: transparent; background-size: cover; background-position: center; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); filter: sepia(0.3) contrast(1.1); position: relative; }
+
+        /* keyframe ajustado para terminar com face para cima: 540deg (540%360 = 180) */
+        .flip-container { perspective: 1000px; margin: 0 auto; width: 140px; height: 210px; }
+        .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.3s ease; }
+        .flip-anim { animation: spinCard 6s ease-in-out forwards; }
+        @keyframes spinCard { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(540deg); } } /* termina com face para cima */
+        
+        .front, .back { position: absolute; width: 140px; height: 210px; left: 50%; top: 0; transform: translateX(-50%); backface-visibility: hidden; border-radius: 8px; background-size: cover; }
+        .front { transform: translateX(-50%) rotateY(180deg); } 
+        .back { transform: translateX(-50%) rotateY(0deg); background-image: url('src/assets/imgs/card-back.png'); }
+
+        .narrator-box { font-style: italic; text-align: center; color: var(--gold); min-height: 40px; margin-bottom: 10px; text-shadow: 1px 1px 2px #000; }
+
+        .player-card { background: #2b2b2b; color: #eee; border-left: 4px solid #555; padding: 10px; margin-bottom: 8px; display:flex; align-items:center; justify-content:space-between; border-radius:0 4px 4px 0; transition: all 0.3s; }
+        .player-card.starter { border-left: 4px solid var(--gold); background: #332a1e; }
+        .player-card.dead { opacity: 0.6; background: #1a0f0f; border-left: 4px solid var(--blood); text-decoration: line-through; color: #e57373; }
+        .emoji-big { font-size: 1.8rem; margin-right: 10px; width: 40px; text-align: center; }
+
+        .chalkboard { background: #1a1a1a; border: 8px solid #5d4037; color: rgba(255,255,255,0.9); font-family: 'Courier Prime', monospace; padding: 15px; border-radius: 6px; }
+        .chalk-text { color: #eee; border-bottom: 1px dashed #555; padding: 5px 0; display: flex; justify-content: space-between; }
+
+        .ach-row { display:flex; align-items:center; gap:10px; padding:8px; border-bottom:1px solid #ccc; margin-bottom:5px; }
+        .ach-row.locked { opacity: 0.5; filter: grayscale(1); }
+
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index:100; display:none; align-items:center; justify-content:center; }
+        .modal-overlay.active { display:flex; }
+        .wanted-poster { background: var(--paper); color: var(--ink); width: 90%; max-width: 320px; padding:20px; text-align:center; border:4px solid #3e2723; box-shadow: 0 0 30px rgba(0,0,0,0.8); transform: rotate(-2deg); }
+
+        .achievement-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); border: 2px solid var(--gold); color: #fff; padding: 15px 25px; border-radius: 50px; display:flex; align-items:center; gap:10px; z-index:200; opacity:0; pointer-events:none; transition: opacity 0.5s, top 0.5s; width:90%; max-width:350px; box-shadow: 0 5px 15px #000; }
+        .achievement-toast.show { opacity: 1; top: 40px; }
+
+        .text-center { text-align:center; }
+        .mt-2 { margin-top:10px; }
+        .log-box { background: rgba(0,0,0,0.5); color:#ccc; font-size:0.85rem; height:80px; overflow-y:auto; padding:5px; margin-top:10px; border-radius:4px; border:1px solid #444; }
+
+        .db-row { display:flex; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
+        .db-name-btn { flex:1; text-align:left; padding:10px; border-radius:6px; background:linear-gradient(#455a64,#2f434a); color:#fff; border:1px solid rgba(0,0,0,0.2); }
+        .db-remove-btn { width:42px; height:42px; border-radius:6px; background:linear-gradient(#c62828,#8e0000); color:#fff; display:flex; align-items:center; justify-content:center; }
+    </style>
 </head>
 <body>
-  <div class="container">
 
-    <!-- TELA 1 — START -->
-    <div id="screen-start" class="screen active" role="region" aria-label="Tela inicial">
-      <h1 class="app-title">O Mentiroso do Bar</h1>
-      <p class="lead" style="text-align:center;">Selecione de 2 a 4 jogadores e comece a partida.</p>
-      <button class="primary" id="btnGoSetup" type="button">Jogar</button>
-    </div>
-
-    <!-- TELA 2 — SETUP -->
-    <div id="screen-setup" class="screen" role="region" aria-label="Configurar jogadores">
-      <h2 class="screen-title">Selecionar jogadores</h2>
-      <p class="screen-desc">Escolha de 2 a 4 jogadores para a partida.</p>
-
-      <div class="slots" id="slotsContainer" aria-live="polite"></div>
-
-      <div class="controls-row">
-        <button class="primary" id="btnStartGame" disabled type="button">Iniciar partida</button>
-        <button class="danger" id="btnBackToStart" type="button">Voltar</button>
-      </div>
-    </div>
-
-    <!-- TELA 3 — SELECT PLAYER -->
-    <div id="screen-select-player" class="screen" role="region" aria-label="Selecionar jogador salvo">
-      <h2 class="screen-title">Escolher jogador</h2>
-
-      <div class="input-row">
-        <input type="text" id="newPlayerName" placeholder="Novo jogador" aria-label="Nome do jogador" />
-        <button class="secondary" id="btnAddPlayer" type="button">+ Adicionar</button>
-      </div>
-
-      <p class="screen-desc">Jogadores salvos:</p>
-      <div class="players-list" id="savedPlayersList" aria-live="polite"></div>
-
-      <div class="controls-row">
-        <button class="danger" id="btnBackToSetup" type="button">Cancelar</button>
-      </div>
-    </div>
-
-    <!-- TELA 4 — MESA (intro com animação) -->
-    <div id="screen-mesa" class="screen" role="region" aria-label="Nova mesa">
-      <h2 class="intro-title" id="mesaIntroTitle">A carta da mesa é:</h2>
-
-
-      <div class="intro-wrapper">
-        <div class="intro-card" id="introCard" aria-hidden="true">
-          <div class="intro-face intro-back" aria-hidden="true"></div>
-          <div class="intro-face intro-front" aria-hidden="true"></div>
+<div id="app-container">
+    <div id="customModal" class="modal-overlay">
+        <div class="wanted-poster">
+            <h2 id="modalTitle" style="border-bottom: 2px solid #000; padding-bottom:5px;">AVISO</h2>
+            <p id="modalMessage" style="font-size: 1.1rem; margin: 15px 0;">Mensagem aqui</p>
+            <div id="modalActions" style="display: flex; gap: 10px; justify-content: center;"></div>
         </div>
-
-        <div id="mesaNarrator" class="intro-text" aria-live="polite"></div>
-      </div>
     </div>
 
-    <!-- TELA 5 — JOGO (carta central única, mesaInfo acima, starter abaixo) -->
-    <div id="screen-game" class="screen" role="region" aria-label="Tela de jogo">
-      <!-- Mesa info (acima da carta central) -->
-      <div class="mesa-top">
-        <div id="mesaInfo" class="mesa-info" aria-live="polite">Mesa de ?</div>
-      </div>
-
-      <!-- Carta central (dinâmica) -->
-      <div class="game-card" id="mesaCard" aria-hidden="false">
-        <div class="game-face" id="mesaCardFace" role="img" aria-label="Carta da mesa"></div>
-      </div>
-
-      <!-- Texto "Agora é a vez de" abaixo da carta -->
-      <div id="starterInfo" class="starter-info" aria-live="polite"></div>
-
-      <!-- Jogadores -->
-      <div class="game-players" id="gamePlayersContainer" aria-live="polite"></div>
-
-      <!-- Status / falas -->
-      <div id="status" class="status" aria-live="polite"></div>
-
-      <!-- Log -->
-      <div id="log" class="log" aria-live="off"></div>
-
-      <!-- Ações -->
-      <div class="top-actions">
-        <button class="secondary" id="btnRestartGame" type="button">Reiniciar partida</button>
-        <button class="danger" id="btnNewGame" type="button">Nova seleção</button>
-      </div>
+    <div id="achievementToast" class="achievement-toast">
+        <span id="achEmoji" style="font-size: 2rem;">🏆</span>
+        <div style="text-align: left;">
+            <div id="achPlayerName" style="color: var(--gold); font-weight: bold; font-size: 0.9rem;">JOGADOR</div>
+            <div style="font-size: 0.8rem; text-transform: uppercase;">Desbloqueou:</div>
+            <div id="achName" style="font-weight: bold;">Nome da Conquista</div>
+        </div>
     </div>
 
-    <!-- TELA 6 — WIN -->
-    <div id="screen-win" class="screen" role="region" aria-label="Tela de vitória">
-      <h2 class="screen-title">Parabéns!</h2>
-      <p id="winMessage" class="win-message" aria-live="polite"></p>
-
-      <div class="controls-row">
-        <button class="primary" id="btnWinRepeat" type="button">Repetir jogadores</button>
-        <button class="secondary" id="btnWinSetup" type="button">Voltar para seleção</button>
-      </div>
+    <div id="screen-start" class="screen active">
+        <div class="paper-panel text-center">
+            <h1 style="font-size: 2.2rem; color: #3e2723; margin-bottom: 5px;">O MENTIROSO</h1>
+            <h2 style="font-size: 1.5rem; color: var(--blood);">DO BAR</h2>
+            <p style="font-style: italic; margin-top: 10px;">"A verdade liberta, mas a mentira embebeda."</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="western-btn primary" onclick="App.goTo('setup')">JOGAR</button>
+            <button class="western-btn secondary" onclick="App.goTo('stats')">ESTATÍSTICAS</button>
+            <button class="western-btn secondary" onclick="App.goTo('rules')">REGRAS</button>
+        </div>
     </div>
 
-  </div>
+    <div id="screen-rules" class="screen">
+        <div class="paper-panel">
+            <h2 class="text-center" style="border-bottom: 2px solid #000;">COMO JOGAR</h2>
+            <div class="scroll-content" style="font-size: 0.95rem; line-height: 1.5;">
+                <p><b>1. A Mesa Física:</b> Usem um baralho físico. Cada jogador recebe 5 cartas.</p>
+                <p><b>2. A Rodada:</b> O app sorteia a carta da mesa (ex: Rei). O jogador da vez deve jogar de 1 a 3 cartas viradas para baixo e anunciar: "Um Rei", "Dois Reis", etc.</p>
+                <p><b>3. O Blefe:</b> Ele pode estar mentindo! Se o próximo jogador acreditar, ele segue jogando. Se duvidar, ele grita "MENTIROSO!".</p>
+                <p><b>4. O Desafio:</b> 
+                   <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
+                   <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
+                </p>
+                <p><b>5. O Disparo:</b> O app simula uma roleta russa. Se fizer "Click", o jogo segue. Se fizer "POW!", o jogador morre (e bebe). As cartas reembaralham a cada disparo.</p>
+                <p><b>6. Rotação:</b> Após 3 disparos (de qualquer um), a mesa muda (K > Q > A).</p>
+            </div>
+        </div>
+        <button class="western-btn primary" onclick="App.goTo('start')">VOLTAR AO INÍCIO</button>
+    </div>
 
-  <!-- usa seus módulos já existentes: ui.js, utils.js, profiles.js, storage.js -->
-  <script type="module" src="src/js/game.js"></script>
+    <div id="screen-setup" class="screen">
+        <div class="paper-panel">
+            <h2 class="text-center">JOGADORES</h2>
+            <p class="text-center" style="font-size: 0.9rem;">Ordem da mesa (Sentido Anti-Horário)</p>
+            <div id="slots-container" class="mt-2"></div>
+        </div>
+        <button id="btn-start-match" class="western-btn primary" disabled onclick="App.confirmOrder()">INICIAR PARTIDA</button>
+        <button class="western-btn danger" onclick="App.goTo('start')">VOLTAR</button>
+    </div>
+
+    <div id="screen-database" class="screen">
+        <div class="paper-panel">
+            <h3>Adicionar Jogador</h3>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="new-player-input" placeholder="Nome..." style="flex:1; padding:8px; font-family: inherit;">
+                <button class="western-btn secondary" style="width:auto; margin:0;" onclick="App.addNewPlayerDB()">+</button>
+            </div>
+            <hr style="border-color:#aaa; margin:15px 0;">
+            <h3>Salvos:</h3>
+            <div id="db-list" style="max-height:200px; overflow-y:auto;"></div>
+        </div>
+        <button class="western-btn danger" onclick="App.renderSetup(); App.goTo('setup')">CANCELAR</button>
+    </div>
+
+    <div id="screen-rotation" class="screen">
+        <div class="text-center">
+            <h2 id="rot-title" style="color: var(--gold); text-shadow: 2px 2px 0 #000;">A CARTA DA MESA É...</h2>
+            <div class="card-wrapper-padding">
+                <div class="flip-container">
+                    <div class="flipper" id="card-flipper">
+                        <div class="front" id="rot-card-front"></div>
+                        <div class="back"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="rot-narrator" class="narrator-box" style="margin-top: 10px; font-size: 1.2rem;"></div>
+        </div>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="mesa-info">
+            <div id="game-mesa-info" style="color: var(--paper); font-weight: bold; font-size: 1.2rem;">Mesa de ?</div>
+        </div>
+        
+        <div class="card-display" id="game-mesa-card"></div>
+        <div id="starter-info" style="text-align:center; margin:5px 0; color:#ccc; font-size:0.9rem;"></div>
+
+        <div id="game-narrator-area" class="narrator-box"></div>
+        <div id="game-status" style="text-align:center; color:var(--gold); font-weight:bold; min-height:1.2em;"></div>
+
+        <div id="game-players-list"></div>
+
+        <div id="game-log" class="log-box"></div>
+
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <button class="western-btn secondary" onclick="App.restartGame()">REINICIAR</button>
+            <button class="western-btn danger" onclick="App.goTo('setup')">SAIR</button>
+        </div>
+    </div>
+
+    <div id="screen-win" class="screen">
+        <div class="paper-panel text-center" style="border-color: var(--gold);">
+            <h1 style="color: #d4af37;">VENCEDOR!</h1>
+            <p id="win-msg" style="font-size: 1.2rem; font-weight: bold;"></p>
+            <div id="win-achievements" style="margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px;"></div>
+        </div>
+        <button class="western-btn primary" onclick="App.restartGame()">JOGAR NOVAMENTE</button>
+        <button class="western-btn secondary" onclick="App.goTo('setup')">MUDAR JOGADORES</button>
+    </div>
+
+    <div id="screen-stats" class="screen">
+        <h2 class="text-center" style="color: var(--paper);">LIVRO DE REGISTROS</h2>
+        <div class="chalkboard" id="stats-board" style="max-height:400px; overflow-y:auto;"></div>
+        <div class="mt-2">
+            <button class="western-btn danger" onclick="App.confirmResetStats()">APAGAR TUDO</button>
+            <button class="western-btn primary" onclick="App.goTo('start')">VOLTAR</button>
+        </div>
+    </div>
+
+    <div id="screen-achievements" class="screen">
+        <div class="paper-panel">
+            <h3 id="ach-screen-title" class="text-center">Conquistas de Fulano</h3>
+            <div id="ach-list-content" class="scroll-content"></div>
+        </div>
+        <button class="western-btn primary" onclick="App.goTo('stats')">VOLTAR ÀS ESTATÍSTICAS</button>
+    </div>
+</div>
+
+<script type="module">
+/* CONFIG e NARRADORES (mantive o teu formato e adicionei mesaIntro / killLines / winner conforme pedido) */
+const CONFIG = {
+    paths: {
+        img: 'src/assets/imgs/',
+        snd: 'src/assets/sounds/' // tentativa principal
+    },
+    fallbackSnd: 'src/assest/sounds/', // fallback para typo de pasta se necessário
+    cards: { K: "king-hearts.png", Q: "queen-diamonds.png", A: "ace-spades.png" },
+    // Sons de jogo
+    sounds: { intro: 'intro-mesa.mp3', cock: 'cocking-a-revolver.mp3', shot: 'gun-shot.mp3', empty: 'empty-gun.mp3' },
+    
+    // Emojis de perfis
+    emojis: { 
+        Marrento: "😎", 
+        Covarde: "🫣", 
+        Piadista: "😜", 
+        Entediado: "🙄", 
+        Nordestino: "😠", 
+        Esfomeado: "😋", 
+        Sabio: "🧙‍♂️", // Emoji do narrador Sábio mantido para uso geral
+        Morte: "💀" // Emoji de Morte mantido para uso geral
+    },
+    
+    // Novas falas dos perfis de jogadores
+    perfis: {
+        Marrento: {
+            before: [
+                "Vamos ver se a sorte está do meu lado.",
+                "Eu não erro, no máximo a realidade me desobedece.",
+                "Confia que o pai tá on.",
+                "Se a morte quer me levar, vai ter que ser na marra."
+            ],
+            afterSurvive: [
+                "Tá vendo? Até a morte me respeita.",
+                "Eu sou tão brabo que até o perigo desiste.",
+                "Se era pra me assustar, precisa tentar mais forte.",
+                "Eu não sobrevivo: eu humilho o perigo."
+            ]
+        },
+
+        Covarde: {
+            before: [
+                "Alguém quer ir no meu lugar?",
+                "Eu com um mal pressentimento sobre isso.",
+                "Se der ruim, não fala pra minha mãe que eu me mijei… de novo.",
+                "Só quero sair daqui inteiro, por favor."
+            ],
+            afterSurvive: [
+                "Meu coração tá tipo: Se você não parar eu paro.",
+                "Caramba, meu coração bateu até errado.",
+                "Acho que minha alma ficou pelo caminho.",
+                "Sobrevivi, mas acho que vou precisar de terapia."
+            ]
+        },
+
+        Piadista: {
+            before: [
+                "Se eu morrer, pelo menos não pago a conta.",
+                "Já sobrevivi a grupo de família, isso aqui é fichinha.",
+                "Essa arma aqui já viu mais mentira que WhatsApp em época de eleição.",
+                "Relaxa, eu sou personagem principal, teoricamente não morro agora.",
+                "Alguém avisa o roteirista que eu tô pronto pra próxima cena?",
+                "Se isso der errado, já deixei meu currículo no céu.",
+            
+            ],
+            afterSurvive: [
+                "Podem respirar, o alívio cômico ainda tá vivo.",
+                "Vocês esperavam o quê? Protagonista morrendo no meio do filme?",
+                "Podem aplaudir, mas sem exagero, tô acostumado.",
+                "Sobrevivi de novo, tô quase virando série regular.",
+                "Ufa! Já pensou perder o personagem mais engraçado?"
+            ]
+        },
+
+        Entediado: {
+            before: [
+                "Já vivi coisa pior… tipo segunda-feira.",
+                "A vida é uma fila: eu só tô esperando minha vez.",
+                "É só mais um capítulo, com ou sem continuação.",
+                "Se eu cair, me acordem quando acabar.",
+                "Se eu morrer agora, pelo menos não pego trânsito na volta."
+
+            ],
+            afterSurvive: [
+                "Pelo visto não era minha vez ainda.",
+                "Ok, continuei vivo. Que tédio!",
+                "Olha só… estou tentando me matar vocês erram.",
+                
+            ]
+        },
+
+        Nordestino: {
+            before: [
+                "Se for hoje, que seja ligeiro. Num tenho tempo pra frescura.",
+                "Bora, desgraça! Ou vai ou racha, porra!.",
+                "Eu tô virado no mói de coentro.",
+                "Vamo simbora, que hoje tem risca faca."
+            ],
+            afterSurvive: [
+                "Rapadura é doce, mas né mole não.",
+                "Tá pensando que beiço de jegue é arroz doce.",
+                "Sobrevivi? Eita porra… agora sim o bicho vai pegar.",
+                "Oxe, essa foi por um triz!",
+                "A bala olhou e disse: Seloko num compensa"
+            ]
+        },
+
+        Esfomeado: {
+            before: [
+                "Eu tô tremendo, mas é de fome mesmo.",
+                "Se eu não morrer tá me devendo uma tapioca.",
+                "Se der certo, me tragam cuscuz. Se der errado… enterra com farinha.",
+                "Se der ruim fala pro meu nutri que eu não vou precisar mais dele."
+            ],
+            afterSurvive: [
+                "Sobrevivi, miseráveis. Agora quero meu pastel com caldo de cana.",
+                "Tô vivo, fala que não preciso mais de nutri.",
+                "Se a bala tivesse gosto de bacon, talvez eu até encarava ela.",
+                "Deu bom, agora vamos comer e morar"
+            ]
+        }
+    },
+    
+    // Novas falas dos narradores
+    narradores: {
+        Sabio: {
+            intro: "🧙‍♂️ Lembrem-se que em cada mentira há risco, e em cada risco pode faltar um gole no próximo drink.",
+            mesaIntro: {
+                K: "Mesa de Rei: O poder é fachada, as balas não se curvam a coroas.",
+                Q: "Mesa de Rainha: Subestimar a realeza sempre cobra seu preço.",
+                A: "Mesa de Ás: O momento em que sorte e imprudência se confundem."
+            },
+            killLines: {
+                Esfomeado: "Até a fome cobra a conta uma hora.",
+                Marrento:  "A arrogância sempre encontra o próprio fim.",
+                Covarde:   "Fugir do risco não adiou o inevitável, só deixou mais doloroso.",
+                default:   "Mais uma lição escrita em chumbo para quem quiser aprender."
+            },
+            winner: [
+              "{nome}, mentiu melhor do que todos, mas lembre-se: até a sorte cansa.",
+              "Hoje o título é seu, {nome}. Só não esqueça que toda vitória tem um preço."
+            ]
+        },
+        Piadista: {
+            intro: "🤭 Não vale dedo no olho nem nas partes baixas… vocês sabem bem por quê.",
+            mesaIntro: {
+                K: "Mesa de Rei: Respeita a autoridade.",
+                Q: "Mesa de Rainha: Cuidado! Ela é mais perigosa que a arma.",
+                A: "Mesa de Ás: Modo hard ativado, meus consagrados."
+            },
+            killLines: {
+                Piadista:  "Eita! O estressadinho levou um sossega leão.",
+                Nordestino:"Pelo menos agora ele não tá gritando com ninguém.",
+                Marrento:  "Agora o jogo tá uma bosta, a pessoa mais sexy foi embora.",
+                default:   "Parem de cair assim, tô ficando sem piada nova."
+            },
+            winner: [
+              "{nome}, parabéns, mentiu tão bem que até eu quase acreditei.",
+              "A mesa aplaude, {nome}. Ah não, é só o gelo batendo no copo mesmo."
+            ]
+        },
+        Entediado: {
+            intro: "😒 Se alguém morrer, me avisem. Posso não estar prestando atenção.",
+            mesaIntro: {
+                K: "Mesa de Rei. Grande coisa.",
+                Q: "Mesa de Rainha. Tentem não passar tanta vergonha.",
+                A: "Mesa de Ás. Pelo menos muda o desenho."
+            },
+            killLines: {
+                Piadista:  "Até que enfim calou a boca.",
+                Esfomeado: "No céu tem pão? E morreu... Próximo.",
+                Entediado: "Pelo menos agora ele não precisa fingir interesse.",
+                default:   "Mais um que caiu. Nada novo."
+            },
+            winner: [
+              "Parabéns, {nome}. Você venceu. Agora posso ir embora?",
+              "{nome} ganhou. Se alguém se importar, finge que comemora."
+            ]
+        },
+        Covarde: {
+            intro: "😨 Galera, só lembrando... Aponta essa arma pra longe de mim, por favor.",
+            mesaIntro: {
+                K: "Mesa de Rei: Se comportem.",
+                Q: "Mesa de Rainha: Tentem pelo menos não fazer nada idiota… é difícil, eu sei.",
+                A: "Mesa de Ás: alguém segura minha mão? Por segurança psicológica."
+            },
+            killLines: {
+                Covarde:    "Eu sabia! Eu devia ter ido embora!",
+                Nordestino: "Será que ele morreu mesmo? Ainda tá com cara de bravo.",
+                Entediado:  "Ele caiu tão devagar que eu achei que tava só alongando!",
+                default:    "Cuidado! Ele quase me acertou."
+            },
+            winner: [
+              "Vitória do {nome}! Ótimo… agora que tal jogo da velha? É mais seguro.",
+              "Parabéns do {nome}… agora vamos embora antes que alguém tente outra rodada."
+            ]
+        }
+    }
+};
+
+const ACHIEVEMENTS_DEF = [
+    { id: 'first_win', emoji: '🏆', name: 'Nasce uma Lenda', desc: 'Primeira vitória.', check: (s, c) => s.wins === 1 },
+    { id: 'die_1/6', emoji: '⏱️', name: 'Speedrun do Além', desc: 'Morreu no primeiro disparo (1/6).', check: (s, c) => c.diedOnShot === 1 },
+    { id: 'win_10', emoji: '💀', name: 'O Terror da Mesa', desc: 'Ganhou 10 partidas.', check: (s, c) => s.wins >= 10 },
+    { id: 'die_5/6', emoji: '😨', name: 'Último Suspiro', desc: 'Ficou faltando só um disparo (5/6).', check: (s, c) => c.didDodgeLastShotBefore },
+    { id: 'win_last_shot_before', emoji: '😎', name: 'Um pé na cova', desc: 'Venceu por um triz (5/6).', isHidden: true, check: (s, c) => c.didWinLastShotBefore && s.wins >= 1 },
+    { id: 'win_streak_3', emoji: '🔥', name: 'Imorrível', desc: 'Ganhou 3 partidas seguidas.', isHidden: true, check: (s, c) => c.winStreak >= 3 },
+    { id: 'no_shot_win', emoji: '🤖', name: 'Tá de Hack', desc: 'Venceu sem disparar (0/6).', isHidden: true, check: (s, c) => s.wins >= 1 && s.dodges === 0 && s.hits === 0 },
+    { id: 'die_10', emoji: '🤕', name: 'Alvo Fácil', desc: 'Morreu 10 vezes.', isHidden: true, check: (s, c) => s.hits >= 10 }
+];
+
+/* --- 2. AUDIO (com fallback para 'assest') --- */
+const AudioSys = {
+    cache: {},
+    bgm: null,
+    initialized: false,
+
+    init() {
+        if (this.initialized) return;
+
+        Object.keys(CONFIG.sounds).forEach(key => {
+            const audio = new Audio();
+            audio.preload = 'auto';
+            audio.src = CONFIG.paths.snd + CONFIG.sounds[key];
+
+            this.cache[key] = audio;
+            this.cache[key].__fallback = CONFIG.fallbackSnd + CONFIG.sounds[key];
+        });
+
+        this.initialized = true;
+    },
+
+    play(key, loop = false) {
+        this.init();
+        const base = this.cache[key];
+        if (!base) return;
+
+        const audio = new Audio();
+        audio.loop = loop;
+        audio.preload = 'auto';
+        audio.volume = 0.9;
+        audio.src = base.src;
+
+        // Tenta tocar o áudio principal
+        audio.play().catch(() => {
+            // Se falhar, tenta fallback
+            if (base.__fallback) {
+                audio.src = base.__fallback;
+                audio.play().catch(() => {});
+            }
+        });
+
+        try {
+            audio.currentTime = 0;
+        } catch (e) {}
+
+        return audio;
+    },
+
+    playLoop(key) {
+        this.stopLoop();
+        this.bgm = this.play(key, true);
+    },
+
+    stopLoop() {
+        if (this.bgm) {
+            try {
+                this.bgm.pause();
+            } catch (e) {}
+            this.bgm = null;
+        }
+    }
+};
+
+
+/* --- 3. STORAGE & STATE --- */
+const Storage = {
+    get(key, def) { try { return JSON.parse(localStorage.getItem('mentiroso_' + key)) || def; } catch { return def; } },
+    set(key, val) { localStorage.setItem('mentiroso_' + key, JSON.stringify(val)); }
+};
+
+let STATE = {
+    slots: Storage.get('slots', Array(6).fill(null)),
+    db: Storage.get('db', []),
+    stats: Storage.get('stats', {}),
+    achieved: Storage.get('achieved', {}),
+    game: { active: false, players: [], turnIndex: 0, mesaCard: 'A', mesaShots: 0, narrator: null, isShooting: false, roundUnlocks: [] }
+};
+
+/* --- 4. LÓGICA --- */
+const Logic = {
+    getNarrator() {
+        const keys = Object.keys(CONFIG.narradores);
+        return keys[Math.floor(Math.random() * keys.length)];
+    },
+    createPlayer(name, perfilFixo) {
+        return { name, perfil: perfilFixo, alive: true, shotsTaken: 0, gun: { chamber: 0, bullet: Math.floor(Math.random() * 6) }, lines: { before: 0, afterSurvive: 0 } };
+    },
+    rotateTable(forceNext = false) {
+        const order = ['K','Q','A'];
+        if (forceNext || STATE.game.mesaShots >= 3) {
+            let idx = order.indexOf(STATE.game.mesaCard);
+            STATE.game.mesaCard = order[(idx + 1) % 3];
+            STATE.game.mesaShots = 0;
+            return true;
+        }
+        return false;
+    },
+    checkAchievements(pName, events, notify = true) {
+        if (!pName) return;
+        if (!STATE.stats[pName]) STATE.stats[pName] = { wins:0, hits:0, dodges:0, _meta: {} };
+        const stats = STATE.stats[pName];
+        if (!STATE.achieved[pName]) STATE.achieved[pName] = [];
+        ACHIEVEMENTS_DEF.forEach(ach => {
+            if (!STATE.achieved[pName].includes(ach.id)) {
+                if (ach.check(stats, events)) {
+                    STATE.achieved[pName].push(ach.id);
+                    if (notify) View.showToast(pName, ach);
+                    else STATE.game.roundUnlocks.push(ach.id);
+                }
+            }
+        });
+        Storage.set('stats', STATE.stats);
+        Storage.set('achieved', STATE.achieved);
+    }
+};
+
+/* --- 5. APP / UI --- */
+const App = {
+    currentSlot: null,
+    init() {
+        this.renderSetup();
+        if (STATE.slots.filter(Boolean).length === 0) STATE.slots = [null,null,null,null,null,null];
+    },
+    goTo(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + screenId).classList.add('active');
+        if (screenId === 'stats') this.renderStats();
+    },
+
+    renderSetup() {
+        const container = document.getElementById('slots-container');
+        container.innerHTML = '';
+        const filled = STATE.slots.filter(Boolean).length;
+        const slotsToShow = Math.min(6, Math.max(2, filled + 1));
+        for (let i=0;i<slotsToShow;i++) {
+            const name = STATE.slots[i];
+            const div = document.createElement('div');
+            div.className = 'slot-row';
+            if (!name) {
+                div.innerHTML = `<span class="slot-name" style="opacity:0.5; font-style:italic">Vazio...</span>
+                                 <button class="western-btn secondary small" onclick="App.openSelect(${i})">Selecionar</button>`;
+            } else {
+                div.innerHTML = `<span class="slot-name">${name}</span>
+                                 <div style="display:flex; gap:4px;">
+                                     ${i > 0 ? `<button class="tiny-btn bg-blue" onclick="App.moveSlot(${i}, -1)">▲</button>` : ''}
+                                     ${i < filled-1 ? `<button class="tiny-btn bg-blue" onclick="App.moveSlot(${i}, 1)">▼</button>` : ''}
+                                     <button class="tiny-btn bg-red" onclick="App.clearSlot(${i})">X</button>
+                                 </div>`;
+            }
+            container.appendChild(div);
+        }
+        document.getElementById('btn-start-match').disabled = filled < 2;
+        Storage.set('slots', STATE.slots);
+    },
+
+    moveSlot(idx, dir) {
+        const tmp = STATE.slots[idx];
+        STATE.slots[idx] = STATE.slots[idx+dir];
+        STATE.slots[idx+dir] = tmp;
+        const compact = STATE.slots.filter(Boolean);
+        STATE.slots = compact.concat(Array(6-compact.length).fill(null));
+        this.renderSetup();
+    },
+
+    clearSlot(idx) {
+        STATE.slots[idx] = null;
+        const compact = STATE.slots.filter(Boolean);
+        STATE.slots = compact.concat(Array(6-compact.length).fill(null));
+        this.renderSetup();
+    },
+
+    openSelect(idx) {
+        this.currentSlot = idx;
+        const dbList = document.getElementById('db-list');
+        dbList.innerHTML = '';
+        const used = STATE.slots.filter(Boolean);
+        const avail = STATE.db.filter(n => !used.includes(n));
+        if (avail.length === 0) dbList.innerHTML = '<p style="text-align:center; opacity:0.6">Nenhum salvo.</p>';
+        avail.forEach(pName => {
+            const row = document.createElement('div');
+            row.className = 'db-row';
+            const nameBtn = document.createElement('button');
+            nameBtn.className = 'db-name-btn';
+            nameBtn.textContent = pName;
+            nameBtn.onclick = () => { STATE.slots[this.currentSlot] = pName; this.goTo('setup'); this.renderSetup(); };
+            const delBtn = document.createElement('button');
+            delBtn.className = 'db-remove-btn'; delBtn.textContent = '🗑';
+            delBtn.onclick = () => this.confirmDeletePlayer(pName);
+            row.appendChild(nameBtn); row.appendChild(delBtn); dbList.appendChild(row);
+        });
+        this.goTo('database');
+    },
+
+    addNewPlayerDB() {
+        const input = document.getElementById('new-player-input');
+        const val = input.value.trim();
+        if (val && !STATE.db.includes(val)) {
+            STATE.db.push(val);
+            Storage.set('db', STATE.db);
+            input.value = '';
+            if (this.currentSlot !== null) {
+                STATE.slots[this.currentSlot] = val;
+                this.goTo('setup');
+                this.renderSetup();
+            }
+        }
+    },
+
+    confirmOrder() {
+        const players = STATE.slots.filter(Boolean);
+        if (players.length === 2) this.startIntro();
+        else {
+            View.showModal("A ORDEM ESTÁ CORRETA?", "Os jogadores estão sentados nesta ordem?", [
+                { text: "SIM, ATIRAR!", class: "primary", action: () => this.startIntro() },
+                { text: "NÃO, PERA", class: "secondary", action: () => View.closeModal() }
+            ]);
+        }
+    },
+
+    startIntro() {
+        View.closeModal();
+        const playersNames = STATE.slots.filter(Boolean);
+        STATE.game.isShooting = false;
+        STATE.game.roundUnlocks = [];
+        const perfisDisponiveis = Object.keys(CONFIG.perfis);
+        for (let i = perfisDisponiveis.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [perfisDisponiveis[i], perfisDisponiveis[j]] = [perfisDisponiveis[j], perfisDisponiveis[i]];
+        }
+        STATE.game.players = playersNames.map((name, idx) => Logic.createPlayer(name, perfisDisponiveis[idx % perfisDisponiveis.length]));
+        STATE.game.turnIndex = Math.floor(Math.random() * playersNames.length);
+        STATE.game.narrator = Logic.getNarrator();
+        STATE.game.mesaCard = ['K','Q','A'][Math.floor(Math.random()*3)];
+        STATE.game.mesaShots = 0;
+        this.runRotationAnim(true);
+    },
+
+    runRotationAnim(isIntro = false) {
+        this.goTo('rotation');
+        AudioSys.playLoop('intro');
+        const cardFace = document.getElementById('rot-card-front');
+        cardFace.style.backgroundImage = `url('${CONFIG.paths.img}${CONFIG.cards[STATE.game.mesaCard]}')`;
+
+        const narratorElm = document.getElementById('rot-narrator');
+        if (isIntro) {
+            narratorElm.textContent = CONFIG.narradores[STATE.game.narrator].intro;
+            document.getElementById('rot-title').textContent = "A CARTA DA MESA É...";
+        } else {
+            // rotação de mesa: mostrar frase mesaIntro específica
+            const mesaLine = (CONFIG.narradores[STATE.game.narrator].mesaIntro || {})[STATE.game.mesaCard] || '';
+            narratorElm.textContent = mesaLine;
+            document.getElementById('rot-title').textContent = "A MESA RODOU!";
+        }
+
+        const flipper = document.getElementById('card-flipper');
+        flipper.classList.remove('flip-anim');
+        void flipper.offsetWidth;
+        flipper.classList.add('flip-anim');
+
+        // tempo da intro/rotação: 6000ms
+        setTimeout(() => {
+            AudioSys.stopLoop();
+            // garantir que flipper termine com face para cima (CSS já roda pra 540deg)
+            // Forçar estado final (apenas garantia visual)
+            flipper.style.transform = 'rotateY(540deg)';
+            this.startGameScreen();
+        }, 6000);
+    },
+
+    startGameScreen() {
+        STATE.game.isShooting = false;
+        this.goTo('game');
+        this.updateGameUI();
+        const pName = STATE.game.players[STATE.game.turnIndex].name;
+        document.getElementById('starter-info').innerHTML = `★ <b>${pName}</b> começa essa bagaça`;
+        this.log(`🎲 ${pName} começa essa bagaça!`);
+    },
+
+    /* --- SEQÜÊNCIA DE TIRO: fala -> 300ms -> cock -> 500ms -> resultado (com som de tiro/falha) --- */
+    handleShoot(pIndex) {
+        if (STATE.game.isShooting) return;
+        STATE.game.isShooting = true;
+        this.renderPlayersList();
+
+        const p = STATE.game.players[pIndex];
+        const frases = CONFIG.perfis[p.perfil];
+        const fraseBefore = frases.before[p.lines.before++ % frases.before.length];
+        const emoji = CONFIG.emojis[p.perfil] || '';
+
+        // 1) fala do personagem
+        document.getElementById('game-status').textContent = `${emoji} "${fraseBefore}"`;
+        this.log(`${emoji} ${p.name}: "${fraseBefore}"`);
+
+        // 2) após 300ms engatilha (cock)
+        setTimeout(() => {
+            AudioSys.play('cock'); // SOM MANTIDO: Engatilhamento
+
+            // 3) após 3500ms resolve o resultado + som do resultado
+            setTimeout(() => {
+                const isDeath = p.gun.chamber === p.gun.bullet;
+
+                // 🔊 SOM DO RESULTADO: tiro (shot) ou falha (empty)
+                AudioSys.play(isDeath ? 'shot' : 'empty');
+
+                if (!isDeath) p.gun.chamber++;
+                p.shotsTaken++;
+                STATE.game.mesaShots++;
+
+                if (isDeath) {
+                    document.body.classList.add('shake-screen');
+                    setTimeout(() => document.body.classList.remove('shake-screen'), 500);
+                }
+
+                this.renderPlayersList();
+
+                if (isDeath) {
+                    // bala: fala do narrador
+                    const narrConf = CONFIG.narradores[STATE.game.narrator];
+                    const killByPerfil = (narrConf.killLines && narrConf.killLines[p.perfil])
+                        ? narrConf.killLines[p.perfil]
+                        : narrConf.killLines.default;
+
+                    document.getElementById('game-status').textContent = `Narrador: "${killByPerfil}"`;
+                    this.log(`🔊 Narrador (${STATE.game.narrator}): "${killByPerfil}"`);
+
+                    // stats + marca morto
+                    p.alive = false;
+                    this.log(`💀 ${p.name} foi de arrasta!`);
+
+                    if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
+                    STATE.stats[p.name].hits++;
+                    STATE.stats[p.name]._meta = { 
+                        ...STATE.stats[p.name]._meta, 
+                        dieStreak: (STATE.stats[p.name]._meta?.dieStreak || 0) + 1, 
+                        winStreak: 0 
+                    };
+
+                    const events = { diedOnShot: p.shotsTaken };
+                    Logic.checkAchievements(p.name, events, true);
+
+                    setTimeout(() => {
+                        this.checkGameFlow(pIndex);
+                    }, 2000);
+
+                } else {
+                    // falha: mostrar "clique" e a fala pós-tensão do personagem
+                    document.getElementById('game-status').textContent = `clique`; // Mantendo o texto "clique" original
+                    this.log(`${p.name}: clique (sobreviveu)`);
+
+                    // mostrar segunda fala do personagem logo em seguida (pequeno delay)
+                    setTimeout(() => {
+                        // CHAVE ATUALIZADA: agora usa 'afterSurvive'
+                        const fraseAfter = frases.afterSurvive[p.lines.afterSurvive++ % frases.afterSurvive.length];
+                        document.getElementById('game-status').textContent = `${fraseAfter}`;
+                        this.log(`${p.name}: "${fraseAfter}"`);
+                    }, 300);
+
+                    // atualizar stats de dodge
+                    if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
+                    STATE.stats[p.name].dodges++;
+                    Logic.checkAchievements(p.name, { didDodgeLastShotBefore: (p.gun.chamber === 5) }, true);
+
+                    // pequeno delay até seguir fluxo de jogo
+                    setTimeout(() => {
+                        this.checkGameFlow(pIndex);
+                    }, 1200);
+                }
+
+            }, 3500); // cock -> shot gap
+        }, 300); // initial delay before cock
+    },
+
+    checkGameFlow(lastShooterIdx) {
+        const alive = STATE.game.players.filter(p => p.alive);
+        if (alive.length <= 1) {
+            const winner = alive[0];
+            if (winner) {
+                if(!STATE.stats[winner.name]) STATE.stats[winner.name] = { wins:0, hits:0, dodges:0 };
+                STATE.stats[winner.name].wins++;
+                const meta = STATE.stats[winner.name]._meta || {};
+                STATE.stats[winner.name]._meta = { ...meta, winStreak: (meta.winStreak||0)+1, dieStreak: 0 };
+                const winEvents = { winStreak: STATE.stats[winner.name]._meta.winStreak };
+                Logic.checkAchievements(winner.name, winEvents, false);
+                // mostrar frase de winner do narrador + emoji do narrador
+                const narrConf = CONFIG.narradores[STATE.game.narrator];
+                const winnerLines = narrConf.winner || [];
+                const chosen = winnerLines.length ? winnerLines[Math.floor(Math.random()*winnerLines.length)] : `${winner.name} venceu!`;
+                const lined = chosen.replace('{nome}', winner.name);
+                document.getElementById('win-msg').textContent = `${CONFIG.emojis[STATE.game.narrator] || ''} ${lined}`;
+                // conquistas
+                const achDiv = document.getElementById('win-achievements'); achDiv.innerHTML = '';
+                if (STATE.game.roundUnlocks.length > 0) {
+                    achDiv.innerHTML = '<p>Novas Conquistas:</p>';
+                    STATE.game.roundUnlocks.forEach(id => {
+                        const def = ACHIEVEMENTS_DEF.find(a=>a.id===id);
+                        achDiv.innerHTML += `<div style="font-size:0.9rem">${def.emoji} ${def.name}</div>`;
+                    });
+                }
+            } else {
+                document.getElementById('win-msg').textContent = "Ninguém sobrou nessa mesa maldita.";
+            }
+            Storage.set('stats', STATE.stats);
+            STATE.game.isShooting = false;
+            this.goTo('win');
+            return;
+        }
+
+        STATE.game.isShooting = false;
+
+        if (Logic.rotateTable()) {
+            // quando rotaciona, atualiza a mensagem do narrador via runRotationAnim(false)
+            this.runRotationAnim(false);
+            this.setNextTurn(lastShooterIdx);
+        } else {
+            this.setNextTurn(lastShooterIdx);
+            this.updateGameUI();
+        }
+    },
+
+    setNextTurn(currentIdx) {
+        let next = (currentIdx + 1) % STATE.game.players.length;
+        while (!STATE.game.players[next].alive) {
+            next = (next + 1) % STATE.game.players.length;
+        }
+        STATE.game.turnIndex = next;
+    },
+
+    restartGame() { this.startIntro(); },
+
+    updateGameUI() {
+        document.getElementById('game-mesa-info').textContent = `Mesa de ${STATE.game.mesaCard}`;
+        const cardDisplay = document.getElementById('game-mesa-card');
+        cardDisplay.style.backgroundImage = `url('${CONFIG.paths.img}${CONFIG.cards[STATE.game.mesaCard]}')`;
+        document.getElementById('game-status').textContent = "";
+        document.getElementById('game-narrator-area').textContent = "";
+        this.renderPlayersList();
+    },
+
+    renderPlayersList() {
+        const list = document.getElementById('game-players-list');
+        list.innerHTML = '';
+        STATE.game.players.forEach((p, idx) => {
+            const isStarter = (idx === STATE.game.turnIndex);
+            const div = document.createElement('div');
+            div.className = `player-card ${!p.alive ? 'dead' : ''} ${isStarter ? 'starter' : ''}`;
+            div.innerHTML = `
+                <div style="display:flex; align-items:center;">
+                    <span class="emoji-big">${p.alive ? CONFIG.emojis[p.perfil] : '💀'}</span>
+                    <div>
+                        <div style="font-weight:bold; font-size:1.1rem">${p.name}</div>
+                        <div style="font-size:0.8rem; opacity:0.8">${p.shotsTaken}/6</div>
+                    </div>
+                </div>
+                <div>
+                    ${!p.alive ? '<span class="shot-glass" style="display:none;"></span>' : 
+                      `<button class="western-btn danger small" ${STATE.game.isShooting ? 'disabled' : ''} onclick="App.handleShoot(${idx})">ATIRAR</button>`
+                    }
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    },
+
+    log(msg) {
+        const box = document.getElementById('game-log');
+        box.innerHTML += `<div>${msg}</div>`;
+        box.scrollTop = box.scrollHeight;
+    },
+
+    renderStats() {
+        const board = document.getElementById('stats-board');
+        const list = Object.keys(STATE.stats).sort((a,b)=>STATE.stats[b].wins - STATE.stats[a].wins);
+        if (list.length === 0) { board.innerHTML = '<p class="text-center">Ainda não há lendas neste bar.</p>'; return; }
+        board.innerHTML = '';
+        list.forEach(name => {
+            const s = STATE.stats[name];
+            const achs = STATE.achieved[name] || [];
+            let html = `<div style="margin-bottom:15px; border-bottom:1px dashed #555; padding-bottom:10px;">
+                <div style="font-weight:bold; color:var(--gold); display:flex; justify-content:space-between; align-items:center;">
+                    <span>${name} ${achs.length > 0 ? '⭐' : ''}</span>
+                    <button class="western-btn secondary small" style="margin:0; width:auto; font-size:0.7rem;" onclick="App.viewPlayerAch('${name}')">VER CONQUISTAS</button>
+                </div>
+                <div style="font-size:0.9rem; margin-top:5px;">🏆 ${s.wins} | ☠️ ${s.hits} | 🍀 ${s.dodges}</div>
+                <div style="margin-top:5px; font-size:0.8rem;">
+                    ${achs.map(id => { const def = ACHIEVEMENTS_DEF.find(a=>a.id===id); return def ? def.emoji : ''; }).join(' ')}
+                </div>
+            </div>`;
+            board.innerHTML += html;
+        });
+    },
+
+    viewPlayerAch(name) {
+        document.getElementById('ach-screen-title').textContent = `Conquistas: ${name}`;
+        const container = document.getElementById('ach-list-content'); container.innerHTML = '';
+        const unlocked = STATE.achieved[name] || [];
+        const sorted = [...ACHIEVEMENTS_DEF].sort((a,b) => {
+            const hasA = unlocked.includes(a.id); const hasB = unlocked.includes(b.id);
+            if (hasA && !hasB) return -1;
+            if (!hasA && hasB) return 1;
+            return 0;
+        });
+        sorted.forEach(ach => {
+            const has = unlocked.includes(ach.id);
+            if(!has && ach.isHidden) return;
+            const div = document.createElement('div'); div.className = `ach-row ${has ? '' : 'locked'}`;
+            div.innerHTML = `<div style="font-size:1.5rem;">${has ? ach.emoji : '🔒'}</div>
+                <div><div style="font-weight:bold; color:${has ? 'var(--gold)' : '#aaa'}">${ach.name}</div>
+                <div style="font-size:0.8rem;">${ach.desc}</div></div>`;
+            container.appendChild(div);
+        });
+        this.goTo('achievements');
+    },
+
+    confirmResetStats() {
+        View.showModal("QUEIMAR REGISTROS?", "Isso apagará todas as vitórias e conquistas para sempre.", [
+            { text: "SIM, QUEIME TUDO", class: "danger", action: () => {
+                STATE.stats = {}; STATE.achieved = {}; STATE.db = []; STATE.slots = [null,null,null,null,null,null];
+                Storage.set('stats',{}); Storage.set('achieved',{}); Storage.set('db',[]); Storage.set('slots', STATE.slots);
+                this.renderStats(); View.closeModal();
+            }},
+            { text: "CANCELAR", class: "secondary", action: () => View.closeModal() }
+        ]);
+    },
+
+    confirmDeletePlayer(name) {
+        View.showModal("EXPULSAR DO BAR?", `Deseja remover "${name}" permanentemente?`, [
+            { text: "FORA DAQUI!", class: "danger", action: () => {
+                STATE.db = STATE.db.filter(n=>n!==name);
+                STATE.slots = STATE.slots.map(s => s === name ? null : s);
+                Storage.set('db', STATE.db);
+                Storage.set('slots', STATE.slots);
+                this.openSelect(this.currentSlot);
+                View.closeModal();
+            }},
+            { text: "DEIXA ELE", class: "secondary", action: () => View.closeModal() }
+        ]);
+    }
+};
+
+/* VIEW helpers */
+const View = {
+    showModal(title,msg,buttons) {
+        const m = document.getElementById('customModal');
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = msg;
+        const act = document.getElementById('modalActions'); act.innerHTML = '';
+        buttons.forEach(b => {
+            const btn = document.createElement('button'); btn.textContent = b.text; btn.className = `western-btn ${b.class}`; btn.onclick = b.action; act.appendChild(btn);
+        });
+        m.classList.add('active');
+    },
+    closeModal() { document.getElementById('customModal').classList.remove('active'); },
+    showToast(pName, ach) {
+        const t = document.getElementById('achievementToast');
+        document.getElementById('achPlayerName').textContent = pName;
+        document.getElementById('achEmoji').textContent = ach.emoji;
+        document.getElementById('achName').textContent = ach.name;
+        t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'), 3500);
+    }
+};
+
+/* BOOTSTRAP */
+window.App = App;
+App.init();
+
+</script>
 </body>
 </html>
