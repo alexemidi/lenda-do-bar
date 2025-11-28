@@ -9,7 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Rye&display=swap" rel="stylesheet">
     
     <style>
-        /* --- VARIÁVEIS E TEMA (PALETA SALOON) --- */
+        /* =========================================
+           1. VARIÁVEIS E RESET
+           ========================================= */
         :root {
             --bg-wood: #1a120b;
             --bg-felt: #2c3e50;
@@ -37,27 +39,30 @@
             padding: 15px;
         }
 
-        h1, h2, h3, button.western-btn {
+        h1, h2, h3, button.western-btn, .western-font {
             font-family: 'Rye', serif;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
+        /* =========================================
+           2. LAYOUT E UTILITÁRIOS
+           ========================================= */
         #app-container { width: 100%; max-width: 450px; position: relative; }
 
         .screen { display: none; animation: fadeIn 0.4s ease-out; }
         .screen.active { display: block; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .text-center { text-align:center; }
+        .mt-2 { margin-top:10px; }
+        .scroll-content { max-height: 320px; overflow-y: auto; padding-right: 5px; }
+        .scroll-content::-webkit-scrollbar { width: 6px; }
+        .scroll-content::-webkit-scrollbar-thumb { background: #8d6e63; border-radius: 3px; }
 
-        .shake-screen { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 
-            10%, 90% { transform: translate3d(-1px, 0, 0); } 
-            20%, 80% { transform: translate3d(2px, 0, 0); } 
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 
-            40%, 60% { transform: translate3d(4px, 0, 0); } 
-        }
-
+        /* =========================================
+           3. COMPONENTES DE UI (Painéis, Botões, etc)
+           ========================================= */
+        /* Painel de Papel Padrão */
         .paper-panel {
             background: var(--paper);
             color: var(--ink);
@@ -67,7 +72,6 @@
             margin-bottom: 15px;
             position: relative;
         }
-        
         .paper-panel::after, .paper-panel::before {
             content: ''; position: absolute; top: 10px; width: 8px; height: 8px; 
             background: #3e2723; border-radius: 50%; box-shadow: 0 1px 0 rgba(255,255,255,0.3);
@@ -75,13 +79,10 @@
         .paper-panel::before { left: 10px; }
         .paper-panel::after { right: 10px; }
 
-        .scroll-content { max-height: 320px; overflow-y: auto; padding-right: 5px; }
-        .scroll-content::-webkit-scrollbar { width: 6px; }
-        .scroll-content::-webkit-scrollbar-thumb { background: #8d6e63; border-radius: 3px; }
-
-        button { cursor: pointer; border: none; outline: none; transition: transform 0.1s; }
+        /* Botões Estilo Western */
+        button { cursor: pointer; border: none; outline: none; transition: transform 0.1s, background-color 0.3s, color 0.3s; }
         button:active { transform: scale(0.97); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        button:disabled { opacity: 0.8; cursor: not-allowed; filter: grayscale(0.2); }
 
         .western-btn {
             width: 100%;
@@ -99,60 +100,219 @@
         .western-btn.danger { background: linear-gradient(to bottom, #c62828, #8e0000); border-color: #e57373; }
         .western-btn.secondary { background: linear-gradient(to bottom, #455a64, #263238); border-color: #78909c; }
         .western-btn.small { padding: 5px 10px; font-size: 0.9rem; width: auto; }
+        
+        .western-btn.btn-protect {
+            background: #2196F3;
+            border-color: #64B5F6;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .western-btn.btn-fire {
+            background: linear-gradient(to bottom, #ff5722, #bf360c);
+            border-color: #ff8a65;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
 
-        .slot-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 4px; border: 1px dashed #8d6e63; }
-        .slot-name { flex: 1; font-weight: bold; font-size: 1.1rem; }
+        .btn-black {
+            background: #111;
+            color: #fff;
+            border: 2px solid #444;
+            box-shadow: 0 4px 0 #000;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 1.2rem;
+            margin-left: 8px;
+        }
+        
+        .help-btn {
+            position: absolute; top: 10px; right: 10px; width: 35px; height: 35px;
+            border-radius: 50%; background: var(--paper); color: var(--ink);
+            font-weight: bold; font-size: 1.2rem; border: 2px solid #3e2723;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5); font-family: 'Rye', serif; z-index: 50;
+        }
+
         .tiny-btn { width: 32px; height: 32px; font-weight: bold; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.3); color: white; }
         .bg-blue { background: #455a64; }
         .bg-red { background: #c62828; }
 
+        /* Setup Slots */
+        .slot-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 4px; border: 1px dashed #8d6e63; }
+        .slot-name { flex: 1; font-weight: bold; font-size: 1.1rem; }
+
+        /* Switch Modo Massacre */
+        .switch-container {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; margin: 12px auto; padding: 8px 15px;
+            border-radius: 8px; border: 2px solid #5d4037;
+            background: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.7);
+            width: fit-content;
+        }
+        .massacre-label {
+            font-family: 'Rye', serif; font-size: 0.95rem; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase; color: #555; text-align: right;
+        }
+        .switch { position: relative; display: inline-block; width: 54px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, #5d4037, #3e2723);
+            transition: .4s; border: 2px solid #3e2723;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.7);
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px;
+            left: 3px; bottom: 3px; background-color: #cbb892;
+            box-shadow: 0 0 4px rgba(0,0,0,0.6); transition: .4s;
+        }
+        .slider.round { border-radius: 34px; }
+        .slider.round:before { border-radius: 50%; }
+        
+        input:checked + .slider {
+            background: radial-gradient(circle at 20% 50%, #ffe0b2, #ff9800, #bf360c);
+            border-color: #ffb74d;
+            box-shadow: 0 0 4px rgba(255, 111, 0, 0.9), 0 0 10px rgba(255, 87, 34, 0.8), 0 0 18px rgba(255, 160, 0, 0.6);
+        }
+        input:checked + .slider:before {
+            transform: translateX(24px); background-color: #fff3e0;
+            box-shadow: 0 0 6px rgba(255, 249, 196, 0.9);
+        }
+        input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+
+        .switch-container:has(input:checked) {
+            border-color: #ffb700;
+            background: linear-gradient(135deg, #100a08 30%, #3e1f18 100%);
+            animation: flamePulse 1.4s infinite ease-in-out;
+        }
+        .switch-container:has(input:checked) .massacre-label {
+            color: #ffb700;
+            text-shadow: 0 0 5px rgba(255, 183, 0, 0.8), 0 0 10px rgba(255, 69, 0, 0.6);
+        }
+
+        /* Jogo & Cartas */
         .mesa-info { text-align: center; margin-bottom: 10px; }
-
         .card-wrapper-padding { padding: 15px; overflow: visible; }
-        .card-display { width: 100px; height: 140px; margin: 0 auto 15px; background-color: transparent; background-size: cover; background-position: center; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); filter: sepia(0.3) contrast(1.1); position: relative; }
-
-        /* keyframe ajustado para terminar com face para cima: 540deg (540%360 = 180) */
+        .card-display { 
+            width: 100px; height: 140px; margin: 0 auto 15px; 
+            background-color: transparent; background-size: cover; background-position: center; 
+            border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
+            filter: sepia(0.3) contrast(1.1); position: relative; 
+        }
         .flip-container { perspective: 1000px; margin: 0 auto; width: 140px; height: 210px; }
         .flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.3s ease; }
-        .flip-anim { animation: spinCard 6s ease-in-out forwards; }
-        @keyframes spinCard { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(540deg); } } /* termina com face para cima */
-        
-        .front, .back { position: absolute; width: 140px; height: 210px; left: 50%; top: 0; transform: translateX(-50%); backface-visibility: hidden; border-radius: 8px; background-size: cover; }
+        .front, .back { 
+            position: absolute; width: 140px; height: 210px; left: 50%; top: 0; 
+            transform: translateX(-50%); backface-visibility: hidden; 
+            border-radius: 8px; background-size: cover; 
+        }
         .front { transform: translateX(-50%) rotateY(180deg); } 
         .back { transform: translateX(-50%) rotateY(0deg); background-image: url('src/assets/imgs/card-back.png'); }
 
-        .narrator-box { font-style: italic; text-align: center; color: var(--gold); min-height: 40px; margin-bottom: 10px; text-shadow: 1px 1px 2px #000; }
-
+        .narrator-box { font-style: italic; text-align: center; color: var(--gold); min-height: 30px; margin-bottom: 5px; text-shadow: 1px 1px 2px #000; }
         .player-card { background: #2b2b2b; color: #eee; border-left: 4px solid #555; padding: 10px; margin-bottom: 8px; display:flex; align-items:center; justify-content:space-between; border-radius:0 4px 4px 0; transition: all 0.3s; }
         .player-card.starter { border-left: 4px solid var(--gold); background: #332a1e; }
-        .player-card.dead { opacity: 0.6; background: #1a0f0f; border-left: 4px solid var(--blood); text-decoration: line-through; color: #e57373; }
+        .player-card.dead { opacity: 0.6; background: #1a0f0f; border-left: 4px solid #8a0303; text-decoration: line-through; color: #e57373; }
         .emoji-big { font-size: 1.8rem; margin-right: 10px; width: 40px; text-align: center; }
-
-        .chalkboard { background: #1a1a1a; border: 8px solid #5d4037; color: rgba(255,255,255,0.9); font-family: 'Courier Prime', monospace; padding: 15px; border-radius: 6px; }
-        .chalk-text { color: #eee; border-bottom: 1px dashed #555; padding: 5px 0; display: flex; justify-content: space-between; }
-
-        .ach-row { display:flex; align-items:center; gap:10px; padding:8px; border-bottom:1px solid #ccc; margin-bottom:5px; }
-        .ach-row.locked { opacity: 0.5; filter: grayscale(1); }
-
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index:100; display:none; align-items:center; justify-content:center; }
-        .modal-overlay.active { display:flex; }
-        .wanted-poster { background: var(--paper); color: var(--ink); width: 90%; max-width: 320px; padding:20px; text-align:center; border:4px solid #3e2723; box-shadow: 0 0 30px rgba(0,0,0,0.8); transform: rotate(-2deg); }
-
-        .achievement-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); border: 2px solid var(--gold); color: #fff; padding: 15px 25px; border-radius: 50px; display:flex; align-items:center; gap:10px; z-index:200; opacity:0; pointer-events:none; transition: opacity 0.5s, top 0.5s; width:90%; max-width:350px; box-shadow: 0 5px 15px #000; }
-        .achievement-toast.show { opacity: 1; top: 40px; }
-
-        .text-center { text-align:center; }
-        .mt-2 { margin-top:10px; }
         .log-box { background: rgba(0,0,0,0.5); color:#ccc; font-size:0.85rem; height:80px; overflow-y:auto; padding:5px; margin-top:10px; border-radius:4px; border:1px solid #444; }
 
+        /* Estatísticas e Banco de Dados */
+        .chalkboard { background: #1a1a1a; border: 8px solid #5d4037; color: rgba(255,255,255,0.9); font-family: 'Courier Prime', monospace; padding: 15px; border-radius: 6px; }
+        .chalk-text { color: #eee; border-bottom: 1px dashed #555; padding: 5px 0; display: flex; justify-content: space-between; }
+        .ach-row { display:flex; align-items:center; gap:10px; padding:8px; border-bottom:1px solid #ccc; margin-bottom:5px; }
+        .ach-row.locked { opacity: 0.5; filter: grayscale(1); }
         .db-row { display:flex; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
         .db-name-btn { flex:1; text-align:left; padding:10px; border-radius:6px; background:linear-gradient(#455a64,#2f434a); color:#fff; border:1px solid rgba(0,0,0,0.2); }
         .db-remove-btn { width:42px; height:42px; border-radius:6px; background:linear-gradient(#c62828,#8e0000); color:#fff; display:flex; align-items:center; justify-content:center; }
+
+        /* Modais e Toasts */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index:100; display:none; align-items:center; justify-content:center; }
+        .modal-overlay.active { display:flex; }
+        .wanted-poster { background: var(--paper); color: var(--ink); width: 90%; max-width: 320px; padding:20px; text-align:center; border:4px solid #3e2723; box-shadow: 0 0 30px rgba(0,0,0,0.8); transform: rotate(-2deg); }
+        
+        .achievement-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); border: 2px solid var(--gold); color: #fff; padding: 15px 25px; border-radius: 50px; display:flex; align-items:center; gap:10px; z-index:2000; opacity:0; pointer-events:none; transition: opacity 0.5s, top 0.5s; width:90%; max-width:350px; box-shadow: 0 5px 15px #000; }
+        .achievement-toast.show { opacity: 1; top: 40px; }
+
+        .simple-toast {
+            position: fixed; top: 25%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.9); border: 2px solid var(--blood); color: #fff;
+            padding: 15px 25px; border-radius: 8px; font-family: 'Rye', serif;
+            text-align: center; z-index: 3000; opacity: 0; pointer-events: none;
+            transition: opacity 0.5s ease; box-shadow: 0 0 20px rgba(138, 3, 3, 0.6);
+            white-space: nowrap;
+        }
+        .simple-toast.show { opacity: 1; }
+
+        /* =========================================
+           4. ESTILOS ESPECÍFICOS DE TELAS
+           ========================================= */
+        
+        /* Tela de Loading */
+        .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .loading-deck-info { 
+            font-family: 'Roboto Slab', serif; margin-top: 25px; text-align: center; 
+            background: #1a120b; padding: 15px; border-radius: 6px; border: 4px solid #5d4037; 
+            outline: 2px dashed var(--gold); outline-offset: -8px; color: #e6dcc3; 
+            font-size: 1.1rem; line-height: 1.6; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        }
+
+        /* Tela de Setup (Estilo Carvão) */
+        #screen-setup .paper-panel {
+            background: #14100e; 
+            color: var(--paper);
+            border: 1px solid #3e2723;
+            box-shadow: 0 0 20px rgba(0,0,0,0.9);
+        }
+        #screen-setup .paper-panel h2 { color: var(--gold); border-bottom-color: var(--gold) !important; }
+        #screen-setup .paper-panel p { color: #bbb; }
+
+        /* =========================================
+           5. ANIMAÇÕES
+           ========================================= */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes flamePulse { 
+            0% { box-shadow: 0 0 6px rgba(255,140,0,0.4); } 
+            50% { box-shadow: 0 0 14px rgba(255,69,0,0.9); } 
+            100% { box-shadow: 0 0 6px rgba(255,140,0,0.4); } 
+        }
+        @keyframes spinCard { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(540deg); } }
+        @keyframes shake { 
+            10%, 90% { transform: translate3d(-1px, 0, 0); } 
+            20%, 80% { transform: translate3d(2px, 0, 0); } 
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 
+            40%, 60% { transform: translate3d(4px, 0, 0); } 
+        }
+        .shake-screen { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        .flip-anim { animation: spinCard 6s ease-in-out forwards; }
+        
+        .card-animation { position: relative; width: 70px; height: 98px; margin: 20px auto; }
+        .card-anim {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('src/assets/imgs/card-back.png'); background-size: cover; background-position: center;
+            border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.5); animation: shuffle 2.5s infinite ease-in-out;
+            border: 1px solid #2e2218;
+        }
+        .card-anim:nth-child(1) { animation-delay: 0s; z-index: 3; }
+        .card-anim:nth-child(2) { animation-delay: 0.25s; z-index: 2; }
+        .card-anim:nth-child(3) { animation-delay: 0.5s; z-index: 1; }
+        @keyframes shuffle {
+            0% { transform: translateX(0) rotate(0); }
+            25% { transform: translateX(40px) rotate(15deg); }
+            50% { transform: translateX(0) rotate(0); z-index: 1;} 
+            75% { transform: translateX(-40px) rotate(-15deg); }
+            100% { transform: translateX(0) rotate(0); }
+        }
+        .pulsate { animation: pulse 1.5s infinite; color: var(--gold); letter-spacing: 2px; text-shadow: 2px 2px 0 #000; }
+        @keyframes pulse { 0% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.8; transform: scale(1); } }
+
     </style>
 </head>
 <body>
 
 <div id="app-container">
+    <div id="systemToast" class="simple-toast"></div>
+
     <div id="customModal" class="modal-overlay">
         <div class="wanted-poster">
             <h2 id="modalTitle" style="border-bottom: 2px solid #000; padding-bottom:5px;">AVISO</h2>
@@ -187,35 +347,62 @@
         <div class="paper-panel">
             <h2 class="text-center" style="border-bottom: 2px solid #000;">COMO JOGAR</h2>
             <div class="scroll-content" style="font-size: 0.95rem; line-height: 1.5;">
-                <p><b>1. A Mesa Física:</b> Usem um baralho físico. Cada jogador recebe 5 cartas.</p>
+                <p><b>1. O Baralho:</b> Cada jogador recebe 5 cartas. Usem um baralho físico composto por:</p>
+                <ul>
+                    <li><b>Até 4 jogadores:</b> 6 Reis, 6 Damas, 6 Ases e 2 Curingas.</li>
+                    <li><b>Até 5 jogadores:</b> 7 Reis, 7 Damas, 7 Ases e 3 Curingas.</li>
+                    <li><b>Até 6 jogadores:</b> 8 Reis, 8 Damas, 8 Ases, 2 Curingas e 2 Valetes.</li>
+                </ul>
+
                 <p><b>2. A Rodada:</b> O app sorteia a carta da mesa (ex: Rei). O jogador da vez deve jogar de 1 a 3 cartas viradas para baixo e anunciar: "Um Rei", "Dois Reis", etc.</p>
                 <p><b>3. O Blefe:</b> Ele pode estar mentindo! Se o próximo jogador acreditar, ele segue jogando. Se duvidar, ele grita "MENTIROSO!".</p>
                 <p><b>4. O Desafio:</b> 
-                   <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
-                   <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
+                    <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
+                    <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
                 </p>
-                <p><b>5. O Disparo:</b> O app simula uma roleta russa. Se fizer "Click", o jogo segue. Se fizer "POW!", o jogador morre (e bebe). As cartas reembaralham a cada disparo.</p>
-                <p><b>6. Rotação:</b> Após 3 disparos (de qualquer um), a mesa muda (K > Q > A).</p>
+                <p><b>5. Modo Massacre:</b> No modo massacre o Valete (J) toca o terror. Se ele for jogado e alguém desafiar TODOS na mesa entram no modo massacre exceto quem jogou que recebe o escudo. Mas cuidado! Ele deve ser jogado sozinho, se o valete for jogado com outras a punição atirar em si mesmo pelo número de cartas jogadas de vez (de 1 a 3). Esse modo só é obrigatório com 6 jogadores.</p>
+                <p><b>6. O Disparo:</b> O app simula uma roleta russa se fizer clique, segue o jogo, mas se sair o disparo o jogador está fora da partida. As cartas são embaralhadas de novo a cada disparo e o jogador à esquerda de quem atirou começa a nova rodada.</p>
+                <p><b>7. Quem paga a conta:</b> Essa parte é opcional cada jogador eliminado pode pagar uma prenda ou como estão em um bar...</p>
             </div>
         </div>
-        <button class="western-btn primary" onclick="App.goTo('start')">VOLTAR AO INÍCIO</button>
+        <button class="western-btn primary" onclick="App.exitRules()">VOLTAR</button>
     </div>
 
     <div id="screen-setup" class="screen">
         <div class="paper-panel">
             <h2 class="text-center">JOGADORES</h2>
-            <p class="text-center" style="font-size: 0.9rem;">Ordem da mesa (Sentido Anti-Horário)</p>
+            <p class="text-center" style="font-size: 0.9rem;">Os jogadores devem estar organizados no sentido anti-horário.</p>
             <div id="slots-container" class="mt-2"></div>
+
+            <div class="switch-container">
+                <span class="massacre-label">MODO MASSACRE</span>
+                <label class="switch">
+                    <input type="checkbox" id="massacre-toggle" checked onchange="App.toggleMassacreConfig()">
+                    <span class="slider round"></span>
+                </label>
+            </div>
         </div>
         <button id="btn-start-match" class="western-btn primary" disabled onclick="App.confirmOrder()">INICIAR PARTIDA</button>
         <button class="western-btn danger" onclick="App.goTo('start')">VOLTAR</button>
+    </div>
+
+    <div id="screen-loading" class="screen">
+        <div class="loading-container">
+            <h2 class="pulsate">EMBARALHANDO</h2>
+            <div class="card-animation">
+                <div class="card-anim"></div>
+                <div class="card-anim"></div>
+                <div class="card-anim"></div>
+            </div>
+            <div id="deck-config-info" class="loading-deck-info"></div>
+        </div>
     </div>
 
     <div id="screen-database" class="screen">
         <div class="paper-panel">
             <h3>Adicionar Jogador</h3>
             <div style="display:flex; gap:5px;">
-                <input type="text" id="new-player-input" placeholder="Nome..." style="flex:1; padding:8px; font-family: inherit;">
+                <input type="text" id="new-player-input" placeholder="Nome..." style="flex:1; padding:8px; font-family: inherit; color: #000;">
                 <button class="western-btn secondary" style="width:auto; margin:0;" onclick="App.addNewPlayerDB()">+</button>
             </div>
             <hr style="border-color:#aaa; margin:15px 0;">
@@ -241,15 +428,21 @@
     </div>
 
     <div id="screen-game" class="screen">
+        <button class="help-btn" onclick="App.goTo('rules')">?</button>
+
         <div class="mesa-info">
             <div id="game-mesa-info" style="color: var(--paper); font-weight: bold; font-size: 1.2rem;">Mesa de ?</div>
         </div>
         
         <div class="card-display" id="game-mesa-card"></div>
-        <div id="starter-info" style="text-align:center; margin:5px 0; color:#ccc; font-size:0.9rem;"></div>
+        <div id="starter-info" style="text-align:center; margin:5px 0; color:#ccc; font-size:1.15rem;"></div>
 
         <div id="game-narrator-area" class="narrator-box"></div>
-        <div id="game-status" style="text-align:center; color:var(--gold); font-weight:bold; min-height:1.2em;"></div>
+        
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+            <div id="game-status" style="text-align:center; color:var(--gold); font-weight:bold; min-height:1.2em; flex: 1;"></div>
+            <button id="btn-duel-toggle" class="btn-black" onclick="App.toggleDuelMode()">⚔️</button>
+        </div>
 
         <div id="game-players-list"></div>
 
@@ -290,202 +483,73 @@
 </div>
 
 <script type="module">
-/* CONFIG e NARRADORES (mantive o teu formato e adicionei mesaIntro / killLines / winner conforme pedido) */
+/* --- CONFIG e NARRADORES --- */
 const CONFIG = {
     paths: {
         img: 'src/assets/imgs/',
-        snd: 'src/assets/sounds/' // tentativa principal
+        snd: 'src/assets/sounds/' 
     },
-    fallbackSnd: 'src/assest/sounds/', // fallback para typo de pasta se necessário
+    fallbackSnd: 'src/assest/sounds/', 
     cards: { K: "king-hearts.png", Q: "queen-diamonds.png", A: "ace-spades.png" },
-    // Sons de jogo
     sounds: { intro: 'intro-mesa.mp3', cock: 'cocking-a-revolver.mp3', shot: 'gun-shot.mp3', empty: 'empty-gun.mp3' },
-    
-    // Emojis de perfis
     emojis: { 
-        Marrento: "😎", 
-        Covarde: "🫣", 
-        Piadista: "😜", 
-        Entediado: "🙄", 
-        Nordestino: "😠", 
-        Esfomeado: "😋", 
-        Sabio: "🧙‍♂️", // Emoji do narrador Sábio mantido para uso geral
-        Morte: "💀" // Emoji de Morte mantido para uso geral
+        Marrento: "😎", Covarde: "🫣", Piadista: "😜", Entediado: "🙄", 
+        Nordestino: "😠", Esfomeado: "😋", Sabio: "🧙‍♂️", Morte: "💀" 
     },
-    
-    // Novas falas dos perfis de jogadores
+    deathLines: [
+        "Ainda não.", "Hoje não.", "Não dessa vez.", "Ficou pra depois.", "Por pouco, hein.",
+        "Passou batido.", "Quase.", "Outra hora talvez.", "Não agora.", "Escapou."
+    ],
     perfis: {
         Marrento: {
-            before: [
-                "Vamos ver se a sorte está do meu lado.",
-                "Eu não erro, no máximo a realidade me desobedece.",
-                "Confia que o pai tá on.",
-                "Se a morte quer me levar, vai ter que ser na marra."
-            ],
-            afterSurvive: [
-                "Tá vendo? Até a morte me respeita.",
-                "Eu sou tão brabo que até o perigo desiste.",
-                "Se era pra me assustar, precisa tentar mais forte.",
-                "Eu não sobrevivo: eu humilho o perigo."
-            ]
+            before: [ "Vamos ver se a sorte está do meu lado.", "Eu não erro, no máximo a realidade me desobedece.", "Confia que o pai tá on.", "Se a morte quer me levar, vai ter que ser na marra." ],
+            afterSurvive: [ "Tá vendo? Até a morte me respeita.", "Eu sou tão brabo que até o perigo desiste.", "Se era pra me assustar, precisa tentar mais forte.", "Eu não sobrevivo: eu humilho o perigo." ]
         },
-
         Covarde: {
-            before: [
-                "Alguém quer ir no meu lugar?",
-                "Eu com um mal pressentimento sobre isso.",
-                "Se der ruim, não fala pra minha mãe que eu me mijei… de novo.",
-                "Só quero sair daqui inteiro, por favor."
-            ],
-            afterSurvive: [
-                "Meu coração tá tipo: Se você não parar eu paro.",
-                "Caramba, meu coração bateu até errado.",
-                "Acho que minha alma ficou pelo caminho.",
-                "Sobrevivi, mas acho que vou precisar de terapia."
-            ]
+            before: [ "Alguém quer ir no meu lugar?", "Eu com um mal pressentimento sobre isso.", "Se der ruim, não fala pra minha mãe que eu me mijei… de novo.", "Só quero sair daqui inteiro, por favor." ],
+            afterSurvive: [ "Meu coração tá tipo: Se você não parar eu paro.", "Caramba, meu coração bateu até errado.", "Acho que minha alma ficou pelo caminho.", "Sobrevivi, mas acho que vou precisar de terapia." ]
         },
-
         Piadista: {
-            before: [
-                "Se eu morrer, pelo menos não pago a conta.",
-                "Já sobrevivi a grupo de família, isso aqui é fichinha.",
-                "Essa arma aqui já viu mais mentira que WhatsApp em época de eleição.",
-                "Relaxa, eu sou personagem principal, teoricamente não morro agora.",
-                "Alguém avisa o roteirista que eu tô pronto pra próxima cena?",
-                "Se isso der errado, já deixei meu currículo no céu.",
-            
-            ],
-            afterSurvive: [
-                "Podem respirar, o alívio cômico ainda tá vivo.",
-                "Vocês esperavam o quê? Protagonista morrendo no meio do filme?",
-                "Podem aplaudir, mas sem exagero, tô acostumado.",
-                "Sobrevivi de novo, tô quase virando série regular.",
-                "Ufa! Já pensou perder o personagem mais engraçado?"
-            ]
+            before: [ "Se eu morrer, pelo menos não pago a conta.", "Já sobrevivi a grupo de família, isso aqui é fichinha.", "Essa arma aqui já viu mais mentira que WhatsApp em época de eleição.", "Relaxa, eu sou personagem principal, teoricamente não morro agora.", "Alguém avisa o roteirista que eu tô pronto pra próxima cena?", "Se isso der errado, já deixei meu currículo no céu." ],
+            afterSurvive: [ "Podem respirar, o alívio cômico ainda tá vivo.", "Vocês esperavam o quê? Protagonista morrendo no meio do filme?", "Podem aplaudir, mas sem exagero, tô acostumado.", "Sobrevivi de novo, tô quase virando série regular.", "Ufa! Já pensou perder o personagem mais engraçado?" ]
         },
-
         Entediado: {
-            before: [
-                "Já vivi coisa pior… tipo segunda-feira.",
-                "A vida é uma fila: eu só tô esperando minha vez.",
-                "É só mais um capítulo, com ou sem continuação.",
-                "Se eu cair, me acordem quando acabar.",
-                "Se eu morrer agora, pelo menos não pego trânsito na volta."
-
-            ],
-            afterSurvive: [
-                "Pelo visto não era minha vez ainda.",
-                "Ok, continuei vivo. Que tédio!",
-                "Olha só… estou tentando me matar vocês erram.",
-                
-            ]
+            before: [ "Já vivi coisa pior… tipo segunda-feira.", "A vida é uma fila: eu só tô esperando minha vez.", "É só mais um capítulo, com ou sem continuação.", "Se eu cair, me acordem quando acabar.", "Se eu morrer agora, pelo menos não pego trânsito na volta." ],
+            afterSurvive: [ "Pelo menos não era minha vez ainda.", "Ok, continuei vivo. Que tédio!", "Olha só… estou tentando me matar vocês erram." ]
         },
-
         Nordestino: {
-            before: [
-                "Se for hoje, que seja ligeiro. Num tenho tempo pra frescura.",
-                "Bora, desgraça! Ou vai ou racha, porra!.",
-                "Eu tô virado no mói de coentro.",
-                "Vamo simbora, que hoje tem risca faca."
-            ],
-            afterSurvive: [
-                "Rapadura é doce, mas né mole não.",
-                "Tá pensando que beiço de jegue é arroz doce.",
-                "Sobrevivi? Eita porra… agora sim o bicho vai pegar.",
-                "Oxe, essa foi por um triz!",
-                "A bala olhou e disse: Seloko num compensa"
-            ]
+            before: [ "Se for hoje, que seja ligeiro. Num tenho tempo pra frescura.", "Bora, desgraça! Ou vai ou racha, porra!.", "Eu tô virado no mói de coentro.", "Vamo simbora, que hoje tem risca faca." ],
+            afterSurvive: [ "Rapadura é doce, mas né mole não.", "Tá pensando que beiço de jegue é arroz doce.", "Sobrevivi? Eita porra… agora sim o bicho vai pegar.", "Oxe, essa foi por um triz!", "A bala olhou e disse: Seloko num compensa" ]
         },
-
         Esfomeado: {
-            before: [
-                "Eu tô tremendo, mas é de fome mesmo.",
-                "Se eu não morrer tá me devendo uma tapioca.",
-                "Se der certo, me tragam cuscuz. Se der errado… enterra com farinha.",
-                "Se der ruim fala pro meu nutri que eu não vou precisar mais dele."
-            ],
-            afterSurvive: [
-                "Sobrevivi, miseráveis. Agora quero meu pastel com caldo de cana.",
-                "Tô vivo, fala que não preciso mais de nutri.",
-                "Se a bala tivesse gosto de bacon, talvez eu até encarava ela.",
-                "Deu bom, agora vamos comer e morar"
-            ]
+            before: [ "Eu tô tremendo, mas é de fome mesmo.", "Se eu não morrer tá me devendo uma tapioca.", "Se der certo, me tragam cuscuz. Se der errado… enterra com farinha.", "Se der ruim fala pro meu nutri que eu não vou precisar mais dele." ],
+            afterSurvive: [ "Sobrevivi, miseráveis. Agora quero meu pastel com caldo de cana.", "Tô vivo, fala que não preciso mais de nutri.", "Se a bala tivesse gosto de bacon, talvez eu até encarava ela.", "Deu bom, agora vamos comer e morar" ]
         }
     },
-    
-    // Novas falas dos narradores
     narradores: {
         Sabio: {
             intro: "🧙‍♂️ Lembrem-se que em cada mentira há risco, e em cada risco pode faltar um gole no próximo drink.",
-            mesaIntro: {
-                K: "Mesa de Rei: O poder é fachada, as balas não se curvam a coroas.",
-                Q: "Mesa de Rainha: Subestimar a realeza sempre cobra seu preço.",
-                A: "Mesa de Ás: O momento em que sorte e imprudência se confundem."
-            },
-            killLines: {
-                Esfomeado: "Até a fome cobra a conta uma hora.",
-                Marrento:  "A arrogância sempre encontra o próprio fim.",
-                Covarde:   "Fugir do risco não adiou o inevitável, só deixou mais doloroso.",
-                default:   "Mais uma lição escrita em chumbo para quem quiser aprender."
-            },
-            winner: [
-              "{nome}, mentiu melhor do que todos, mas lembre-se: até a sorte cansa.",
-              "Hoje o título é seu, {nome}. Só não esqueça que toda vitória tem um preço."
-            ]
+            mesaIntro: { K: "Mesa de Rei: O poder é fachada.", Q: "Mesa de Rainha: Subestimar custa caro.", A: "Mesa de Ás: Sorte e imprudência." },
+            killLines: { default: "Mais uma lição escrita em chumbo para quem quiser aprender." },
+            winner: [ "{nome}, mentiu melhor do que todos, mas lembre-se: até a sorte cansa.", "Hoje o título é seu, {nome}. Só não esqueça que toda vitória tem um preço." ]
         },
         Piadista: {
             intro: "🤭 Não vale dedo no olho nem nas partes baixas… vocês sabem bem por quê.",
-            mesaIntro: {
-                K: "Mesa de Rei: Respeita a autoridade.",
-                Q: "Mesa de Rainha: Cuidado! Ela é mais perigosa que a arma.",
-                A: "Mesa de Ás: Modo hard ativado, meus consagrados."
-            },
-            killLines: {
-                Piadista:  "Eita! O estressadinho levou um sossega leão.",
-                Nordestino:"Pelo menos agora ele não tá gritando com ninguém.",
-                Marrento:  "Agora o jogo tá uma bosta, a pessoa mais sexy foi embora.",
-                default:   "Parem de cair assim, tô ficando sem piada nova."
-            },
-            winner: [
-              "{nome}, parabéns, mentiu tão bem que até eu quase acreditei.",
-              "A mesa aplaude, {nome}. Ah não, é só o gelo batendo no copo mesmo."
-            ]
+            mesaIntro: { K: "Mesa de Rei: Respeita a autoridade.", Q: "Mesa de Rainha: Mais perigosa que a arma.", A: "Mesa de Ás: Modo hard ativado." },
+            killLines: { default: "Parem de cair assim, tô ficando sem piada nova." },
+            winner: [ "{nome}, parabéns, mentiu tão bem que até eu quase acreditei.", "A mesa aplaude, {nome}. Ah não, é só o gelo batendo no copo mesmo." ]
         },
         Entediado: {
             intro: "😒 Se alguém morrer, me avisem. Posso não estar prestando atenção.",
-            mesaIntro: {
-                K: "Mesa de Rei. Grande coisa.",
-                Q: "Mesa de Rainha. Tentem não passar tanta vergonha.",
-                A: "Mesa de Ás. Pelo menos muda o desenho."
-            },
-            killLines: {
-                Piadista:  "Até que enfim calou a boca.",
-                Esfomeado: "No céu tem pão? E morreu... Próximo.",
-                Entediado: "Pelo menos agora ele não precisa fingir interesse.",
-                default:   "Mais um que caiu. Nada novo."
-            },
-            winner: [
-              "Parabéns, {nome}. Você venceu. Agora posso ir embora?",
-              "{nome} ganhou. Se alguém se importar, finge que comemora."
-            ]
+            mesaIntro: { K: "Mesa de Rei. Grande coisa.", Q: "Mesa de Rainha. Tentem não passar tanta vergonha.", A: "Mesa de Ás. Pelo menos muda o desenho." },
+            killLines: { default: "Mais um que caiu. Nada novo." },
+            winner: [ "Parabéns, {nome}. Você venceu. Agora posso ir embora?", "{nome} ganhou. Se alguém se importar, finge que comemora." ]
         },
         Covarde: {
-            intro: "😨 Galera, só lembrando... Aponta essa arma pra longe de mim, por favor.",
-            mesaIntro: {
-                K: "Mesa de Rei: Se comportem.",
-                Q: "Mesa de Rainha: Tentem pelo menos não fazer nada idiota… é difícil, eu sei.",
-                A: "Mesa de Ás: alguém segura minha mão? Por segurança psicológica."
-            },
-            killLines: {
-                Covarde:    "Eu sabia! Eu devia ter ido embora!",
-                Nordestino: "Será que ele morreu mesmo? Ainda tá com cara de bravo.",
-                Entediado:  "Ele caiu tão devagar que eu achei que tava só alongando!",
-                default:    "Cuidado! Ele quase me acertou."
-            },
-            winner: [
-              "Vitória do {nome}! Ótimo… agora que tal jogo da velha? É mais seguro.",
-              "Parabéns do {nome}… agora vamos embora antes que alguém tente outra rodada."
-            ]
+            intro: "😨 Galera, cuidado com essa arma... Aponta ela pra longe.",
+            mesaIntro: { K: "Mesa de Rei: Se comportem.", Q: "Mesa de Rainha: Não façam nada idiota.", A: "Mesa de Ás: alguém segura minha mão?" },
+            killLines: { default: "Cuidado! Ele quase me acertou." },
+            winner: [ "Vitória do {nome}! Ótimo… agora vamos embora antes que alguém tente outra rodada." ]
         }
     }
 };
@@ -498,74 +562,42 @@ const ACHIEVEMENTS_DEF = [
     { id: 'win_last_shot_before', emoji: '😎', name: 'Um pé na cova', desc: 'Venceu por um triz (5/6).', isHidden: true, check: (s, c) => c.didWinLastShotBefore && s.wins >= 1 },
     { id: 'win_streak_3', emoji: '🔥', name: 'Imorrível', desc: 'Ganhou 3 partidas seguidas.', isHidden: true, check: (s, c) => c.winStreak >= 3 },
     { id: 'no_shot_win', emoji: '🤖', name: 'Tá de Hack', desc: 'Venceu sem disparar (0/6).', isHidden: true, check: (s, c) => s.wins >= 1 && s.dodges === 0 && s.hits === 0 },
-    { id: 'die_10', emoji: '🤕', name: 'Alvo Fácil', desc: 'Morreu 10 vezes.', isHidden: true, check: (s, c) => s.hits >= 10 }
+    { id: 'die_10', emoji: '🤕', name: 'Alvo Fácil', desc: 'Morreu 10 vezes.', isHidden: true, check: (s, c) => s.hits >= 10 },
+    { id: 'massacre_3_deaths', emoji: '🩸', name: 'Banho de Sangue', desc: '3 ou mais morreram num massacre.', check: (s, c) => c.isMassacre && c.massacreDeaths >= 3 },
+    { id: 'untouchable', emoji: '⚖️', name: 'O Intocável', desc: 'Ganhou tendo sido protegido na rodada final.', check: (s, c) => c.wasProtectedWinner },
+    { id: 'chaos_survivor', emoji: '🌪️', name: 'Caos Total', desc: 'Sobreviveu massacre com arma na 5ª câmara.', check: (s, c) => c.chaosSurvivor },
+    { id: 'cat_lives', emoji: '🐈', name: 'Sete Vidas', desc: 'Acumulou 70 sobrevivências.', check: (s, c) => s.dodges >= 70 },
+    { id: 'vip_client', emoji: '🤠', name: 'Cliente VIP', desc: 'Jogou 20 partidas completas.', check: (s, c) => s.matches >= 20 }
 ];
 
-/* --- 2. AUDIO (com fallback para 'assest') --- */
+/* --- AUDIO --- */
 const AudioSys = {
-    cache: {},
-    bgm: null,
-    initialized: false,
-
+    cache: {}, bgm: null, initialized: false,
     init() {
         if (this.initialized) return;
-
         Object.keys(CONFIG.sounds).forEach(key => {
-            const audio = new Audio();
-            audio.preload = 'auto';
+            const audio = new Audio(); audio.preload = 'auto';
             audio.src = CONFIG.paths.snd + CONFIG.sounds[key];
-
             this.cache[key] = audio;
             this.cache[key].__fallback = CONFIG.fallbackSnd + CONFIG.sounds[key];
         });
-
         this.initialized = true;
     },
-
     play(key, loop = false) {
         this.init();
         const base = this.cache[key];
         if (!base) return;
-
         const audio = new Audio();
-        audio.loop = loop;
-        audio.preload = 'auto';
-        audio.volume = 0.9;
-        audio.src = base.src;
-
-        // Tenta tocar o áudio principal
-        audio.play().catch(() => {
-            // Se falhar, tenta fallback
-            if (base.__fallback) {
-                audio.src = base.__fallback;
-                audio.play().catch(() => {});
-            }
-        });
-
-        try {
-            audio.currentTime = 0;
-        } catch (e) {}
-
+        audio.loop = loop; audio.preload = 'auto'; audio.volume = 0.9; audio.src = base.src;
+        audio.play().catch(() => { if (base.__fallback) { audio.src = base.__fallback; audio.play().catch(() => {}); } });
+        try { audio.currentTime = 0; } catch (e) {}
         return audio;
     },
-
-    playLoop(key) {
-        this.stopLoop();
-        this.bgm = this.play(key, true);
-    },
-
-    stopLoop() {
-        if (this.bgm) {
-            try {
-                this.bgm.pause();
-            } catch (e) {}
-            this.bgm = null;
-        }
-    }
+    playLoop(key) { this.stopLoop(); this.bgm = this.play(key, true); },
+    stopLoop() { if (this.bgm) { try { this.bgm.pause(); } catch (e) {} this.bgm = null; } }
 };
 
-
-/* --- 3. STORAGE & STATE --- */
+/* --- STORAGE & STATE --- */
 const Storage = {
     get(key, def) { try { return JSON.parse(localStorage.getItem('mentiroso_' + key)) || def; } catch { return def; } },
     set(key, val) { localStorage.setItem('mentiroso_' + key, JSON.stringify(val)); }
@@ -576,10 +608,14 @@ let STATE = {
     db: Storage.get('db', []),
     stats: Storage.get('stats', {}),
     achieved: Storage.get('achieved', {}),
-    game: { active: false, players: [], turnIndex: 0, mesaCard: 'A', mesaShots: 0, narrator: null, isShooting: false, roundUnlocks: [] }
+    game: { 
+        active: false, players: [], turnIndex: 0, mesaCard: 'A', mesaShots: 0, 
+        narrator: null, isShooting: false, isMassacre: false, protectedIdx: null, 
+        lastProtectedIdx: null, roundUnlocks: [], deathLinesDeck: [], deathLineIdx: 0, massacreMode: true
+    }
 };
 
-/* --- 4. LÓGICA --- */
+/* --- LÓGICA --- */
 const Logic = {
     getNarrator() {
         const keys = Object.keys(CONFIG.narradores);
@@ -598,9 +634,16 @@ const Logic = {
         }
         return false;
     },
+    shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    },
     checkAchievements(pName, events, notify = true) {
         if (!pName) return;
-        if (!STATE.stats[pName]) STATE.stats[pName] = { wins:0, hits:0, dodges:0, _meta: {} };
+        if (!STATE.stats[pName]) STATE.stats[pName] = { wins:0, hits:0, dodges:0, matches: 0, _meta: {} };
         const stats = STATE.stats[pName];
         if (!STATE.achieved[pName]) STATE.achieved[pName] = [];
         ACHIEVEMENTS_DEF.forEach(ach => {
@@ -617,9 +660,11 @@ const Logic = {
     }
 };
 
-/* --- 5. APP / UI --- */
+/* --- APP CONTROLLER --- */
 const App = {
     currentSlot: null,
+    duelMode: false, 
+
     init() {
         this.renderSetup();
         if (STATE.slots.filter(Boolean).length === 0) STATE.slots = [null,null,null,null,null,null];
@@ -629,11 +674,35 @@ const App = {
         document.getElementById('screen-' + screenId).classList.add('active');
         if (screenId === 'stats') this.renderStats();
     },
-
+    exitRules() {
+        if (STATE.game.active) this.goTo('game');
+        else this.goTo('start');
+    },
+    toggleMassacreConfig() {
+        const sw = document.getElementById('massacre-toggle');
+        STATE.game.massacreMode = sw.checked;
+        this.renderSetup();
+        
+        if (sw.checked) {
+            const t = document.getElementById('systemToast');
+            t.textContent = "O Valete entrou na festa. Dancem 🔥";
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 1500);
+        }
+    },
     renderSetup() {
         const container = document.getElementById('slots-container');
         container.innerHTML = '';
         const filled = STATE.slots.filter(Boolean).length;
+        
+        const massacreSwitch = document.getElementById('massacre-toggle');
+        if (filled === 6) {
+            massacreSwitch.checked = true; massacreSwitch.disabled = true; STATE.game.massacreMode = true;
+        } else {
+            massacreSwitch.disabled = false;
+        }
+        STATE.game.massacreMode = massacreSwitch.checked;
+
         const slotsToShow = Math.min(6, Math.max(2, filled + 1));
         for (let i=0;i<slotsToShow;i++) {
             const name = STATE.slots[i];
@@ -655,76 +724,80 @@ const App = {
         document.getElementById('btn-start-match').disabled = filled < 2;
         Storage.set('slots', STATE.slots);
     },
-
     moveSlot(idx, dir) {
         const tmp = STATE.slots[idx];
-        STATE.slots[idx] = STATE.slots[idx+dir];
-        STATE.slots[idx+dir] = tmp;
+        STATE.slots[idx] = STATE.slots[idx+dir]; STATE.slots[idx+dir] = tmp;
         const compact = STATE.slots.filter(Boolean);
         STATE.slots = compact.concat(Array(6-compact.length).fill(null));
         this.renderSetup();
     },
-
     clearSlot(idx) {
         STATE.slots[idx] = null;
         const compact = STATE.slots.filter(Boolean);
         STATE.slots = compact.concat(Array(6-compact.length).fill(null));
         this.renderSetup();
     },
-
-    openSelect(idx) {
-        this.currentSlot = idx;
-        const dbList = document.getElementById('db-list');
-        dbList.innerHTML = '';
+    renderDBList() {
+        const dbList = document.getElementById('db-list'); dbList.innerHTML = '';
         const used = STATE.slots.filter(Boolean);
         const avail = STATE.db.filter(n => !used.includes(n));
+        
         if (avail.length === 0) dbList.innerHTML = '<p style="text-align:center; opacity:0.6">Nenhum salvo.</p>';
+        
         avail.forEach(pName => {
-            const row = document.createElement('div');
-            row.className = 'db-row';
-            const nameBtn = document.createElement('button');
-            nameBtn.className = 'db-name-btn';
+            const row = document.createElement('div'); row.className = 'db-row';
+            const nameBtn = document.createElement('button'); nameBtn.className = 'db-name-btn';
             nameBtn.textContent = pName;
             nameBtn.onclick = () => { STATE.slots[this.currentSlot] = pName; this.goTo('setup'); this.renderSetup(); };
-            const delBtn = document.createElement('button');
-            delBtn.className = 'db-remove-btn'; delBtn.textContent = '🗑';
+            
+            const delBtn = document.createElement('button'); delBtn.className = 'db-remove-btn'; delBtn.textContent = '🗑';
             delBtn.onclick = () => this.confirmDeletePlayer(pName);
+            
             row.appendChild(nameBtn); row.appendChild(delBtn); dbList.appendChild(row);
         });
+    },
+    openSelect(idx) {
+        this.currentSlot = idx;
+        this.renderDBList();
         this.goTo('database');
     },
-
     addNewPlayerDB() {
         const input = document.getElementById('new-player-input');
         const val = input.value.trim();
+        if (STATE.slots.includes(val)) {
+            View.showModal("JÁ ESTÁ NA MESA!", `O jogador "${val}" já foi selecionado.`, [ { text: "Ops, foi mal", class: "primary", action: () => View.closeModal() } ]);
+            return;
+        }
         if (val && !STATE.db.includes(val)) {
-            STATE.db.push(val);
-            Storage.set('db', STATE.db);
-            input.value = '';
-            if (this.currentSlot !== null) {
-                STATE.slots[this.currentSlot] = val;
-                this.goTo('setup');
-                this.renderSetup();
-            }
+            STATE.db.push(val); Storage.set('db', STATE.db); input.value = '';
+            this.renderDBList(); input.focus();
         }
     },
-
     confirmOrder() {
         const players = STATE.slots.filter(Boolean);
-        if (players.length === 2) this.startIntro();
+        if (players.length === 2) this.showLoading();
         else {
-            View.showModal("A ORDEM ESTÁ CORRETA?", "Os jogadores estão sentados nesta ordem?", [
-                { text: "SIM, ATIRAR!", class: "primary", action: () => this.startIntro() },
+            View.showModal("A ORDEM ESTÁ CORRETA?", "Sentido anti-horário é para a direita 😒", [
+                { text: "SIM, BORA!", class: "primary", action: () => this.showLoading() },
                 { text: "NÃO, PERA", class: "secondary", action: () => View.closeModal() }
             ]);
         }
     },
-
+    showLoading() {
+        View.closeModal(); this.goTo('loading');
+        const count = STATE.slots.filter(Boolean).length;
+        const isM = STATE.game.massacreMode;
+        let info = "";
+        if (count <= 4) info = isM ? "<b>6</b> Reis, <b>6</b> Damas, <b>6</b> Ases, <b>1</b> Curinga e <b>1</b> Valete." : "<b>6</b> Reis, <b>6</b> Damas, <b>6</b> Ases e <b>2</b> Curingas.";
+        else if (count === 5) info = isM ? "<b>7</b> Reis, <b>7</b> Damas, <b>7</b> Ases, <b>2</b> Curingas e <b>1</b> Valete." : "<b>7</b> Reis, <b>7</b> Damas, <b>7</b> Ases e <b>3</b> Curingas.";
+        else info = "<b>8</b> Reis, <b>8</b> Damas, <b>8</b> Ases, <b>2</b> Curingas e <b>2</b> Valetes.";
+        document.getElementById('deck-config-info').innerHTML = info;
+        setTimeout(() => { this.startIntro(); }, 4000);
+    },
     startIntro() {
-        View.closeModal();
         const playersNames = STATE.slots.filter(Boolean);
-        STATE.game.isShooting = false;
-        STATE.game.roundUnlocks = [];
+        STATE.game.active = true; STATE.game.isShooting = false; STATE.game.isMassacre = false;
+        STATE.game.protectedIdx = null; STATE.game.lastProtectedIdx = null; STATE.game.roundUnlocks = [];
         const perfisDisponiveis = Object.keys(CONFIG.perfis);
         for (let i = perfisDisponiveis.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -735,53 +808,119 @@ const App = {
         STATE.game.narrator = Logic.getNarrator();
         STATE.game.mesaCard = ['K','Q','A'][Math.floor(Math.random()*3)];
         STATE.game.mesaShots = 0;
+        
+        STATE.game.deathLinesDeck = [...CONFIG.deathLines];
+        Logic.shuffle(STATE.game.deathLinesDeck);
+        STATE.game.deathLineIdx = 0;
         this.runRotationAnim(true);
     },
-
     runRotationAnim(isIntro = false) {
         this.goTo('rotation');
-        // Toca a intro uma vez (sem loop) em toda entrada nessa tela (intro + rotação)
-        AudioSys.play('intro');
-
+        AudioSys.play('intro'); 
         const cardFace = document.getElementById('rot-card-front');
         cardFace.style.backgroundImage = `url('${CONFIG.paths.img}${CONFIG.cards[STATE.game.mesaCard]}')`;
-
         const narratorElm = document.getElementById('rot-narrator');
         if (isIntro) {
             narratorElm.textContent = CONFIG.narradores[STATE.game.narrator].intro;
             document.getElementById('rot-title').textContent = "A CARTA DA MESA É...";
         } else {
-            // rotação de mesa: mostrar frase mesaIntro específica
             const mesaLine = (CONFIG.narradores[STATE.game.narrator].mesaIntro || {})[STATE.game.mesaCard] || '';
-            narratorElm.textContent = mesaLine;
-            document.getElementById('rot-title').textContent = "A MESA RODOU!";
+            const narrEmoji = CONFIG.emojis[STATE.game.narrator] || '💀';
+            narratorElm.textContent = `${narrEmoji} ${mesaLine}`;
         }
-
         const flipper = document.getElementById('card-flipper');
-        flipper.classList.remove('flip-anim');
-        void flipper.offsetWidth;
-        flipper.classList.add('flip-anim');
-
-        // tempo da intro/rotação: 6000ms
-        setTimeout(() => {
-            // garantir que flipper termine com face para cima (CSS já roda pra 540deg)
-            // Forçar estado final (apenas garantia visual)
-            flipper.style.transform = 'rotateY(540deg)';
-            this.startGameScreen();
-        }, 6000);
+        flipper.classList.remove('flip-anim'); void flipper.offsetWidth; flipper.classList.add('flip-anim');
+        setTimeout(() => { flipper.style.transform = 'rotateY(540deg)'; this.startGameScreen(); }, 6000);
     },
-
     startGameScreen() {
-        STATE.game.isShooting = false;
-        this.goTo('game');
-        this.updateGameUI();
+        STATE.game.isShooting = false; STATE.game.isMassacre = false; this.duelMode = false;
+        this.goTo('game'); this.updateGameUI();
+        const logBox = document.getElementById('game-log'); logBox.innerHTML = '';
+        const narr = CONFIG.narradores[STATE.game.narrator];
+        const narrEmoji = CONFIG.emojis[STATE.game.narrator] || '💀';
+        const mesaLine = (narr.mesaIntro || {})[STATE.game.mesaCard] || '';
         const pName = STATE.game.players[STATE.game.turnIndex].name;
-        document.getElementById('starter-info').innerHTML = `★ <b>${pName}</b> começa essa bagaça`;
+        this.log(narr.intro);
+        this.log(`${narrEmoji} ${mesaLine}`);
         this.log(`🎲 ${pName} começa essa bagaça!`);
     },
+    toggleDuelMode() {
+        if (STATE.game.isShooting) return;
+        this.duelMode = !this.duelMode;
+        this.renderPlayersList();
+    },
+    triggerMassacre(protectedIdx) {
+        if (STATE.game.isShooting) return;
+        STATE.game.isShooting = true; STATE.game.isMassacre = true; STATE.game.protectedIdx = protectedIdx;
+        this.duelMode = false; 
+        const players = STATE.game.players;
+        this.renderPlayersList();
+        document.getElementById('game-status').textContent = "☠️ Isso vai ser interessante.";
+        this.log(`☠️ Morte: Isso vai ser interessante.`);
+        const delays = [300, 350, 400, 450, 500, 550];
+        let deaths = []; let massacreDeathsCount = 0;
 
-    /* --- SEQÜÊNCIA DE TIRO: fala -> 300ms -> cock -> 500ms -> resultado (com som de tiro/falha) --- */
+        players.forEach((p, idx) => {
+            if (idx !== protectedIdx && p.alive) {
+                const delay = delays[Math.floor(Math.random() * delays.length)];
+                setTimeout(() => { AudioSys.play('cock'); }, delay);
+                setTimeout(() => {
+                    const isDeath = p.gun.chamber === p.gun.bullet;
+                    AudioSys.play(isDeath ? 'shot' : 'empty');
+                    if (!isDeath) {
+                        if (p.gun.chamber === 5) Logic.checkAchievements(p.name, { chaosSurvivor: true }, true);
+                        p.gun.chamber++;
+                    }
+                    p.shotsTaken++;
+                    if (isDeath) {
+                        deaths.push(p.name); p.alive = false; massacreDeathsCount++;
+                        if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
+                        STATE.stats[p.name].hits++;
+                        STATE.stats[p.name]._meta = { ...STATE.stats[p.name]._meta, dieStreak: (STATE.stats[p.name]._meta?.dieStreak || 0) + 1, winStreak: 0 };
+                        Logic.checkAchievements(p.name, { diedOnShot: p.shotsTaken }, true);
+                    } else {
+                        if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
+                        STATE.stats[p.name].dodges++;
+                    }
+                    this.renderPlayersList();
+                }, 3000 + delay);
+            }
+        });
+
+        setTimeout(() => {
+            STATE.game.mesaShots++;
+            if (massacreDeathsCount >= 3) {
+                const protectedP = players[protectedIdx];
+                if (protectedP && protectedP.alive) Logic.checkAchievements(protectedP.name, { isMassacre: true, massacreDeaths: massacreDeathsCount }, true);
+            }
+            STATE.game.isMassacre = false; STATE.game.lastProtectedIdx = protectedIdx; STATE.game.protectedIdx = null;
+            this.renderPlayersList();
+
+            let msg = "";
+            if (deaths.length === 0) msg = "☠️ Hum...";
+            else if (deaths.length === 1) { msg = "☠️ Vem eu te levo."; this.log(`☠️ ${deaths[0]} foi de arrasta!`); }
+            else {
+                const causerIdx = (STATE.game.lastProtectedIdx + 1) % players.length;
+                const causerName = players[causerIdx].name;
+                msg = `☠️ Obrigado! ${causerName}`; this.log(`☠️ Massacre! Mortos: ${deaths.join(', ')}`);
+            }
+            document.getElementById('game-status').textContent = msg; if (msg) this.log(msg);
+            if (deaths.length > 0) { document.body.classList.add('shake-screen'); setTimeout(() => document.body.classList.remove('shake-screen'), 500); }
+
+            let nextTurn = (STATE.game.lastProtectedIdx + 2) % players.length;
+            setTimeout(() => {
+                const aliveCount = players.filter(p => p.alive).length;
+                if (aliveCount <= 1) this.checkGameFlow(STATE.game.lastProtectedIdx);
+                else {
+                    while (!players[nextTurn].alive) nextTurn = (nextTurn + 1) % players.length;
+                    STATE.game.turnIndex = nextTurn; STATE.game.isShooting = false;
+                    if (Logic.rotateTable()) this.runRotationAnim(false); else this.updateGameUI();
+                }
+            }, 3000);
+        }, 4000);
+    },
     handleShoot(pIndex) {
+        if (this.duelMode) { this.triggerMassacre(pIndex); return; }
         if (STATE.game.isShooting) return;
         STATE.game.isShooting = true;
         this.renderPlayersList();
@@ -791,200 +930,164 @@ const App = {
         const fraseBefore = frases.before[p.lines.before++ % frases.before.length];
         const emoji = CONFIG.emojis[p.perfil] || '';
 
-        // 1) fala do personagem
-        document.getElementById('game-status').textContent = `${emoji} "${fraseBefore}"`;
-        this.log(`${emoji} ${p.name}: "${fraseBefore}"`);
+        document.getElementById('game-status').textContent = `${emoji} ${fraseBefore}`;
+        this.log(`${emoji} ${p.name}: ${fraseBefore}`);
 
-        // 2) após 300ms engatilha (cock)
         setTimeout(() => {
-            AudioSys.play('cock'); // SOM MANTIDO: Engatilhamento
-
-            // 3) após 3500ms resolve o resultado + som do resultado
+            AudioSys.play('cock'); 
             setTimeout(() => {
                 const isDeath = p.gun.chamber === p.gun.bullet;
-
-                // 🔊 SOM DO RESULTADO: tiro (shot) ou falha (empty)
                 AudioSys.play(isDeath ? 'shot' : 'empty');
-
                 if (!isDeath) p.gun.chamber++;
-                p.shotsTaken++;
-                STATE.game.mesaShots++;
-
-                if (isDeath) {
-                    document.body.classList.add('shake-screen');
-                    setTimeout(() => document.body.classList.remove('shake-screen'), 500);
-                }
-
+                p.shotsTaken++; STATE.game.mesaShots++;
+                if (isDeath) { document.body.classList.add('shake-screen'); setTimeout(() => document.body.classList.remove('shake-screen'), 500); }
                 this.renderPlayersList();
 
                 if (isDeath) {
-                    // bala: fala do narrador
                     const narrConf = CONFIG.narradores[STATE.game.narrator];
-                    const killByPerfil = (narrConf.killLines && narrConf.killLines[p.perfil])
-                        ? narrConf.killLines[p.perfil]
-                        : narrConf.killLines.default;
-
-                    document.getElementById('game-status').textContent = `Narrador: "${killByPerfil}"`;
-                    this.log(`🔊 Narrador (${STATE.game.narrator}): "${killByPerfil}"`);
-
-                    // stats + marca morto
-                    p.alive = false;
-                    this.log(`💀 ${p.name} foi de arrasta!`);
-
+                    const killByPerfil = (narrConf.killLines && narrConf.killLines[p.perfil]) ? narrConf.killLines[p.perfil] : narrConf.killLines.default;
+                    const narrEmoji = CONFIG.emojis[STATE.game.narrator] || '💀';
+                    document.getElementById('game-status').textContent = `${narrEmoji} ${killByPerfil}`;
+                    this.log(`${narrEmoji} ${killByPerfil}`);
+                    p.alive = false; this.log(`💀 ${p.name} foi de arrasta!`);
                     if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
                     STATE.stats[p.name].hits++;
-                    STATE.stats[p.name]._meta = { 
-                        ...STATE.stats[p.name]._meta, 
-                        dieStreak: (STATE.stats[p.name]._meta?.dieStreak || 0) + 1, 
-                        winStreak: 0 
-                    };
-
+                    STATE.stats[p.name]._meta = { ...STATE.stats[p.name]._meta, dieStreak: (STATE.stats[p.name]._meta?.dieStreak || 0) + 1, winStreak: 0 };
                     const events = { diedOnShot: p.shotsTaken };
                     Logic.checkAchievements(p.name, events, true);
-
-                    setTimeout(() => {
-                        this.checkGameFlow(pIndex);
-                    }, 2000);
-
+                    setTimeout(() => { this.checkGameFlow(pIndex); }, 4000);
                 } else {
-                    // falha: mostrar "clique" e a fala pós-tensão do personagem
-                    document.getElementById('game-status').textContent = `clique`; // Mantendo o texto "clique" original
-                    this.log(`${p.name}: clique (sobreviveu)`);
-
-                    // mostrar segunda fala do personagem logo em seguida (pequeno delay)
+                    const deathLine = STATE.game.deathLinesDeck[STATE.game.deathLineIdx % STATE.game.deathLinesDeck.length];
+                    STATE.game.deathLineIdx++;
+                    document.getElementById('game-status').textContent = `☠️ ${deathLine}`; this.log(`☠️ ${deathLine}`);
                     setTimeout(() => {
-                        // CHAVE ATUALIZADA: agora usa 'afterSurvive'
                         const fraseAfter = frases.afterSurvive[p.lines.afterSurvive++ % frases.afterSurvive.length];
-                        document.getElementById('game-status').textContent = `${fraseAfter}`;
-                        this.log(`${p.name}: "${fraseAfter}"`);
-                    }, 300);
-
-                    // atualizar stats de dodge
-                    if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
-                    STATE.stats[p.name].dodges++;
-                    Logic.checkAchievements(p.name, { didDodgeLastShotBefore: (p.gun.chamber === 5) }, true);
-
-                    // pequeno delay até seguir fluxo de jogo
-                    setTimeout(() => {
-                        this.checkGameFlow(pIndex);
-                    }, 1200);
+                        document.getElementById('game-status').textContent = `${emoji} ${fraseAfter}`;
+                        this.log(`${emoji} ${p.name}: ${fraseAfter}`);
+                        if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
+                        STATE.stats[p.name].dodges++;
+                        Logic.checkAchievements(p.name, { didDodgeLastShotBefore: (p.gun.chamber === 5) }, true);
+                        setTimeout(() => { this.checkGameFlow(pIndex); }, 3000);
+                    }, 1500);
                 }
-
-            }, 3500); // cock -> shot gap
-        }, 300); // initial delay before cock
+            }, 3500);
+        }, 300);
     },
-
     checkGameFlow(lastShooterIdx) {
         const alive = STATE.game.players.filter(p => p.alive);
         if (alive.length <= 1) {
-            const winner = alive[0];
+            const winner = alive[0]; STATE.game.active = false;
+            STATE.game.players.forEach(p => {
+                if(!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0, matches: 0 };
+                STATE.stats[p.name].matches = (STATE.stats[p.name].matches || 0) + 1;
+                Logic.checkAchievements(p.name, {}, false);
+            });
             if (winner) {
-                if(!STATE.stats[winner.name]) STATE.stats[winner.name] = { wins:0, hits:0, dodges:0 };
+                if(!STATE.stats[winner.name]) STATE.stats[winner.name] = { wins:0, hits:0, dodges:0, matches: 0 };
                 STATE.stats[winner.name].wins++;
                 const meta = STATE.stats[winner.name]._meta || {};
                 STATE.stats[winner.name]._meta = { ...meta, winStreak: (meta.winStreak||0)+1, dieStreak: 0 };
-                const winEvents = { winStreak: STATE.stats[winner.name]._meta.winStreak };
-                Logic.checkAchievements(winner.name, winEvents, false);
-                // mostrar frase de winner do narrador + emoji do narrador
+                
+                const winnerIdx = STATE.game.players.indexOf(winner);
+                const wasProtected = (STATE.game.lastProtectedIdx === winnerIdx);
+                const winEvents = { winStreak: STATE.stats[winner.name]._meta.winStreak, wasProtectedWinner: wasProtected };
+                Logic.checkAchievements(winner.name, winEvents, true);
+                
                 const narrConf = CONFIG.narradores[STATE.game.narrator];
                 const winnerLines = narrConf.winner || [];
                 const chosen = winnerLines.length ? winnerLines[Math.floor(Math.random()*winnerLines.length)] : `${winner.name} venceu!`;
                 const lined = chosen.replace('{nome}', winner.name);
                 document.getElementById('win-msg').textContent = `${CONFIG.emojis[STATE.game.narrator] || ''} ${lined}`;
-                // conquistas
+                
                 const achDiv = document.getElementById('win-achievements'); achDiv.innerHTML = '';
                 if (STATE.game.roundUnlocks.length > 0) {
                     achDiv.innerHTML = '<p>Novas Conquistas:</p>';
                     STATE.game.roundUnlocks.forEach(id => {
                         const def = ACHIEVEMENTS_DEF.find(a=>a.id===id);
-                        achDiv.innerHTML += `<div style="font-size:0.9rem">${def.emoji} ${def.name}</div>`;
+                        if(def) achDiv.innerHTML += `<div style="font-size:0.9rem">${def.emoji} ${def.name}</div>`;
                     });
                 }
             } else {
                 document.getElementById('win-msg').textContent = "Ninguém sobrou nessa mesa maldita.";
             }
-            Storage.set('stats', STATE.stats);
-            STATE.game.isShooting = false;
-            this.goTo('win');
+            Storage.set('stats', STATE.stats); STATE.game.isShooting = false;
+            setTimeout(() => { this.goTo('win'); }, 1000);
             return;
         }
-
         STATE.game.isShooting = false;
-
-        if (Logic.rotateTable()) {
-            // quando rotaciona, atualiza a mensagem do narrador via runRotationAnim(false)
-            this.runRotationAnim(false);
-            this.setNextTurn(lastShooterIdx);
-        } else {
-            this.setNextTurn(lastShooterIdx);
-            this.updateGameUI();
-        }
+        if (Logic.rotateTable()) { this.runRotationAnim(false); this.setNextTurn(lastShooterIdx); } 
+        else { this.setNextTurn(lastShooterIdx); this.updateGameUI(); }
     },
-
     setNextTurn(currentIdx) {
         let next = (currentIdx + 1) % STATE.game.players.length;
-        while (!STATE.game.players[next].alive) {
-            next = (next + 1) % STATE.game.players.length;
-        }
+        while (!STATE.game.players[next].alive) next = (next + 1) % STATE.game.players.length;
         STATE.game.turnIndex = next;
     },
-
-    restartGame() { this.startIntro(); },
-
+    restartGame() { this.showLoading(); },
     updateGameUI() {
         document.getElementById('game-mesa-info').textContent = `Mesa de ${STATE.game.mesaCard}`;
         const cardDisplay = document.getElementById('game-mesa-card');
         cardDisplay.style.backgroundImage = `url('${CONFIG.paths.img}${CONFIG.cards[STATE.game.mesaCard]}')`;
         document.getElementById('game-status').textContent = "";
         document.getElementById('game-narrator-area').textContent = "";
+        
+        const pName = STATE.game.players[STATE.game.turnIndex].name;
+        document.getElementById('starter-info').innerHTML = `★ <b>${pName}</b> começa essa bagaça`;
         this.renderPlayersList();
     },
-
     renderPlayersList() {
-        const list = document.getElementById('game-players-list');
-        list.innerHTML = '';
+        const list = document.getElementById('game-players-list'); list.innerHTML = '';
+        const btnDuel = document.getElementById('btn-duel-toggle');
+        if (STATE.game.massacreMode) btnDuel.style.display = 'block'; else btnDuel.style.display = 'none';
+
         STATE.game.players.forEach((p, idx) => {
             const isStarter = (idx === STATE.game.turnIndex);
             const div = document.createElement('div');
             div.className = `player-card ${!p.alive ? 'dead' : ''} ${isStarter ? 'starter' : ''}`;
+            
+            let btnHtml = '';
+            if (!p.alive) {
+                btnHtml = '<span class="shot-glass" style="display:none;"></span>';
+            } else {
+                if (STATE.game.isMassacre) {
+                    if (idx === STATE.game.protectedIdx) btnHtml = `<button class="western-btn btn-protect small" disabled>🕊️ Protegido</button>`;
+                    else btnHtml = `<button class="western-btn btn-fire small" disabled>🔥 FOGO</button>`;
+                } else if (this.duelMode) {
+                    btnHtml = `<button class="western-btn btn-protect small" ${STATE.game.isShooting ? 'disabled' : ''} onclick="App.handleShoot(${idx})">🕊️ Protegido</button>`;
+                } else {
+                    btnHtml = `<button class="western-btn danger small" ${STATE.game.isShooting ? 'disabled' : ''} onclick="App.handleShoot(${idx})">ATIRAR</button>`;
+                }
+            }
             div.innerHTML = `
                 <div style="display:flex; align-items:center;">
                     <span class="emoji-big">${p.alive ? CONFIG.emojis[p.perfil] : '💀'}</span>
-                    <div>
-                        <div style="font-weight:bold; font-size:1.1rem">${p.name}</div>
-                        <div style="font-size:0.8rem; opacity:0.8">${p.shotsTaken}/6</div>
-                    </div>
+                    <div><div style="font-weight:bold; font-size:1.3rem">${p.name}</div></div>
                 </div>
-                <div>
-                    ${!p.alive ? '<span class="shot-glass" style="display:none;"></span>' : 
-                      `<button class="western-btn danger small" ${STATE.game.isShooting ? 'disabled' : ''} onclick="App.handleShoot(${idx})">ATIRAR</button>`
-                    }
+                <div style="display:flex; align-items:center; gap: 10px;">
+                     <div style="font-size:1.2rem; font-weight:bold; opacity:0.8">${p.shotsTaken}/6</div>
+                    ${btnHtml}
                 </div>
             `;
             list.appendChild(div);
         });
     },
-
     log(msg) {
         const box = document.getElementById('game-log');
-        box.innerHTML += `<div>${msg}</div>`;
-        box.scrollTop = box.scrollHeight;
+        box.innerHTML += `<div>${msg}</div>`; box.scrollTop = box.scrollHeight;
     },
-
     renderStats() {
         const board = document.getElementById('stats-board');
         const list = Object.keys(STATE.stats).sort((a,b)=>STATE.stats[b].wins - STATE.stats[a].wins);
         if (list.length === 0) { board.innerHTML = '<p class="text-center">Ainda não há lendas neste bar.</p>'; return; }
         board.innerHTML = '';
         list.forEach(name => {
-            const s = STATE.stats[name];
-            const achs = STATE.achieved[name] || [];
+            const s = STATE.stats[name]; const achs = STATE.achieved[name] || [];
             let html = `<div style="margin-bottom:15px; border-bottom:1px dashed #555; padding-bottom:10px;">
                 <div style="font-weight:bold; color:var(--gold); display:flex; justify-content:space-between; align-items:center;">
                     <span>${name} ${achs.length > 0 ? '⭐' : ''}</span>
                     <button class="western-btn secondary small" style="margin:0; width:auto; font-size:0.7rem;" onclick="App.viewPlayerAch('${name}')">VER CONQUISTAS</button>
                 </div>
-                <div style="font-size:0.9rem; margin-top:5px;">🏆 ${s.wins} | ☠️ ${s.hits} | 🍀 ${s.dodges}</div>
+                <div style="font-size:0.9rem; margin-top:5px;">🏆 ${s.wins} | ☠️ ${s.hits} | 🍀 ${s.dodges} | 🤠 ${s.matches || 0}</div>
                 <div style="margin-top:5px; font-size:0.8rem;">
                     ${achs.map(id => { const def = ACHIEVEMENTS_DEF.find(a=>a.id===id); return def ? def.emoji : ''; }).join(' ')}
                 </div>
@@ -992,20 +1095,16 @@ const App = {
             board.innerHTML += html;
         });
     },
-
     viewPlayerAch(name) {
         document.getElementById('ach-screen-title').textContent = `Conquistas: ${name}`;
         const container = document.getElementById('ach-list-content'); container.innerHTML = '';
         const unlocked = STATE.achieved[name] || [];
         const sorted = [...ACHIEVEMENTS_DEF].sort((a,b) => {
             const hasA = unlocked.includes(a.id); const hasB = unlocked.includes(b.id);
-            if (hasA && !hasB) return -1;
-            if (!hasA && hasB) return 1;
-            return 0;
+            if (hasA && !hasB) return -1; if (!hasA && hasB) return 1; return 0;
         });
         sorted.forEach(ach => {
-            const has = unlocked.includes(ach.id);
-            if(!has && ach.isHidden) return;
+            const has = unlocked.includes(ach.id); if(!has && ach.isHidden) return;
             const div = document.createElement('div'); div.className = `ach-row ${has ? '' : 'locked'}`;
             div.innerHTML = `<div style="font-size:1.5rem;">${has ? ach.emoji : '🔒'}</div>
                 <div><div style="font-weight:bold; color:${has ? 'var(--gold)' : '#aaa'}">${ach.name}</div>
@@ -1014,7 +1113,6 @@ const App = {
         });
         this.goTo('achievements');
     },
-
     confirmResetStats() {
         View.showModal("QUEIMAR REGISTROS?", "Isso apagará todas as vitórias e conquistas para sempre.", [
             { text: "SIM, QUEIME TUDO", class: "danger", action: () => {
@@ -1025,23 +1123,20 @@ const App = {
             { text: "CANCELAR", class: "secondary", action: () => View.closeModal() }
         ]);
     },
-
     confirmDeletePlayer(name) {
         View.showModal("EXPULSAR DO BAR?", `Deseja remover "${name}" permanentemente?`, [
             { text: "FORA DAQUI!", class: "danger", action: () => {
                 STATE.db = STATE.db.filter(n=>n!==name);
                 STATE.slots = STATE.slots.map(s => s === name ? null : s);
-                Storage.set('db', STATE.db);
-                Storage.set('slots', STATE.slots);
-                this.openSelect(this.currentSlot);
-                View.closeModal();
+                Storage.set('db', STATE.db); Storage.set('slots', STATE.slots);
+                this.openSelect(this.currentSlot); View.closeModal();
             }},
             { text: "DEIXA ELE", class: "secondary", action: () => View.closeModal() }
         ]);
     }
 };
 
-/* VIEW helpers */
+/* --- VIEW HELPER --- */
 const View = {
     showModal(title,msg,buttons) {
         const m = document.getElementById('customModal');
