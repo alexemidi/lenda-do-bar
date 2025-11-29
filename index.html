@@ -21,6 +21,8 @@
             --blood: #8a0303;
             --ink: #2b2b2b;
             --shadow: rgba(0,0,0,0.6);
+            --chaos: #9c27b0;
+            --chaos-light: #e1bee7;
         }
 
         * { box-sizing: border-box; user-select: none; }
@@ -101,6 +103,15 @@
         .western-btn.secondary { background: linear-gradient(to bottom, #455a64, #263238); border-color: #78909c; }
         .western-btn.small { padding: 5px 10px; font-size: 0.9rem; width: auto; }
         
+        /* Botão Atirar Cinza quando desabilitado */
+        .western-btn.danger:disabled {
+            background: #555;
+            border-color: #333;
+            color: #aaa;
+            filter: none;
+            box-shadow: none;
+        }
+
         .western-btn.btn-protect {
             background: #2196F3;
             border-color: #64B5F6;
@@ -113,12 +124,29 @@
             color: #fff;
             transition: all 0.3s ease;
         }
+        .western-btn.btn-aim {
+            background: linear-gradient(to bottom, #7b1fa2, #4a148c);
+            border-color: #ce93d8;
+            color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 #38006b;
+        }
 
         .btn-black {
             background: #111;
             color: #fff;
             border: 2px solid #444;
             box-shadow: 0 4px 0 #000;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 1.2rem;
+            margin-left: 8px;
+        }
+        .btn-purple {
+            background: #4a148c;
+            color: #fff;
+            border: 2px solid #7b1fa2;
+            box-shadow: 0 4px 0 #230b42;
             border-radius: 4px;
             padding: 5px 10px;
             font-size: 1.2rem;
@@ -141,7 +169,7 @@
         .slot-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; background: rgba(0,0,0,0.1); padding: 5px; border-radius: 4px; border: 1px dashed #8d6e63; }
         .slot-name { flex: 1; font-weight: bold; font-size: 1.1rem; }
 
-        /* Switch Modo Massacre */
+        /* Switches (Massacre e Caos) */
         .switch-container {
             display: flex; align-items: center; justify-content: center;
             gap: 10px; margin: 12px auto; padding: 8px 15px;
@@ -162,6 +190,11 @@
             transition: .4s; border: 2px solid #3e2723;
             box-shadow: 0 2px 4px rgba(0,0,0,0.7);
         }
+        .slider.before {
+            position: absolute; content: ""; height: 18px; width: 18px;
+            left: 3px; bottom: 3px; background-color: #cbb892;
+            box-shadow: 0 0 4px rgba(0,0,0,0.6); transition: .4s;
+        }
         .slider:before {
             position: absolute; content: ""; height: 18px; width: 18px;
             left: 3px; bottom: 3px; background-color: #cbb892;
@@ -170,6 +203,7 @@
         .slider.round { border-radius: 34px; }
         .slider.round:before { border-radius: 50%; }
         
+        /* Estilos do Modo Massacre (Fogo) */
         input:checked + .slider {
             background: radial-gradient(circle at 20% 50%, #ffe0b2, #ff9800, #bf360c);
             border-color: #ffb74d;
@@ -181,14 +215,30 @@
         }
         input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
 
-        .switch-container:has(input:checked) {
+        .switch-container:not(.chaos-style):has(input:checked) {
             border-color: #ffb700;
             background: linear-gradient(135deg, #100a08 30%, #3e1f18 100%);
             animation: flamePulse 1.4s infinite ease-in-out;
         }
-        .switch-container:has(input:checked) .massacre-label {
+        .switch-container:not(.chaos-style):has(input:checked) .massacre-label {
             color: #ffb700;
             text-shadow: 0 0 5px rgba(255, 183, 0, 0.8), 0 0 10px rgba(255, 69, 0, 0.6);
+        }
+
+        /* Estilos do Modo Caos (Roxo) */
+        .switch-container.chaos-style:has(input:checked) {
+            border-color: var(--chaos);
+            background: linear-gradient(135deg, #1a0f1f 30%, #2e1b33 100%);
+            box-shadow: 0 0 10px rgba(156, 39, 176, 0.4);
+        }
+        .switch-container.chaos-style:has(input:checked) .massacre-label {
+            color: var(--chaos-light);
+            text-shadow: 0 0 5px var(--chaos);
+        }
+        .switch-container.chaos-style input:checked + .slider {
+            background: radial-gradient(circle at 20% 50%, #e1bee7, #9c27b0, #4a148c);
+            border-color: #ce93d8;
+            box-shadow: 0 0 4px rgba(156, 39, 176, 0.9);
         }
 
         /* Jogo & Cartas */
@@ -210,12 +260,23 @@
         .front { transform: translateX(-50%) rotateY(180deg); } 
         .back { transform: translateX(-50%) rotateY(0deg); background-image: url('src/assets/imgs/card-back.png'); }
 
-        .narrator-box { font-style: italic; text-align: center; color: var(--gold); min-height: 30px; margin-bottom: 5px; text-shadow: 1px 1px 2px #000; }
+        .narrator-box { 
+            font-style: italic; text-align: center; color: var(--gold); 
+            min-height: 30px; margin-bottom: 5px; text-shadow: 1px 1px 2px #000;
+            font-size: 1.15rem; /* Fonte aumentada */
+        }
         .player-card { background: #2b2b2b; color: #eee; border-left: 4px solid #555; padding: 10px; margin-bottom: 8px; display:flex; align-items:center; justify-content:space-between; border-radius:0 4px 4px 0; transition: all 0.3s; }
         .player-card.starter { border-left: 4px solid var(--gold); background: #332a1e; }
+        .player-card.chaos-highlight { border-left: 4px solid var(--chaos); background: #2a1b2e; box-shadow: 0 0 10px rgba(156, 39, 176, 0.5); }
         .player-card.dead { opacity: 0.6; background: #1a0f0f; border-left: 4px solid #8a0303; text-decoration: line-through; color: #e57373; }
         .emoji-big { font-size: 1.8rem; margin-right: 10px; width: 40px; text-align: center; }
         .log-box { background: rgba(0,0,0,0.5); color:#ccc; font-size:0.85rem; height:80px; overflow-y:auto; padding:5px; margin-top:10px; border-radius:4px; border:1px solid #444; }
+
+        #game-status {
+            text-align: center; color: var(--gold); font-weight: bold; 
+            min-height: 1.2em; flex: 1;
+            font-size: 1.3rem; /* Fonte aumentada */
+        }
 
         /* Estatísticas e Banco de Dados */
         .chalkboard { background: #1a1a1a; border: 8px solid #5d4037; color: rgba(255,255,255,0.9); font-family: 'Courier Prime', monospace; padding: 15px; border-radius: 6px; }
@@ -224,7 +285,14 @@
         .ach-row.locked { opacity: 0.5; filter: grayscale(1); }
         .db-row { display:flex; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
         .db-name-btn { flex:1; text-align:left; padding:10px; border-radius:6px; background:linear-gradient(#455a64,#2f434a); color:#fff; border:1px solid rgba(0,0,0,0.2); }
-        .db-remove-btn { width:42px; height:42px; border-radius:6px; background:linear-gradient(#c62828,#8e0000); color:#fff; display:flex; align-items:center; justify-content:center; }
+        
+        /* Botão Expulsar ajustado */
+        .db-remove-btn { 
+            width: auto; height: 42px; padding: 0 10px;
+            border-radius:6px; background:linear-gradient(#c62828,#8e0000); 
+            color:#fff; display:flex; align-items:center; justify-content:center;
+            font-size: 0.8rem; font-weight: bold; letter-spacing: 1px;
+        }
 
         /* Modais e Toasts */
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index:100; display:none; align-items:center; justify-content:center; }
@@ -286,7 +354,10 @@
         .shake-screen { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
         .flip-anim { animation: spinCard 6s ease-in-out forwards; }
         
-        .card-animation { position: relative; width: 70px; height: 98px; margin: 20px auto; }
+        .card-animation { 
+            position: relative; width: 70px; height: 98px; margin: 20px auto; 
+            opacity: 0; animation: fadeIn 0.5s ease-out 0.5s forwards;
+        }
         .card-anim {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('src/assets/imgs/card-back.png'); background-size: cover; background-position: center;
@@ -349,20 +420,29 @@
             <div class="scroll-content" style="font-size: 0.95rem; line-height: 1.5;">
                 <p><b>1. O Baralho:</b> Cada jogador recebe 5 cartas. Usem um baralho físico composto por:</p>
                 <ul>
-                    <li><b>Até 4 jogadores:</b> 6 Reis, 6 Damas, 6 Ases e 2 Curingas.</li>
-                    <li><b>Até 5 jogadores:</b> 7 Reis, 7 Damas, 7 Ases e 3 Curingas.</li>
-                    <li><b>Até 6 jogadores:</b> 8 Reis, 8 Damas, 8 Ases, 2 Curingas e 2 Valetes.</li>
+                    <li><b>Até 4 jogadores - 20 cartas:</b> 6 Reis, 6 Damas, 6 Ases e 2 Coringas/ até 1 especial* (Opcional).</li>
+                    <li><b>Até 5 jogadores - 25 cartas:</b> 7 Reis, 7 Damas, 7 Ases e 3 Coringas/ até 2 especiais* (Opcionais).</li>
+                    <li><b>Até 6 jogadores - 30 cartas:</b> 8 Reis, 8 Damas, 8 Ases, 2 Coringas e especiais* (Obrigatório).</li>
                 </ul>
 
-                <p><b>2. A Rodada:</b> O app sorteia a carta da mesa (ex: Rei). O jogador da vez deve jogar de 1 a 3 cartas viradas para baixo e anunciar: "Um Rei", "Dois Reis", etc.</p>
-                <p><b>3. O Blefe:</b> Ele pode estar mentindo! Se o próximo jogador acreditar, ele segue jogando. Se duvidar, ele grita "MENTIROSO!".</p>
-                <p><b>4. O Desafio:</b> 
+                <p><b>2. A Rodada:</b> O jogo sorteia a carta da mesa (ex: Rei). O jogador da vez deve jogar de 1 a 3 cartas viradas para baixo e anunciar: "Um Rei", "Dois Reis", etc.</p>
+                <p><b>3. O Coringa:</b> O coringa funciona como a carta da mesa. Perfeito para enganar os desatentos. <b>OBS:</b> As cartas especiais entram no lugar do coringa se algum modo especial estiver ligado.</p>
+                <p><b>4. O Blefe:</b> Ele pode estar mentindo! Se o próximo jogador acreditar, ele segue jogando. Se duvidar, ele grita "MENTIROSO!" desafiando quem jogou a última carta. <b>OBS:</b> Apenas o jogador seguinte pode desafiar o anterior.
+                <p><b>5. O Desafio:</b> 
                     <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
                     <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
                 </p>
-                <p><b>5. Modo Massacre:</b> No modo massacre o Valete (J) toca o terror. Se ele for jogado e alguém desafiar TODOS na mesa entram no modo massacre exceto quem jogou que recebe o escudo. Mas cuidado! Ele deve ser jogado sozinho, se o valete for jogado com outras a punição atirar em si mesmo pelo número de cartas jogadas de vez (de 1 a 3). Esse modo só é obrigatório com 6 jogadores.</p>
-                <p><b>6. O Disparo:</b> O app simula uma roleta russa se fizer clique, segue o jogo, mas se sair o disparo o jogador está fora da partida. As cartas são embaralhadas de novo a cada disparo e o jogador à esquerda de quem atirou começa a nova rodada.</p>
+                
+                <p><b>6. O Disparo:</b> O jogo simula uma roleta russa se sua arma falhar você deu sorte, mas se disparar a bala você está fora da partida. A cada disparo as cartas são embaralhadas de novo e o jogador à direita de quem puxou o gatilho vai iniciar. Por isso, coloque os jogadores na ordem de seleção.</p>
                 <p><b>7. Quem paga a conta:</b> Essa parte é opcional cada jogador eliminado pode pagar uma prenda ou como estão em um bar...</p>
+                <div style="text-align: center; margin: 15px 0; border-top: 1px dashed #555; border-bottom: 1px dashed #555; padding: 5px;">
+                    <h3 style="margin: 0; color: var(--gold);">ESPECIAIS*</h3>
+                </div>
+
+                <p><b>8. Modo Massacre:</b> No modo Massacre o Valete (J) toca o terror. Se ele for jogado e alguém desafiar TODOS na mesa entram no duelo exceto quem jogou o Valete.</p>
+                
+                <p><b>9. Modo Caos:</b> Se alguém jogar um 8 e for desafiado, o Caos reina. Todos escolhem um alvo para atirar (exceto si mesmo). O Diabo vai influenciar, mas a decisão é sua.</p>
+
             </div>
         </div>
         <button class="western-btn primary" onclick="App.exitRules()">VOLTAR</button>
@@ -374,13 +454,24 @@
             <p class="text-center" style="font-size: 0.9rem;">Os jogadores devem estar organizados no sentido anti-horário.</p>
             <div id="slots-container" class="mt-2"></div>
 
-            <div class="switch-container">
-                <span class="massacre-label">MODO MASSACRE</span>
-                <label class="switch">
-                    <input type="checkbox" id="massacre-toggle" checked onchange="App.toggleMassacreConfig()">
-                    <span class="slider round"></span>
-                </label>
+            <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                <div class="switch-container" style="margin:0;">
+                    <span class="massacre-label">MASSACRE</span>
+                    <label class="switch">
+                        <input type="checkbox" id="massacre-toggle" checked onchange="App.toggleMassacreConfig()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="switch-container chaos-style" style="margin:0;">
+                    <span class="massacre-label">CAOS</span>
+                    <label class="switch">
+                        <input type="checkbox" id="chaos-toggle" onchange="App.toggleChaosConfig()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
             </div>
+
         </div>
         <button id="btn-start-match" class="western-btn primary" disabled onclick="App.confirmOrder()">INICIAR PARTIDA</button>
         <button class="western-btn danger" onclick="App.goTo('start')">VOLTAR</button>
@@ -423,7 +514,7 @@
                     </div>
                 </div>
             </div>
-            <div id="rot-narrator" class="narrator-box" style="margin-top: 10px; font-size: 1.2rem;"></div>
+            <div id="rot-narrator" class="narrator-box" style="margin-top: 10px;"></div>
         </div>
     </div>
 
@@ -440,9 +531,13 @@
         <div id="game-narrator-area" class="narrator-box"></div>
         
         <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
-            <div id="game-status" style="text-align:center; color:var(--gold); font-weight:bold; min-height:1.2em; flex: 1;"></div>
-            <button id="btn-duel-toggle" class="btn-black" onclick="App.toggleDuelMode()">⚔️</button>
-        </div>
+    <div id="game-status" style="min-height: 3.5em; display:flex; align-items:center; justify-content:center;"></div>
+    
+    <div style="display:flex; flex-direction: column; gap: 6px; margin-left: 8px;">
+        <button id="btn-chaos-toggle" class="btn-purple" onclick="App.toggleChaosMode()" style="margin:0;">🌀</button>
+        <button id="btn-duel-toggle" class="btn-black" onclick="App.toggleDuelMode()" style="margin:0;">⚔️</button>
+    </div>
+</div>
 
         <div id="game-players-list"></div>
 
@@ -490,84 +585,235 @@ const CONFIG = {
         snd: 'src/assets/sounds/' 
     },
     fallbackSnd: 'src/assest/sounds/', 
-    cards: { K: "king-hearts.png", Q: "queen-diamonds.png", A: "ace-spades.png" },
-    sounds: { intro: 'intro-mesa.mp3', cock: 'cocking-a-revolver.mp3', shot: 'gun-shot.mp3', empty: 'empty-gun.mp3' },
+    cards: { K: "king-hearts.png", Q: "queen-diamonds.png", A: "ace-spades.png", 8: "card-back.png" },
+    sounds: { intro: 'six-shots-left.mp3', rotation: 'rotation-suspense.mp3', cock: 'cocking-a-revolver.mp3', shot: 'gun-shot.mp3', empty: 'empty-gun.mp3' },
     emojis: { 
         Marrento: "😎", Covarde: "🫣", Piadista: "😜", Entediado: "🙄", 
-        Nordestino: "😠", Esfomeado: "😋", Sabio: "🧙‍♂️", Morte: "💀" 
+        Nordestino: "😠", Esfomeado: "😋", Sabio: "🧙‍♂️", Morte: "💀",
+        Diabo: "😈"
     },
     deathLines: [
         "Ainda não.", "Hoje não.", "Não dessa vez.", "Ficou pra depois.", "Por pouco, hein.",
         "Passou batido.", "Quase.", "Outra hora talvez.", "Não agora.", "Escapou."
     ],
+    // PERFIS ATUALIZADOS COM O CONTEÚDO ANTIGO + MAIS RICO
     perfis: {
         Marrento: {
-            before: [ "Vamos ver se a sorte está do meu lado.", "Eu não erro, no máximo a realidade me desobedece.", "Confia que o pai tá on.", "Se a morte quer me levar, vai ter que ser na marra." ],
-            afterSurvive: [ "Tá vendo? Até a morte me respeita.", "Eu sou tão brabo que até o perigo desiste.", "Se era pra me assustar, precisa tentar mais forte.", "Eu não sobrevivo: eu humilho o perigo." ]
+            before: [
+                "Vamos ver se a sorte está do meu lado.",
+                "Eu não erro, no máximo a realidade me desobedece.",
+                "Confia que o pai tá on.",
+                "Se a morte quer me levar, vai ter que ser na marra."
+            ],
+            afterSurvive: [
+                "Tá vendo? Até a morte me respeita.",
+                "Eu sou tão brabo que até o perigo desiste.",
+                "Se era pra me assustar, precisa tentar mais forte.",
+                "Eu não sobrevivo: eu humilho o perigo."
+            ]
         },
         Covarde: {
-            before: [ "Alguém quer ir no meu lugar?", "Eu com um mal pressentimento sobre isso.", "Se der ruim, não fala pra minha mãe que eu me mijei… de novo.", "Só quero sair daqui inteiro, por favor." ],
-            afterSurvive: [ "Meu coração tá tipo: Se você não parar eu paro.", "Caramba, meu coração bateu até errado.", "Acho que minha alma ficou pelo caminho.", "Sobrevivi, mas acho que vou precisar de terapia." ]
+            before: [
+                "Alguém quer ir no meu lugar?",
+                "Eu com um mal pressentimento sobre isso.",
+                "Se der ruim, não fala pra minha mãe que eu me mijei… de novo.",
+                "Só quero sair daqui inteiro, por favor."
+            ],
+            afterSurvive: [
+                "Meu coração tá tipo: Se você não parar eu paro.",
+                "Caramba, meu coração bateu até errado.",
+                "Acho que minha alma ficou pelo caminho.",
+                "Sobrevivi, mas acho que vou precisar de terapia."
+            ]
         },
         Piadista: {
-            before: [ "Se eu morrer, pelo menos não pago a conta.", "Já sobrevivi a grupo de família, isso aqui é fichinha.", "Essa arma aqui já viu mais mentira que WhatsApp em época de eleição.", "Relaxa, eu sou personagem principal, teoricamente não morro agora.", "Alguém avisa o roteirista que eu tô pronto pra próxima cena?", "Se isso der errado, já deixei meu currículo no céu." ],
-            afterSurvive: [ "Podem respirar, o alívio cômico ainda tá vivo.", "Vocês esperavam o quê? Protagonista morrendo no meio do filme?", "Podem aplaudir, mas sem exagero, tô acostumado.", "Sobrevivi de novo, tô quase virando série regular.", "Ufa! Já pensou perder o personagem mais engraçado?" ]
+            before: [
+                "Se eu morrer, pelo menos não pago a conta.",
+                "Já sobrevivi a grupo de família, isso aqui é fichinha.",
+                "Essa arma aqui já viu mais mentira que WhatsApp em época de eleição.",
+                "Relaxa, eu sou personagem principal, teoricamente não morro agora.",
+                "Alguém avisa o roteirista que eu tô pronto pra próxima cena?",
+                "Se isso der errado, já deixei meu currículo no céu."
+            ],
+            afterSurvive: [
+                "Podem respirar, o alívio cômico ainda tá vivo.",
+                "Vocês esperavam o quê? Protagonista morrendo no meio do filme?",
+                "Podem aplaudir, mas sem exagero, tô acostumado.",
+                "Sobrevivi de novo, tô quase virando série regular.",
+                "Ufa! Já pensou perder o personagem mais engraçado?"
+            ]
         },
         Entediado: {
-            before: [ "Já vivi coisa pior… tipo segunda-feira.", "A vida é uma fila: eu só tô esperando minha vez.", "É só mais um capítulo, com ou sem continuação.", "Se eu cair, me acordem quando acabar.", "Se eu morrer agora, pelo menos não pego trânsito na volta." ],
-            afterSurvive: [ "Pelo menos não era minha vez ainda.", "Ok, continuei vivo. Que tédio!", "Olha só… estou tentando me matar vocês erram." ]
+            before: [
+                "Já vivi coisa pior… tipo segunda-feira.",
+                "A vida é uma fila: eu só tô esperando minha vez.",
+                "É só mais um capítulo, com ou sem continuação.",
+                "Se eu cair, me acordem quando acabar.",
+                "Se eu morrer agora, pelo menos não pego trânsito na volta."
+            ],
+            afterSurvive: [
+                "Pelo visto não era minha vez ainda.",
+                "Ok, continuei vivo. Que tédio!",
+                "Olha só… estou tentando me matar vocês erram."
+            ]
         },
         Nordestino: {
-            before: [ "Se for hoje, que seja ligeiro. Num tenho tempo pra frescura.", "Bora, desgraça! Ou vai ou racha, porra!.", "Eu tô virado no mói de coentro.", "Vamo simbora, que hoje tem risca faca." ],
-            afterSurvive: [ "Rapadura é doce, mas né mole não.", "Tá pensando que beiço de jegue é arroz doce.", "Sobrevivi? Eita porra… agora sim o bicho vai pegar.", "Oxe, essa foi por um triz!", "A bala olhou e disse: Seloko num compensa" ]
+            before: [
+                "Se for hoje, que seja ligeiro. Num tenho tempo pra frescura.",
+                "Bora, desgraça! Ou vai ou racha, porra!.",
+                "Eu tô virado no mói de coentro.",
+                "Vamo simbora, que hoje tem risca faca."
+            ],
+            afterSurvive: [
+                "Rapadura é doce, mas né mole não.",
+                "Tá pensando que beiço de jegue é arroz doce.",
+                "Sobrevivi? Eita porra… agora sim o bicho vai pegar.",
+                "Oxe, essa foi por um triz!",
+                "A bala olhou e disse: Seloko num compensa"
+            ]
         },
         Esfomeado: {
-            before: [ "Eu tô tremendo, mas é de fome mesmo.", "Se eu não morrer tá me devendo uma tapioca.", "Se der certo, me tragam cuscuz. Se der errado… enterra com farinha.", "Se der ruim fala pro meu nutri que eu não vou precisar mais dele." ],
-            afterSurvive: [ "Sobrevivi, miseráveis. Agora quero meu pastel com caldo de cana.", "Tô vivo, fala que não preciso mais de nutri.", "Se a bala tivesse gosto de bacon, talvez eu até encarava ela.", "Deu bom, agora vamos comer e morar" ]
+            before: [
+                "Eu tô tremendo, mas é de fome mesmo.",
+                "Se eu não morrer tá me devendo uma tapioca.",
+                "Se der certo, me tragam cuscuz. Se der errado… enterra com farinha.",
+                "Se der ruim fala pro meu nutri que eu não vou precisar mais dele."
+            ],
+            afterSurvive: [
+                "Sobrevivi, miseráveis. Agora quero meu pastel com caldo de cana.",
+                "Tô vivo, fala que não preciso mais de nutri.",
+                "Se a bala tivesse gosto de bacon, talvez eu até encarava ela.",
+                "Deu bom, agora vamos comer e morar"
+            ]
         }
     },
+    diabo: {
+        intro: "Isso está ficando interessante.",
+        taunts: [
+            "👿 Fulano tá rindo demais… acaba com essa alegria dele.",
+            "👿 Se eu fosse você, eu atirava no fulano.",
+            "👿 Fulano tá muito quieto… sempre desconfie dos quietos.",
+            "👿 Ouvi fulano dizendo que você não tem coragem, vai deixar?",
+            "👿 Fulano tá confiante demais. Acaba logo com isso.",
+            "👿 Mira no fulano para eu ver o que acontece.",
+            "👿 Fulano xingou sua mãe, eu não deixava.",
+            "👿 Fulano disse que ia atirar em você.",
+            "👿 Fulano tá tirando onda com sua cara. Vai ficar só olhando?",
+            "👿 Fulano lhe chamou de frouxo ali na mesa… eu mesmo ouvi."
+        ],
+        outro: "😈 É assim que eu gosto MuahahaHAHAHA...",
+        results: {
+            none: ["👿 Que palhaçada foi essa? Esse jogo é ridículo.", "👿 Tá de brincadeira! Ninguém?"],
+            one: ["😈 Eu tenho tantos planos para você..."],
+            many: ["😈 Eu adoro esse jogo hahahaha"]
+        }
+    },
+    // NARRADORES ATUALIZADOS COM O CONTEÚDO ANTIGO + MESA DE 8 DO NOVO
     narradores: {
         Sabio: {
             intro: "🧙‍♂️ Lembrem-se que em cada mentira há risco, e em cada risco pode faltar um gole no próximo drink.",
-            mesaIntro: { K: "Mesa de Rei: O poder é fachada.", Q: "Mesa de Rainha: Subestimar custa caro.", A: "Mesa de Ás: Sorte e imprudência." },
-            killLines: { default: "Mais uma lição escrita em chumbo para quem quiser aprender." },
-            winner: [ "{nome}, mentiu melhor do que todos, mas lembre-se: até a sorte cansa.", "Hoje o título é seu, {nome}. Só não esqueça que toda vitória tem um preço." ]
+            mesaIntro: {
+                K: "Mesa de Rei: o poder é fachada, as balas não se curvam a coroas.",
+                Q: "Mesa de Rainha: subestimar a realeza sempre cobra seu preço.",
+                A: "Mesa de Ás: o momento em que sorte e imprudência se confundem."
+            },
+            killLines: {
+                Esfomeado: "Até a fome cobra a conta uma hora.",
+                Marrento: "A arrogância sempre encontra o próprio fim.",
+                Covarde: "Fugir do risco não adiou o inevitável, só deixou mais doloroso.",
+                default: "Mais uma lição escrita em chumbo para quem quiser aprender."
+            },
+            winner: [
+                "{nome}, mentiu melhor do que todos, mas lembre-se: até a sorte cansa.",
+                "Hoje o título é seu, {nome}. Só não esqueça que toda vitória tem um preço."
+            ]
         },
         Piadista: {
             intro: "🤭 Não vale dedo no olho nem nas partes baixas… vocês sabem bem por quê.",
-            mesaIntro: { K: "Mesa de Rei: Respeita a autoridade.", Q: "Mesa de Rainha: Mais perigosa que a arma.", A: "Mesa de Ás: Modo hard ativado." },
-            killLines: { default: "Parem de cair assim, tô ficando sem piada nova." },
-            winner: [ "{nome}, parabéns, mentiu tão bem que até eu quase acreditei.", "A mesa aplaude, {nome}. Ah não, é só o gelo batendo no copo mesmo." ]
+            mesaIntro: {
+                K: "Mesa de Rei: Respeita a autoridade.",
+                Q: "Mesa de Rainha: Cuidado! Ela é mais perigosa que a arma.",
+                A: "Mesa de Ás: Modo hard ativado, meus consagrados."
+            },
+            killLines: {
+                Piadista: "Eita! O estressadinho levou um sossega leão.",
+                Nordestino: "Pelo menos agora ele não tá gritando com ninguém.",
+                Marrento: "Agora o jogo tá uma bosta, a pessoa mais sexy foi embora.",
+                default: "Parem de cair assim, tô ficando sem piada nova."
+            },
+            winner: [
+                "{nome}, parabéns, mentiu tão bem que até eu quase acreditei.",
+                "A mesa aplaude, {nome}. Ah não, é só o gelo batendo no copo mesmo."
+            ]
         },
         Entediado: {
             intro: "😒 Se alguém morrer, me avisem. Posso não estar prestando atenção.",
-            mesaIntro: { K: "Mesa de Rei. Grande coisa.", Q: "Mesa de Rainha. Tentem não passar tanta vergonha.", A: "Mesa de Ás. Pelo menos muda o desenho." },
-            killLines: { default: "Mais um que caiu. Nada novo." },
-            winner: [ "Parabéns, {nome}. Você venceu. Agora posso ir embora?", "{nome} ganhou. Se alguém se importar, finge que comemora." ]
+            mesaIntro: {
+                K: "Mesa de Rei. Grande coisa.",
+                Q: "Mesa de Rainha. Tentem não passar tanta vergonha.",
+                A: "Mesa de Ás. Pelo menos muda o desenho."
+            },
+            killLines: {
+                Piadista: "Até que enfim calou a boca.",
+                Esfomeado: "No céu tem pão? E morreu... Próximo.",
+                Entediado: "Pelo menos agora ele não precisa fingir interesse.",
+                default: "Mais um que caiu. Nada novo."
+            },
+            winner: [
+                "Parabéns, {nome}. Você venceu. Agora posso ir embora?",
+                "{nome} ganhou. Se alguém se importar, finge que comemora."
+            ]
         },
         Covarde: {
-            intro: "😨 Galera, cuidado com essa arma... Aponta ela pra longe.",
-            mesaIntro: { K: "Mesa de Rei: Se comportem.", Q: "Mesa de Rainha: Não façam nada idiota.", A: "Mesa de Ás: alguém segura minha mão?" },
-            killLines: { default: "Cuidado! Ele quase me acertou." },
-            winner: [ "Vitória do {nome}! Ótimo… agora vamos embora antes que alguém tente outra rodada." ]
+            intro: "😨 Galera, só lembrando... Aponta essa arma pra longe de mim, por favor.",
+            mesaIntro: {
+                K: "Mesa de Rei: Se comportem.",
+                Q: "Mesa de Rainha: Tentem pelo menos não fazer nada idiota… é difícil, eu sei.",
+                A: "Mesa de Ás: alguém segura minha mão? Por segurança psicológica."
+            },
+            killLines: {
+                Covarde: "Eu sabia! Eu devia ter ido embora!",
+                Nordestino: "Será que ele morreu mesmo? Ainda tá com cara de bravo.",
+                Entediado: "Ele caiu tão devagar que eu achei que tava só alongando!",
+                default: "Cuidado! Ele quase me acertou."
+            },
+            winner: [
+                "Vitória do {nome}! Ótimo… agora que tal jogo da velha? É mais seguro.",
+                "Parabéns do {nome}… agora vamos embora antes que alguém tente outra rodada."
+            ]
         }
     }
 };
 
 const ACHIEVEMENTS_DEF = [
-    { id: 'first_win', emoji: '🏆', name: 'Nasce uma Lenda', desc: 'Primeira vitória.', check: (s, c) => s.wins === 1 },
-    { id: 'die_1/6', emoji: '⏱️', name: 'Speedrun do Além', desc: 'Morreu no primeiro disparo (1/6).', check: (s, c) => c.diedOnShot === 1 },
+    // --- VISÍVEIS ---
+    { id: 'first_win', emoji: '🏆', name: 'Nasce uma Lenda', desc: 'Venceu a partida pela primeira vez.', check: (s, c) => s.wins === 1 },
+    { id: 'vip_client', emoji: '🤠', name: 'Cliente VIP', desc: 'Jogou 20 partidas completas.', check: (s, c) => s.matches >= 20 },
     { id: 'win_10', emoji: '💀', name: 'O Terror da Mesa', desc: 'Ganhou 10 partidas.', check: (s, c) => s.wins >= 10 },
-    { id: 'die_5/6', emoji: '😨', name: 'Último Suspiro', desc: 'Ficou faltando só um disparo (5/6).', check: (s, c) => c.didDodgeLastShotBefore },
-    { id: 'win_last_shot_before', emoji: '😎', name: 'Um pé na cova', desc: 'Venceu por um triz (5/6).', isHidden: true, check: (s, c) => c.didWinLastShotBefore && s.wins >= 1 },
-    { id: 'win_streak_3', emoji: '🔥', name: 'Imorrível', desc: 'Ganhou 3 partidas seguidas.', isHidden: true, check: (s, c) => c.winStreak >= 3 },
-    { id: 'no_shot_win', emoji: '🤖', name: 'Tá de Hack', desc: 'Venceu sem disparar (0/6).', isHidden: true, check: (s, c) => s.wins >= 1 && s.dodges === 0 && s.hits === 0 },
-    { id: 'die_10', emoji: '🤕', name: 'Alvo Fácil', desc: 'Morreu 10 vezes.', isHidden: true, check: (s, c) => s.hits >= 10 },
+    { id: 'die_10', emoji: '🤕', name: 'Alvo Fácil', desc: 'Morreu 10 vezes.', check: (s, c) => s.hits >= 10 },
+    { id: 'die_5_6', emoji: '😨', name: 'Último Suspiro', desc: 'Ficou faltando só um disparo (5/6).', check: (s, c) => c.didDodgeLastShotBefore },
     { id: 'massacre_3_deaths', emoji: '🩸', name: 'Banho de Sangue', desc: '3 ou mais morreram num massacre.', check: (s, c) => c.isMassacre && c.massacreDeaths >= 3 },
-    { id: 'untouchable', emoji: '⚖️', name: 'O Intocável', desc: 'Ganhou tendo sido protegido na rodada final.', check: (s, c) => c.wasProtectedWinner },
-    { id: 'chaos_survivor', emoji: '🌪️', name: 'Caos Total', desc: 'Sobreviveu massacre com arma na 5ª câmara.', check: (s, c) => c.chaosSurvivor },
-    { id: 'cat_lives', emoji: '🐈', name: 'Sete Vidas', desc: 'Acumulou 70 sobrevivências.', check: (s, c) => s.dodges >= 70 },
-    { id: 'vip_client', emoji: '🤠', name: 'Cliente VIP', desc: 'Jogou 20 partidas completas.', check: (s, c) => s.matches >= 20 }
+    { id: 'chaos_luck', emoji: '🍀', name: 'Sorte no Caos', desc: 'Faltando dois disparos para morrer acertou outro jogador.', check: (s, c) => c.chaosLuckHit },
+
+    // --- OCULTAS ---
+    { id: 'die_1_6', emoji: '⏱️', name: 'Speedrun do Além', desc: 'Morreu no primeiro disparo.', isHidden: true, check: (s, c) => c.diedOnShot === 1 },
+    { id: 'cat_lives', emoji: '🐈', name: 'Sete Vidas', desc: 'Acumulou 70 sobrevivências.', isHidden: true, check: (s, c) => s.dodges >= 70 },
+    { id: 'win_last_shot', emoji: '😎', name: 'Um pé na cova', desc: 'Venceu por um triz (5/6).', isHidden: true, check: (s, c) => c.didWinLastShotBefore && s.wins >= 1 },
+    { id: 'win_streak_3', emoji: '🔥', name: 'Imorrível', desc: 'Ganhou 3 partidas seguidas.', isHidden: true, check: (s, c) => s._meta.winStreak >= 3 },
+    { id: 'no_shot_win', emoji: '🤖', name: 'Tá de Hack', desc: 'Venceu sem disparar (0/6).', isHidden: true, check: (s, c) => s.wins >= 1 && s.dodges === 0 && s.hits === 0 },
+    { id: 'untouchable', emoji: '⚖️', name: 'O Intocável', desc: 'Ganhou tendo sido protegido na rodada final.', isHidden: true, check: (s, c) => c.wasProtectedWinner },
+    { id: 'king_table', emoji: '👑', name: 'Rei da Mesa', desc: 'Ganhou 20 ou mais partidas.', isHidden: true, check: (s, c) => s.wins >= 20 },
+    { id: 'legend_legends', emoji: '🧙‍♂️', name: 'Lenda das Lendas', desc: 'Ganhou 50 ou mais partidas.', isHidden: true, check: (s, c) => s.wins >= 50 },
+    { id: 'dreaming_beyond', emoji: '😭', name: 'Estão Deixando a Gente Sonhar... No Além', desc: 'Primeiro a morrer três vezes seguidas.', isHidden: true, check: (s, c) => s._meta.dieStreak >= 3 },
+    { id: 'die_stubborn', emoji: '☠️', name: 'Morreu de Teimoso', desc: 'Morreu na última bala (6/6).', isHidden: true, check: (s, c) => c.diedOnShot === 6 },
+    { id: 'die_50', emoji: '😭', name: 'Não estou suportando mais', desc: 'Morreu 50 ou mais vezes.', isHidden: true, check: (s, c) => s.hits >= 50 },
+    { id: 'die_100', emoji: '🪦', name: 'Veterano do Além', desc: 'Morreu 100 ou mais vezes.', isHidden: true, check: (s, c) => s.hits >= 100 },
+    { id: 'saint_intern', emoji: '😇', name: 'O Santo era Estagiário', desc: 'Morreu na segunda bala (2/6).', isHidden: true, check: (s, c) => c.diedOnShot === 2 },
+    { id: 'public_enemy', emoji: '🎯', name: 'Inimigo Público nº 1', desc: 'Sobreviveu ao Caos sendo alvo de 3 ou mais jogadores.', isHidden: true, check: (s, c) => c.publicEnemySurvived },
+    { id: 'devil_listener', emoji: '😈', name: 'Deu ouvido ao mau', desc: 'Atirou em quem o Diabo mandou.', isHidden: true, check: (s, c) => c.listenedToDevil },
+    { id: 'hope_last', emoji: '📉', name: 'A Esperança é a última que morre... Você não.', desc: 'Sobreviveu ao caos na 5/6, mas morreu logo em seguida.', isHidden: true, check: (s, c) => c.hopeLastDies },
+    { id: 'zombie_bar', emoji: '🧟', name: 'Zumbi do Bar', desc: 'Jogou 50 ou mais, mas ganhou menos de 5.', isHidden: true, check: (s, c) => s.matches >= 50 && s.wins < 5 },
+    { id: 'me_and_you', emoji: '💞', name: 'Agora sou eu e você meu gostoso!', desc: 'Quando os dois se miram e morrem.', isHidden: true, check: (s, c) => c.mutualChaosDeath }
 ];
 
 /* --- AUDIO --- */
@@ -611,7 +857,8 @@ let STATE = {
     game: { 
         active: false, players: [], turnIndex: 0, mesaCard: 'A', mesaShots: 0, 
         narrator: null, isShooting: false, isMassacre: false, protectedIdx: null, 
-        lastProtectedIdx: null, roundUnlocks: [], deathLinesDeck: [], deathLineIdx: 0, massacreMode: true
+        lastProtectedIdx: null, roundUnlocks: [], deathLinesDeck: [], deathLineIdx: 0, massacreMode: true, chaosMode: false,
+        chaos: { active: false, queue: [], currentPickIdx: 0, targets: {}, votes: {}, devilTarget: null }
     }
 };
 
@@ -625,15 +872,16 @@ const Logic = {
         return { name, perfil: perfilFixo, alive: true, shotsTaken: 0, gun: { chamber: 0, bullet: Math.floor(Math.random() * 6) }, lines: { before: 0, afterSurvive: 0 } };
     },
     rotateTable(forceNext = false) {
-        const order = ['K','Q','A'];
-        if (forceNext || STATE.game.mesaShots >= 3) {
-            let idx = order.indexOf(STATE.game.mesaCard);
-            STATE.game.mesaCard = order[(idx + 1) % 3];
-            STATE.game.mesaShots = 0;
-            return true;
-        }
-        return false;
-    },
+    const order = ['K','Q','A']; 
+    if (forceNext || STATE.game.mesaShots >= 3) {
+        let idx = order.indexOf(STATE.game.mesaCard);
+        if(idx === -1) idx = 0;
+        STATE.game.mesaCard = order[(idx + 1) % order.length];
+        STATE.game.mesaShots = 0;
+        return true;
+    }
+    return false;
+},
     shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -668,6 +916,14 @@ const App = {
     init() {
         this.renderSetup();
         if (STATE.slots.filter(Boolean).length === 0) STATE.slots = [null,null,null,null,null,null];
+        
+        // Verifica primeiro acesso
+        if (!localStorage.getItem('mentiroso_visited')) {
+            View.showModal("BEM-VINDO!", "Como é sua primeira vez, recomendamos ler as regras antes de começar.", [
+                { text: "LER REGRAS", class: "primary", action: () => { View.closeModal(); App.goTo('rules'); localStorage.setItem('mentiroso_visited', 'true'); } },
+                { text: "JÁ SEI JOGAR", class: "secondary", action: () => { View.closeModal(); localStorage.setItem('mentiroso_visited', 'true'); } }
+            ]);
+        }
     },
     goTo(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -680,12 +936,59 @@ const App = {
     },
     toggleMassacreConfig() {
         const sw = document.getElementById('massacre-toggle');
+        const chaosSw = document.getElementById('chaos-toggle');
+        const count = STATE.slots.filter(Boolean).length;
+
+        if (count >= 6) {
+            // Regra 1: Pelo menos um deve estar ligado.
+            if (!sw.checked && !chaosSw.checked) {
+                chaosSw.checked = true; // Se desligou massacre e caos estava off, liga caos
+                STATE.game.chaosMode = true;
+            }
+        } else if (count <= 4) {
+            // Regra 2: Exclusivo.
+            if (sw.checked && chaosSw.checked) {
+                chaosSw.checked = false; // Se ligou massacre, desliga caos
+                STATE.game.chaosMode = false;
+            }
+        }
+
         STATE.game.massacreMode = sw.checked;
-        this.renderSetup();
+        this.renderSetup(); // Re-render para atualizar visual
         
         if (sw.checked) {
             const t = document.getElementById('systemToast');
             t.textContent = "O Valete entrou na festa. Dancem 🔥";
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 1500);
+        }
+    },
+    // Nova função: Controle do Modo Caos
+    toggleChaosConfig() {
+        const sw = document.getElementById('chaos-toggle');
+        const massSw = document.getElementById('massacre-toggle');
+        const count = STATE.slots.filter(Boolean).length;
+
+        if (count >= 6) {
+            // Regra 1: Pelo menos um deve estar ligado.
+            if (!sw.checked && !massSw.checked) {
+                massSw.checked = true; // Se desligou caos e massacre estava off, liga massacre
+                STATE.game.massacreMode = true;
+            }
+        } else if (count <= 4) {
+            // Regra 2: Exclusivo.
+            if (sw.checked && massSw.checked) {
+                massSw.checked = false; // Se ligou caos, desliga massacre
+                STATE.game.massacreMode = false;
+            }
+        }
+
+        STATE.game.chaosMode = sw.checked;
+        this.renderSetup(); // Re-render para atualizar visual
+        
+        if (sw.checked) {
+            const t = document.getElementById('systemToast');
+            t.textContent = "O Caos está liberado 😈";
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 1500);
         }
@@ -696,12 +999,16 @@ const App = {
         const filled = STATE.slots.filter(Boolean).length;
         
         const massacreSwitch = document.getElementById('massacre-toggle');
-        if (filled === 6) {
-            massacreSwitch.checked = true; massacreSwitch.disabled = true; STATE.game.massacreMode = true;
-        } else {
-            massacreSwitch.disabled = false;
+        const chaosSwitch = document.getElementById('chaos-toggle');
+        
+        // Atualiza estado visual base
+        massacreSwitch.checked = STATE.game.massacreMode;
+        chaosSwitch.checked = STATE.game.chaosMode;
+
+        // Se por acaso entrar num estado inválido inicial, corrige silenciosamente
+        if (filled >= 6 && !STATE.game.massacreMode && !STATE.game.chaosMode) {
+            STATE.game.massacreMode = true; massacreSwitch.checked = true;
         }
-        STATE.game.massacreMode = massacreSwitch.checked;
 
         const slotsToShow = Math.min(6, Math.max(2, filled + 1));
         for (let i=0;i<slotsToShow;i++) {
@@ -714,8 +1021,8 @@ const App = {
             } else {
                 div.innerHTML = `<span class="slot-name">${name}</span>
                                  <div style="display:flex; gap:4px;">
-                                     ${i > 0 ? `<button class="tiny-btn bg-blue" onclick="App.moveSlot(${i}, -1)">▲</button>` : ''}
-                                     ${i < filled-1 ? `<button class="tiny-btn bg-blue" onclick="App.moveSlot(${i}, 1)">▼</button>` : ''}
+                                     <button class="tiny-btn bg-blue" onclick="App.moveSlot(${i}, -1)" style="${i === 0 ? 'visibility:hidden' : ''}">▲</button>
+                                     <button class="tiny-btn bg-blue" onclick="App.moveSlot(${i}, 1)" style="${i >= filled-1 ? 'visibility:hidden' : ''}">▼</button>
                                      <button class="tiny-btn bg-red" onclick="App.clearSlot(${i})">X</button>
                                  </div>`;
             }
@@ -750,7 +1057,7 @@ const App = {
             nameBtn.textContent = pName;
             nameBtn.onclick = () => { STATE.slots[this.currentSlot] = pName; this.goTo('setup'); this.renderSetup(); };
             
-            const delBtn = document.createElement('button'); delBtn.className = 'db-remove-btn'; delBtn.textContent = '🗑';
+            const delBtn = document.createElement('button'); delBtn.className = 'db-remove-btn'; delBtn.textContent = 'EXPULSAR';
             delBtn.onclick = () => this.confirmDeletePlayer(pName);
             
             row.appendChild(nameBtn); row.appendChild(delBtn); dbList.appendChild(row);
@@ -770,7 +1077,11 @@ const App = {
         }
         if (val && !STATE.db.includes(val)) {
             STATE.db.push(val); Storage.set('db', STATE.db); input.value = '';
-            this.renderDBList(); input.focus();
+            
+            // Seleciona direto e volta
+            STATE.slots[this.currentSlot] = val;
+            this.goTo('setup');
+            this.renderSetup();
         }
     },
     confirmOrder() {
@@ -787,10 +1098,33 @@ const App = {
         View.closeModal(); this.goTo('loading');
         const count = STATE.slots.filter(Boolean).length;
         const isM = STATE.game.massacreMode;
+        const isC = STATE.game.chaosMode;
         let info = "";
-        if (count <= 4) info = isM ? "<b>6</b> Reis, <b>6</b> Damas, <b>6</b> Ases, <b>1</b> Curinga e <b>1</b> Valete." : "<b>6</b> Reis, <b>6</b> Damas, <b>6</b> Ases e <b>2</b> Curingas.";
-        else if (count === 5) info = isM ? "<b>7</b> Reis, <b>7</b> Damas, <b>7</b> Ases, <b>2</b> Curingas e <b>1</b> Valete." : "<b>7</b> Reis, <b>7</b> Damas, <b>7</b> Ases e <b>3</b> Curingas.";
-        else info = "<b>8</b> Reis, <b>8</b> Damas, <b>8</b> Ases, <b>2</b> Curingas e <b>2</b> Valetes.";
+
+        // Até 4 Jogadores (20 cartas) - Modos são exclusivos aqui
+        if (count <= 4) {
+            const base = "<b>6</b> Reis, <b>6</b> Damas, <b>6</b> Ases";
+            if (isM) info = `${base}, <b>1</b> Coringa e <b>1</b> Valete.`;
+            else if (isC) info = `${base}, <b>1</b> Coringa e <b>1</b> Carta 8.`;
+            else info = `${base} e <b>2</b> Coringas.`;
+        } 
+        // 5 Jogadores (25 cartas)
+        else if (count === 5) {
+            const base = "<b>7</b> Reis, <b>7</b> Damas, <b>7</b> Ases";
+            if (isM && isC) info = `${base}, <b>1</b> Coringa, <b>1</b> Valete e <b>1</b> Carta 8.`;
+            else if (isM) info = `${base}, <b>2</b> Coringas e <b>1</b> Valete.`;
+            else if (isC) info = `${base}, <b>2</b> Coringas e <b>1</b> Carta 8.`;
+            else info = `${base} e <b>3</b> Coringas.`;
+        } 
+        // 6 Jogadores (30 cartas)
+        else {
+            const base = "<b>8</b> Reis, <b>8</b> Damas, <b>8</b> Ases";
+            if (isM && isC) info = `${base}, <b>2</b> Coringas, <b>1</b> Valete e <b>1</b> Carta 8.`;
+            else if (isM) info = `${base}, <b>2</b> Coringas e <b>2</b> Valetes.`;
+            else if (isC) info = `${base}, <b>2</b> Coringas e <b>2</b> Cartas 8.`;
+            else info = `${base} e <b>4</b> Coringas.`;
+        }
+
         document.getElementById('deck-config-info').innerHTML = info;
         setTimeout(() => { this.startIntro(); }, 4000);
     },
@@ -798,6 +1132,8 @@ const App = {
         const playersNames = STATE.slots.filter(Boolean);
         STATE.game.active = true; STATE.game.isShooting = false; STATE.game.isMassacre = false;
         STATE.game.protectedIdx = null; STATE.game.lastProtectedIdx = null; STATE.game.roundUnlocks = [];
+        STATE.game.chaos = { active: false, queue: [], currentPickIdx: 0, targets: {}, votes: {}, devilTarget: null };
+
         const perfisDisponiveis = Object.keys(CONFIG.perfis);
         for (let i = perfisDisponiveis.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -816,9 +1152,16 @@ const App = {
     },
     runRotationAnim(isIntro = false) {
         this.goTo('rotation');
-        AudioSys.play('intro'); 
+        // Ajuste Solicitado: Tocar musica intro somente na intro
+        if (isIntro) {
+            AudioSys.play('intro'); 
+        } else {
+            AudioSys.play('rotation'); 
+        }
+        
         const cardFace = document.getElementById('rot-card-front');
-        cardFace.style.backgroundImage = `url('${CONFIG.paths.img}${CONFIG.cards[STATE.game.mesaCard]}')`;
+        const imgName = CONFIG.cards[STATE.game.mesaCard] || 'card-back.png';
+        cardFace.style.backgroundImage = `url('${CONFIG.paths.img}${imgName}')`;
         const narratorElm = document.getElementById('rot-narrator');
         if (isIntro) {
             narratorElm.textContent = CONFIG.narradores[STATE.game.narrator].intro;
@@ -834,6 +1177,7 @@ const App = {
     },
     startGameScreen() {
         STATE.game.isShooting = false; STATE.game.isMassacre = false; this.duelMode = false;
+        STATE.game.chaos.active = false;
         this.goTo('game'); this.updateGameUI();
         const logBox = document.getElementById('game-log'); logBox.innerHTML = '';
         const narr = CONFIG.narradores[STATE.game.narrator];
@@ -845,10 +1189,251 @@ const App = {
         this.log(`🎲 ${pName} começa essa bagaça!`);
     },
     toggleDuelMode() {
-        if (STATE.game.isShooting) return;
+        if (STATE.game.isShooting || STATE.game.chaos.active) return;
         this.duelMode = !this.duelMode;
         this.renderPlayersList();
     },
+
+    /* --- LÓGICA DO MODO CAOS --- */
+    toggleChaosMode() {
+        if (STATE.game.isShooting || STATE.game.chaos.active) return;
+        
+        STATE.game.chaos.active = true;
+        STATE.game.isShooting = true; // Bloqueia outras ações
+        this.duelMode = false;
+
+        // Resetar estruturas
+        STATE.game.chaos.targets = {};
+        STATE.game.chaos.votes = {};
+        STATE.game.chaos.devilTarget = null;
+        
+        // Fila de atiradores: começa pelo turnIndex, depois roda a mesa
+        const players = STATE.game.players;
+        let queue = [];
+        let startIdx = STATE.game.turnIndex;
+        // Preenche a fila na ordem correta
+        for (let i = 0; i < players.length; i++) {
+            let idx = (startIdx + i) % players.length;
+            if (players[idx].alive) queue.push(idx);
+        }
+        STATE.game.chaos.queue = queue;
+        STATE.game.chaos.currentPickIdx = 0; // index na queue
+
+        this.renderPlayersList();
+        
+        // Diabo fala com delay
+        const devilMsg = `😈 ${CONFIG.diabo.intro}`;
+        document.getElementById('game-status').textContent = devilMsg;
+        this.log(devilMsg);
+
+        setTimeout(() => {
+            this.nextChaosPicker();
+        }, 2000);
+    },
+    
+    nextChaosPicker() {
+        const queue = STATE.game.chaos.queue;
+        const currentQueueIdx = STATE.game.chaos.currentPickIdx;
+
+        if (currentQueueIdx >= queue.length) {
+            // Todos escolheram
+            this.resolveChaos();
+            return;
+        }
+
+        const pickerIdx = queue[currentQueueIdx];
+        const pickerName = STATE.game.players[pickerIdx].name;
+
+        // Atualiza Texto de topo
+        document.getElementById('starter-info').innerHTML = `<span style="color:var(--chaos-light); text-shadow:0 0 5px var(--chaos)">★ <b>${pickerName}</b> escolha alguém para testar a sorte</span>`;
+        
+        // Sorteio 1: Escolhe o alvo da provocação (diferente do picker)
+        const targets = STATE.game.players.filter((p, i) => p.alive && i !== pickerIdx);
+        const randomTarget = targets[Math.floor(Math.random() * targets.length)];
+        
+        // Guarda quem o diabo mirou para as conquistas
+        STATE.game.chaos.devilTarget = randomTarget ? STATE.game.players.indexOf(randomTarget) : null;
+
+        // Sorteio 2: Escolhe a frase do diabo
+        const taunts = CONFIG.diabo.taunts;
+        let taunt = taunts[Math.floor(Math.random() * taunts.length)];
+        
+        // Substitui o nome
+        taunt = taunt.replace(/fulano/gi, randomTarget ? randomTarget.name : 'alguém');
+        
+        document.getElementById('game-status').textContent = taunt;
+
+        this.renderPlayersList();
+    },
+
+    handleChaosPick(targetIdx) {
+        const queue = STATE.game.chaos.queue;
+        const pickerRealIdx = queue[STATE.game.chaos.currentPickIdx];
+        
+        // Salva o voto
+        STATE.game.chaos.targets[pickerRealIdx] = targetIdx;
+        
+        // Incrementa contagem de votos no alvo para mudar emoji
+        STATE.game.chaos.votes[targetIdx] = (STATE.game.chaos.votes[targetIdx] || 0) + 1;
+
+        // Próximo
+        STATE.game.chaos.currentPickIdx++;
+        this.nextChaosPicker();
+    },
+
+    resolveChaos() {
+        document.getElementById('starter-info').innerHTML = "";
+        const devilMsg = CONFIG.diabo.outro;
+        document.getElementById('game-status').textContent = devilMsg;
+        this.log(devilMsg);
+        
+        // Renderiza lista final antes dos tiros (para mostrar todos os emojis de medo)
+        this.renderPlayersList();
+
+        setTimeout(() => {
+            // Sons de engatilhar (cock) escalonados
+            const players = STATE.game.players;
+            const shooters = STATE.game.chaos.queue;
+            
+            shooters.forEach((sIdx, i) => {
+                setTimeout(() => AudioSys.play('cock'), i * 100);
+            });
+
+            // Disparo simultâneo após o ultimo cock
+            setTimeout(() => {
+                // Alteração Lógica de Som: Verificar se alguém dispara antes de tocar o som
+                let anyBang = false;
+                shooters.forEach(sIdx => {
+                    const s = players[sIdx];
+                    if (s.gun.chamber === s.gun.bullet) anyBang = true;
+                });
+                
+                AudioSys.play(anyBang ? 'shot' : 'empty');
+
+                if (anyBang) {
+                    document.body.classList.add('shake-screen');
+                    setTimeout(() => document.body.classList.remove('shake-screen'), 500);
+                }
+
+                // Lógica de resolução
+                let deaths = [];
+                
+                shooters.forEach(shooterIdx => {
+                    const shooter = players[shooterIdx];
+                    // Verifica se atira
+                    const isBang = (shooter.gun.chamber === shooter.gun.bullet);
+                    const targetIdx = STATE.game.chaos.targets[shooterIdx];
+                    
+                    // Checa conquista: Deu ouvido ao mau (Atirou em quem o diabo mandou)
+                    if (targetIdx === STATE.game.chaos.devilTarget) {
+                        Logic.checkAchievements(shooter.name, { listenedToDevil: true }, true);
+                    }
+
+                    // Checa conquista: Sorte no Caos (Arma na 4+ e acertou outro)
+                    if (isBang && shooter.gun.chamber >= 4) {
+                        Logic.checkAchievements(shooter.name, { chaosLuckHit: true }, true);
+                    }
+
+                    if (isBang) {
+                        // O TIRO SAIU!
+                        
+                        // 1. Reseta o atirador (Mata, recarrega e gira)
+                        shooter.gun.chamber = 0;
+                        shooter.shotsTaken = 0; // Zera contador visual
+                        shooter.gun.bullet = Math.floor(Math.random() * 6); // Nova posição da bala
+
+                        // 2. Identifica o alvo e mata se ainda estiver vivo
+                        const target = players[targetIdx];
+                        
+                        // Se o alvo já não morreu por outro tiro nesse mesmo turno
+                        if (target.alive && !deaths.includes(target)) {
+                            deaths.push(target);
+                        }
+
+                        // Checa Conquista: Agora sou eu e você (Mutuo)
+                        // Se A atira em B, B atira em A, e ambos morrem.
+                        const bIdx = targetIdx;
+                        // Verifica se B atirou em A (shooterIdx) e se o tiro de B saiu
+                        if (STATE.game.chaos.targets[bIdx] === shooterIdx) {
+                            const shooterB = players[bIdx];
+                            if (shooterB.gun.chamber === shooterB.gun.bullet) {
+                                // Ambos se mataram
+                                Logic.checkAchievements(shooter.name, { mutualChaosDeath: true }, false);
+                                Logic.checkAchievements(target.name, { mutualChaosDeath: true }, false);
+                            }
+                        }
+
+                    } else {
+                        // O TIRO FALHOU (CLICK)
+                        shooter.gun.chamber++;
+                        shooter.shotsTaken++; // Sobe contador visual
+                    }
+                });
+
+                // Processa as mortes
+                deaths.forEach(d => {
+                    d.alive = false;
+                    if (!STATE.stats[d.name]) STATE.stats[d.name] = { wins:0, hits:0, dodges:0 };
+                    STATE.stats[d.name].hits++;
+                    STATE.stats[d.name]._meta = { ...STATE.stats[d.name]._meta, dieStreak: (STATE.stats[d.name]._meta?.dieStreak || 0) + 1, winStreak: 0 };
+                    // Como é caos, o diedOnShot pega o valor atual (que não mudou para quem morreu, apenas para quem atirou e errou)
+                    Logic.checkAchievements(d.name, { diedOnShot: d.shotsTaken }, true); 
+                });
+
+                // Checa conquista Inimigo Público (Alvo de 3+ e sobreviveu)
+                Object.keys(STATE.game.chaos.votes).forEach(tIdxStr => {
+                    const tIdx = parseInt(tIdxStr);
+                    const p = players[tIdx];
+                    if (p.alive && STATE.game.chaos.votes[tIdx] >= 3) {
+                        Logic.checkAchievements(p.name, { publicEnemySurvived: true }, true);
+                    }
+                });
+                
+                // Incrementa contador da mesa (apenas 1 para a rodada de caos)
+                STATE.game.mesaShots++;
+
+                // Logs e Falas Finais
+                this.renderPlayersList();
+                
+                let resultMsg = "";
+                const rConf = CONFIG.diabo.results;
+                if (deaths.length === 0) {
+                    // Sorteia frase se ninguém morrer
+                    resultMsg = rConf.none[Math.floor(Math.random() * rConf.none.length)];
+                }
+                else if (deaths.length < 3) resultMsg = rConf.one[0];
+                else resultMsg = rConf.many[0];
+
+                document.getElementById('game-status').textContent = resultMsg;
+                this.log(resultMsg);
+                if (deaths.length > 0) this.log(`💀 Mortos no Caos: ${deaths.map(d=>d.name).join(', ')}`);
+
+                // Finalização
+                setTimeout(() => {
+                    // Limpa estado caos
+                    STATE.game.chaos.active = false;
+                    STATE.game.isShooting = false;
+                    STATE.game.chaos.votes = {};
+
+                    const alive = players.filter(p => p.alive);
+                    if (alive.length <= 1) {
+                         this.checkGameFlow(0); // Força check de vitória
+                    } else {
+                        // Novo sorteio para quem começa as cartas
+                        const nextStart = alive[Math.floor(Math.random() * alive.length)];
+                        STATE.game.turnIndex = players.indexOf(nextStart);
+                        this.updateGameUI();
+                        this.log(`🎲 O destino escolheu ${nextStart.name} para recomeçar.`);
+                    }
+                }, 4000);
+
+            }, 1000 + (shooters.length * 100));
+
+        }, 2000); // tempo de leitura da frase final do diabo
+    },
+
+    /* --- FIM LÓGICA MODO CAOS --- */
+
     triggerMassacre(protectedIdx) {
         if (STATE.game.isShooting) return;
         STATE.game.isShooting = true; STATE.game.isMassacre = true; STATE.game.protectedIdx = protectedIdx;
@@ -933,6 +1518,9 @@ const App = {
         document.getElementById('game-status').textContent = `${emoji} ${fraseBefore}`;
         this.log(`${emoji} ${p.name}: ${fraseBefore}`);
 
+        // Capture state before shot for "Hope Last Dies" check
+        const chamberBefore = p.gun.chamber;
+
         setTimeout(() => {
             AudioSys.play('cock'); 
             setTimeout(() => {
@@ -953,7 +1541,20 @@ const App = {
                     if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
                     STATE.stats[p.name].hits++;
                     STATE.stats[p.name]._meta = { ...STATE.stats[p.name]._meta, dieStreak: (STATE.stats[p.name]._meta?.dieStreak || 0) + 1, winStreak: 0 };
+                    
+                    // Checa conquistas de morte
                     const events = { diedOnShot: p.shotsTaken };
+                    
+                    // A Esperança é a última que morre...
+                    // Se morreu na bala 1 (chamber 0), e antes (chamberBefore) veio de um reset após 5?
+                    // Como a arma reseta apenas se disparar, isso não se aplica aqui no modo normal de roleta.
+                    // Mas se ele sobreviveu ao CAOS com 5/6 (chamber 5), a arma NÃO reseta no caos se ele não atirar.
+                    // Se ele atirou e errou no caos, chamber foi pra 5+1 -> 6 (impossivel, roleta 0-5).
+                    // Vamos considerar a lógica: Sobreviveu ao caos com 5/6 significa que ele estava na 5, clickou (foi pra 0 na lógica ciclica ou reset manual?).
+                    // No código do Chaos: "if (!isBang) shooter.gun.chamber++;".
+                    // Se chamber era 5, vira 6. Na roleta real volta a 0? O código não trata "chamber % 6".
+                    // Vamos assumir que se chamber > 5, reseta.
+                    
                     Logic.checkAchievements(p.name, events, true);
                     setTimeout(() => { this.checkGameFlow(pIndex); }, 4000);
                 } else {
@@ -966,7 +1567,18 @@ const App = {
                         this.log(`${emoji} ${p.name}: ${fraseAfter}`);
                         if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
                         STATE.stats[p.name].dodges++;
-                        Logic.checkAchievements(p.name, { didDodgeLastShotBefore: (p.gun.chamber === 5) }, true);
+                        
+                        // Checa Último Suspiro (Sobreviveu ao chamber 5)
+                        // Se chamber agora é 6 (pq incrementou), então sobreviveu ao 5.
+                        // Ou se chamber era 5.
+                        // Pela lógica: if (!isDeath) p.gun.chamber++;
+                        // Se p.gun.chamber é 5 AGORA, significa que ele sobreviveu ao 4.
+                        // Se p.gun.chamber é 6, sobreviveu ao 5.
+                        Logic.checkAchievements(p.name, { didDodgeLastShotBefore: (p.gun.chamber === 6 || p.gun.chamber === 5) }, true);
+                        
+                        // Safety reset chamber if > 5
+                        if (p.gun.chamber > 5) p.gun.chamber = 0; 
+
                         setTimeout(() => { this.checkGameFlow(pIndex); }, 3000);
                     }, 1500);
                 }
@@ -990,7 +1602,12 @@ const App = {
                 
                 const winnerIdx = STATE.game.players.indexOf(winner);
                 const wasProtected = (STATE.game.lastProtectedIdx === winnerIdx);
-                const winEvents = { winStreak: STATE.stats[winner.name]._meta.winStreak, wasProtectedWinner: wasProtected };
+                
+                // Conquista: Um pé na cova (Ganhou com chamber alto)
+                // Se chamber >= 5.
+                const didWinLastShotBefore = (winner.gun.chamber >= 5);
+
+                const winEvents = { winStreak: STATE.stats[winner.name]._meta.winStreak, wasProtectedWinner: wasProtected, didWinLastShotBefore: didWinLastShotBefore };
                 Logic.checkAchievements(winner.name, winEvents, true);
                 
                 const narrConf = CONFIG.narradores[STATE.game.narrator];
@@ -1027,7 +1644,8 @@ const App = {
     updateGameUI() {
         document.getElementById('game-mesa-info').textContent = `Mesa de ${STATE.game.mesaCard}`;
         const cardDisplay = document.getElementById('game-mesa-card');
-        cardDisplay.style.backgroundImage = `url('${CONFIG.paths.img}${CONFIG.cards[STATE.game.mesaCard]}')`;
+        const imgName = CONFIG.cards[STATE.game.mesaCard] || 'card-back.png';
+        cardDisplay.style.backgroundImage = `url('${CONFIG.paths.img}${imgName}')`;
         document.getElementById('game-status').textContent = "";
         document.getElementById('game-narrator-area').textContent = "";
         
@@ -1038,18 +1656,63 @@ const App = {
     renderPlayersList() {
         const list = document.getElementById('game-players-list'); list.innerHTML = '';
         const btnDuel = document.getElementById('btn-duel-toggle');
-        if (STATE.game.massacreMode) btnDuel.style.display = 'block'; else btnDuel.style.display = 'none';
+        const btnChaos = document.getElementById('btn-chaos-toggle');
+        
+        // Controles de visibilidade dos botões de modo
+        if (!STATE.game.isShooting && !STATE.game.chaos.active) {
+            btnDuel.style.display = STATE.game.massacreMode ? 'block' : 'none';
+            // Ajuste: Botão Caos só aparece se ativado no setup
+            btnChaos.style.display = STATE.game.chaosMode ? 'block' : 'none';
+        } else {
+            // Se estiver em modo caos ativo, esconde
+            if (STATE.game.chaos.active) {
+                btnDuel.style.display = 'none';
+                btnChaos.style.display = 'none';
+            }
+        }
+
+        const isChaosSel = STATE.game.chaos.active;
+        let pickerIdx = -1;
+        if (isChaosSel && STATE.game.chaos.queue.length > 0 && STATE.game.chaos.currentPickIdx < STATE.game.chaos.queue.length) {
+            pickerIdx = STATE.game.chaos.queue[STATE.game.chaos.currentPickIdx];
+        }
 
         STATE.game.players.forEach((p, idx) => {
             const isStarter = (idx === STATE.game.turnIndex);
+            
+            // Lógica de Emoji no Caos
+            let displayEmoji = p.alive ? CONFIG.emojis[p.perfil] : '💀';
+            if (p.alive && isChaosSel) {
+                const votes = STATE.game.chaos.votes[idx] || 0;
+                if (votes === 1) displayEmoji = "😟";
+                else if (votes === 2) displayEmoji = "😨";
+                else if (votes >= 3) displayEmoji = "😱";
+            }
+
+            // Destaque do atirador no Caos
+            const isChaosPicker = (idx === pickerIdx);
+            
             const div = document.createElement('div');
-            div.className = `player-card ${!p.alive ? 'dead' : ''} ${isStarter ? 'starter' : ''}`;
+            div.className = `player-card ${!p.alive ? 'dead' : ''} ${isStarter && !isChaosSel ? 'starter' : ''} ${isChaosPicker ? 'chaos-highlight' : ''}`;
             
             let btnHtml = '';
             if (!p.alive) {
                 btnHtml = '<span class="shot-glass" style="display:none;"></span>';
             } else {
-                if (STATE.game.isMassacre) {
+                if (isChaosSel) {
+                    // Modo Caos
+                    if (isChaosPicker) {
+                        btnHtml = `<button class="western-btn small" style="background:#444; color:#fff;" disabled>🔫 Atirador</button>`;
+                    } else {
+                        // Se for um alvo válido (não é ele mesmo)
+                        if (pickerIdx !== -1) {
+                             btnHtml = `<button class="western-btn btn-aim small" onclick="App.handleChaosPick(${idx})">🎯 Mirar</button>`;
+                        } else {
+                             // Fase de resolução, sem botões
+                             btnHtml = `<span style="font-size:1.5rem">🥶</span>`;
+                        }
+                    }
+                } else if (STATE.game.isMassacre) {
                     if (idx === STATE.game.protectedIdx) btnHtml = `<button class="western-btn btn-protect small" disabled>🕊️ Protegido</button>`;
                     else btnHtml = `<button class="western-btn btn-fire small" disabled>🔥 FOGO</button>`;
                 } else if (this.duelMode) {
@@ -1060,7 +1723,7 @@ const App = {
             }
             div.innerHTML = `
                 <div style="display:flex; align-items:center;">
-                    <span class="emoji-big">${p.alive ? CONFIG.emojis[p.perfil] : '💀'}</span>
+                    <span class="emoji-big">${displayEmoji}</span>
                     <div><div style="font-weight:bold; font-size:1.3rem">${p.name}</div></div>
                 </div>
                 <div style="display:flex; align-items:center; gap: 10px;">
