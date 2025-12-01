@@ -1,227 +1,227 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Mentiroso do Bar</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Rye&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="src/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Mentiroso do Bar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Rye&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/css/style.css">
 </head>
 <body>
 
 <div id="app-container">
-    <div id="systemToast" class="simple-toast"></div>
+    <div id="systemToast" class="simple-toast"></div>
 
-    <div id="customModal" class="modal-overlay">
-        <div class="wanted-poster">
-            <h2 id="modalTitle" style="border-bottom: 2px solid #000; padding-bottom:5px;">AVISO</h2>
-            <p id="modalMessage" style="font-size: 1.1rem; margin: 15px 0;">Mensagem aqui</p>
-            <div id="modalActions" style="display: flex; gap: 10px; justify-content: center;"></div>
-        </div>
-    </div>
+    <div id="customModal" class="modal-overlay">
+        <div class="wanted-poster">
+            <h2 id="modalTitle" style="border-bottom: 2px solid #000; padding-bottom:5px;">AVISO</h2>
+            <p id="modalMessage" style="font-size: 1.1rem; margin: 15px 0;">Mensagem aqui</p>
+            <div id="modalActions" style="display: flex; gap: 10px; justify-content: center;"></div>
+        </div>
+    </div>
 
-    <div id="achievementToast" class="achievement-toast">
-        <span id="achEmoji" style="font-size: 2rem;">🏆</span>
-        <div style="text-align: left;">
-            <div id="achPlayerName" style="color: var(--gold); font-weight: bold; font-size: 0.9rem;">JOGADOR</div>
-            <div style="font-size: 0.8rem; text-transform: uppercase;">Desbloqueou:</div>
-            <div id="achName" style="font-weight: bold;">Nome da Conquista</div>
-        </div>
-    </div>
+    <div id="achievementToast" class="achievement-toast">
+        <span id="achEmoji" style="font-size: 2rem;">🏆</span>
+        <div style="text-align: left;">
+            <div id="achPlayerName" style="color: var(--gold); font-weight: bold; font-size: 0.9rem;">JOGADOR</div>
+            <div style="font-size: 0.8rem; text-transform: uppercase;">Desbloqueou:</div>
+            <div id="achName" style="font-weight: bold;">Nome da Conquista</div>
+        </div>
+    </div>
 
-    <div id="screen-start" class="screen active">
-        <div class="paper-panel text-center">
-            <h1 style="font-size: 2.2rem; color: #3e2723; margin-bottom: 5px;">O MENTIROSO</h1>
-            <h2 style="font-size: 1.5rem; color: var(--blood);">DO BAR</h2>
-            <p style="font-style: italic; margin-top: 10px;">"A verdade liberta, mas a mentira embebeda."</p>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-            <button class="western-btn primary" onclick="App.goTo('setup')">JOGAR</button>
-            <button class="western-btn secondary" onclick="App.goTo('stats')">ESTATÍSTICAS</button>
-            <button class="western-btn secondary" onclick="App.goTo('rules')">REGRAS</button>
-        </div>
-    </div>
+    <div id="screen-start" class="screen active">
+        <div class="paper-panel text-center">
+            <h1 style="font-size: 2.2rem; color: #3e2723; margin-bottom: 5px;">O MENTIROSO</h1>
+            <h2 style="font-size: 1.5rem; color: var(--blood);">DO BAR</h2>
+            <p style="font-style: italic; margin-top: 10px;">"A verdade liberta, mas a mentira embebeda."</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="western-btn primary" onclick="App.goTo('setup')">JOGAR</button>
+            <button class="western-btn secondary" onclick="App.goTo('stats')">ESTATÍSTICAS</button>
+            <button class="western-btn secondary" onclick="App.goTo('rules')">REGRAS</button>
+        </div>
+    </div>
 
-        <div id="screen-rules" class="screen">
-        <div class="paper-panel">
-            <h2 class="text-center" style="border-bottom: 2px solid #000;">COMO JOGAR</h2>
-            <div class="scroll-content" style="font-size: 0.95rem; line-height: 1.5;">
-                <p><b>1. A Ordem:</b> Calma que aqui é uma bagunça organizada. Coloque os jogadores no sentido anti-horário, ou seja, o próximo jogador é da sua direta (a mão que você escreve, meu amor 😘):</p>
-                <p><b>2. O Baralho:</b> Cada jogador recebe 5 cartas. Usem um baralho físico composto por:</p>
-                <ul>
-                    <li><b>Até 4 jogadores - 20 cartas:<br></b> 6&nbsp;Reis, 6&nbsp;Damas, 6&nbsp;Ases e 2&nbsp;Coringas<br>Ou troca um coringa por 1 especial (Opcional).</li>
-                    <li><b>5 jogadores - 25 cartas:<br></b> 7&nbsp;Reis, 7&nbsp;Damas, 7&nbsp;Ases e 3&nbsp;Coringas. <br> até 2&nbsp;especiais* (Opcionais).</li>
-                    <li><b>6 jogadores - 30 cartas:<br></b> 8&nbsp;Reis, 8&nbsp;Damas, 8&nbsp;Ases, 4&nbsp;Coringas e 2&nbsp;especiais<br> Ou 2&nbsp;Coringas + 4 especiais.</li>
-                </ul>
-                <p><b>3. A Rodada:</b> O jogo sorteia a carta da mesa (ex: Rei). O jogador da vez deve jogar de 1 a 3 cartas viradas para baixo e anunciar: "Um Rei", "Dois Reis", etc.</p>
-                <p><b>4. O Coringa:</b> Esse vale para qualquer carta da mesa.<br>Vai salvar sua vida.<br> <b>Obs: </b>Nos modos especiais, você substitui um coringa pela carta do modo especial escolhido.<br> Por exemplo, Valete ou carta 8.</p>
-                <p><b>5. O Blefe:</b> O jogador antes de você pode blefar ou falar a verdade. Se você acreditar nele anuncie sua jogada colocando suas por cima. Mas se duvida grite "MENTIRA!" desafiando ele a revelar as cartas.<br> <b>OBS:</b> Apenas o jogador seguinte pode desafiar o anterior.</p>
-                <p><b>6. O Desafio:</b> 
-                    <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
-                    <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
-                </p>
-                <p><b>7. O Disparo:</b> É uma roleta russa. Ouviu o clique? Sorte sua. Ouviu o tiro? Fim de jogo. A cada puxada de gatilho, o baralho é misturado novamente e a vez passa para o companheiro à direita. Por isso, os jogadores ficam na ordem desde a seleção.</p>
-                <p><b>8. Quem paga a conta:</b> Essa parte é opcional cada jogador eliminado pode pagar uma prenda ou como estão em um bar...</p>
-                <div style="text-align: center; margin: 15px 0; border-top: 1px dashed #555; border-bottom: 1px dashed #555; padding: 5px;">
-                    <h3 style="margin: 0; color: var(--blood);">ESPECIAIS</h3>
-                </div>
-                <p><b>9. Modo Massacre:</b> Nesse modo, o Valete (J) toca o terror. Se ele for jogado e alguém desafiar TODOS na mesa entram no duelo exceto quem jogou o Valete.</p>
-                <p><b>10. Modo Caos:</b> Jogou um 8 e duvidaram? O Caos reina. É um tiroteio generalizado onde cada um escolhe seu alvo. O mal vai tentar te influenciar, mas a decisão é sua.</p>
-            </div>
-        </div>
-        <button class="western-btn primary" onclick="App.exitRules()">VOLTAR</button>
-    </div>
+        <div id="screen-rules" class="screen">
+        <div class="paper-panel">
+            <h2 class="text-center" style="border-bottom: 2px solid #000;">COMO JOGAR</h2>
+            <div class="scroll-content" style="font-size: 0.95rem; line-height: 1.5;">
+                <p><b>1. A Ordem:</b> Calma que aqui é uma bagunça organizada. Coloque os jogadores no sentido anti-horário, ou seja, o próximo jogador é da sua direta (a mão que você escreve, meu amor 😘):</p>
+                <p><b>2. O Baralho:</b> Cada jogador recebe 5 cartas. Usem um baralho físico composto por:</p>
+                <ul>
+                    <li><b>Até 4 jogadores - 20 cartas:<br></b> 6&nbsp;Reis, 6&nbsp;Damas, 6&nbsp;Ases e 2&nbsp;Coringas<br>Ou troca um coringa por 1 especial (Opcional).</li>
+                    <li><b>5 jogadores - 25 cartas:<br></b> 7&nbsp;Reis, 7&nbsp;Damas, 7&nbsp;Ases e 3&nbsp;Coringas. <br> até 2&nbsp;especiais* (Opcionais).</li>
+                    <li><b>6 jogadores - 30 cartas:<br></b> 8&nbsp;Reis, 8&nbsp;Damas, 8&nbsp;Ases, 4&nbsp;Coringas e 2&nbsp;especiais<br> Ou 2&nbsp;Coringas + 4 especiais.</li>
+                </ul>
+                <p><b>3. A Rodada:</b> O jogo sorteia a carta da mesa (ex: Rei). O jogador da vez deve jogar de 1 a 3 cartas viradas para baixo e anunciar: "Um Rei", "Dois Reis", etc.</p>
+                <p><b>4. O Coringa:</b> Esse vale para qualquer carta da mesa.<br>Vai salvar sua vida.<br> <b>Obs: </b>Nos modos especiais, você substitui um coringa pela carta do modo especial escolhido.<br> Por exemplo, Valete ou carta 8.</p>
+                <p><b>5. O Blefe:</b> O jogador antes de você pode blefar ou falar a verdade. Se você acreditar nele anuncie sua jogada colocando suas por cima. Mas se duvida grite "MENTIRA!" desafiando ele a revelar as cartas.<br> <b>OBS:</b> Apenas o jogador seguinte pode desafiar o anterior.</p>
+                <p><b>6. O Desafio:</b> 
+                    <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
+                    <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
+                </p>
+                <p><b>7. O Disparo:</b> É uma roleta russa. Ouviu o clique? Sorte sua. Ouviu o tiro? Fim de jogo. A cada puxada de gatilho, o baralho é misturado novamente e a vez passa para o companheiro à direita. Por isso, os jogadores ficam na ordem desde a seleção.</p>
+                <p><b>8. Quem paga a conta:</b> Essa parte é opcional cada jogador eliminado pode pagar uma prenda ou como estão em um bar...</p>
+                <div style="text-align: center; margin: 15px 0; border-top: 1px dashed #555; border-bottom: 1px dashed #555; padding: 5px;">
+                    <h3 style="margin: 0; color: var(--blood);">ESPECIAIS</h3>
+                </div>
+                <p><b>9. Modo Massacre:</b> Nesse modo, o Valete (J) toca o terror. Se ele for jogado e alguém desafiar TODOS na mesa entram no duelo exceto quem jogou o Valete.</p>
+                <p><b>10. Modo Caos:</b> Jogou um 8 e duvidaram? O Caos reina. É um tiroteio generalizado onde cada um escolhe seu alvo. O mal vai tentar te influenciar, mas a decisão é sua.</p>
+            </div>
+        </div>
+        <button class="western-btn primary" onclick="App.exitRules()">VOLTAR</button>
+    </div>
 
-    <div id="screen-setup" class="screen">
-        <div class="paper-panel">
-            <h2 class="text-center">JOGADORES</h2>
-            <p class="text-center" style="font-size: 0.9rem;">Os jogadores devem estar organizados no sentido anti-horário.</p>
-            <div id="slots-container" class="mt-2"></div>
+    <div id="screen-setup" class="screen">
+        <div class="paper-panel">
+            <h2 class="text-center">JOGADORES</h2>
+            <p class="text-center" style="font-size: 0.9rem;">Os jogadores devem estar organizados no sentido anti-horário.</p>
+            <div id="slots-container" class="mt-2"></div>
 
-            <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
-                <div class="switch-container" style="margin:0;">
-                    <span class="massacre-label">MASSACRE</span>
-                    <label class="switch">
-                        <input type="checkbox" id="massacre-toggle" checked onchange="App.toggleMassacreConfig()">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
+            <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                <div class="switch-container" style="margin:0;">
+                    <span class="massacre-label">MASSACRE</span>
+                    <label class="switch">
+                        <input type="checkbox" id="massacre-toggle" checked onchange="App.toggleMassacreConfig()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
 
-                <div class="switch-container chaos-style" style="margin:0;">
-                    <span class="massacre-label">CAOS</span>
-                    <label class="switch">
-                        <input type="checkbox" id="chaos-toggle" onchange="App.toggleChaosConfig()">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-            </div>
+                <div class="switch-container chaos-style" style="margin:0;">
+                    <span class="massacre-label">CAOS</span>
+                    <label class="switch">
+                        <input type="checkbox" id="chaos-toggle" onchange="App.toggleChaosConfig()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
 
-        </div>
-        <button id="btn-start-match" class="western-btn primary" disabled onclick="App.confirmOrder()">INICIAR PARTIDA</button>
-        <button class="western-btn danger" onclick="App.goTo('start')">VOLTAR</button>
-    </div>
+        </div>
+        <button id="btn-start-match" class="western-btn primary" disabled onclick="App.confirmOrder()">INICIAR PARTIDA</button>
+        <button class="western-btn danger" onclick="App.goTo('start')">VOLTAR</button>
+    </div>
 
-    <div id="screen-loading" class="screen">
-        <div class="loading-container">
-            <h2 class="pulsate">EMBARALHANDO</h2>
-            <div class="card-animation">
-                <div class="card-anim"></div>
-                <div class="card-anim"></div>
-                <div class="card-anim"></div>
-            </div>
-            <div id="deck-config-info" class="loading-deck-info"></div>
-        </div>
-    </div>
+    <div id="screen-loading" class="screen">
+        <div class="loading-container">
+            <h2 class="pulsate">EMBARALHANDO</h2>
+            <div class="card-animation">
+                <div class="card-anim"></div>
+                <div class="card-anim"></div>
+                <div class="card-anim"></div>
+            </div>
+            <div id="deck-config-info" class="loading-deck-info"></div>
+        </div>
+    </div>
 
-    <div id="screen-database" class="screen">
-        <div class="paper-panel">
-            <h3>Adicionar Jogador</h3>
-            <div style="display:flex; gap:5px;">
-                <input type="text" id="new-player-input" placeholder="Nome..." style="flex:1; padding:8px; font-family: inherit; color: #000;">
-                <button class="western-btn secondary" style="width:auto; margin:0;" onclick="App.addNewPlayerDB()">+</button>
-            </div>
-            <hr style="border-color:#aaa; margin:15px 0;">
-            <h3>Salvos:</h3>
-            <div id="db-list" style="max-height:200px; overflow-y:auto;"></div>
-        </div>
-        <button class="western-btn danger" onclick="App.renderSetup(); App.goTo('setup')">CANCELAR</button>
-    </div>
+    <div id="screen-database" class="screen">
+        <div class="paper-panel">
+            <h3>Adicionar Jogador</h3>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="new-player-input" placeholder="Nome..." style="flex:1; padding:8px; font-family: inherit; color: #000;">
+                <button class="western-btn secondary" style="width:auto; margin:0;" onclick="App.addNewPlayerDB()">+</button>
+            </div>
+            <hr style="border-color:#aaa; margin:15px 0;">
+            <h3>Salvos:</h3>
+            <div id="db-list" style="max-height:200px; overflow-y:auto;"></div>
+        </div>
+        <button class="western-btn danger" onclick="App.renderSetup(); App.goTo('setup')">CANCELAR</button>
+    </div>
 
-    <div id="screen-rotation" class="screen">
-        <div class="text-center">
-            <h2 id="rot-title" style="color: var(--gold); text-shadow: 2px 2px 0 #000;">A CARTA DA MESA É...</h2>
-            <div class="card-wrapper-padding">
-                <div class="flip-container">
-                    <div class="flipper" id="card-flipper">
-                        <div class="front" id="rot-card-front"></div>
-                        <div class="back"></div>
-                    </div>
-                </div>
-            </div>
-            <div id="rot-narrator" class="narrator-box" style="margin-top: 10px;"></div>
-        </div>
-    </div>
+    <div id="screen-rotation" class="screen">
+        <div class="text-center">
+            <h2 id="rot-title" style="color: var(--gold); text-shadow: 2px 2px 0 #000;">A CARTA DA MESA É...</h2>
+            <div class="card-wrapper-padding">
+                <div class="flip-container">
+                    <div class="flipper" id="card-flipper">
+                        <div class="front" id="rot-card-front"></div>
+                        <div class="back"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="rot-narrator" class="narrator-box" style="margin-top: 10px;"></div>
+        </div>
+    </div>
 
-    <div id="screen-game" class="screen">
-        <button class="help-btn" onclick="App.goTo('rules')">?</button>
+    <div id="screen-game" class="screen">
+        <button class="help-btn" onclick="App.goTo('rules')">?</button>
 
-        <div class="mesa-info">
-            <div id="game-mesa-info" style="color: var(--paper); font-weight: bold; font-size: 1.2rem;">Mesa de ?</div>
-        </div>
-        
-        <div class="card-display" id="game-mesa-card"></div>
-        <div id="starter-info" style="text-align:center; margin:5px 0; color:#ccc; font-size:1.15rem;"></div>
+        <div class="mesa-info">
+            <div id="game-mesa-info" style="color: var(--paper); font-weight: bold; font-size: 1.2rem;">Mesa de ?</div>
+        </div>
+        
+        <div class="card-display" id="game-mesa-card"></div>
+        <div id="starter-info" style="text-align:center; margin:5px 0; color:#ccc; font-size:1.15rem;"></div>
 
-        <div id="game-narrator-area" class="narrator-box"></div>
-        
-        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
-            <div id="game-status" style="min-height: 3.5em; display:flex; align-items:center; justify-content:center;"></div>
-            
-            <div style="display:flex; flex-direction: column; gap: 6px; margin-left: 8px;">
-                <button id="btn-chaos-toggle" class="btn-purple" onclick="App.toggleChaosMode()" style="margin:0;">🌀</button>
-                <button id="btn-duel-toggle" class="btn-black" onclick="App.toggleDuelMode()" style="margin:0;">⚔️</button>
-            </div>
-        </div>
+        <div id="game-narrator-area" class="narrator-box"></div>
+        
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+            <div id="game-status" style="min-height: 3.5em; display:flex; align-items:center; justify-content:center;"></div>
+            
+            <div style="display:flex; flex-direction: column; gap: 6px; margin-left: 8px;">
+                <button id="btn-chaos-toggle" class="btn-purple" onclick="App.toggleChaosMode()" style="margin:0;">🌀</button>
+                <button id="btn-duel-toggle" class="btn-black" onclick="App.toggleDuelMode()" style="margin:0;">⚔️</button>
+            </div>
+        </div>
 
-        <div id="game-players-list"></div>
+        <div id="game-players-list"></div>
 
-        <div id="game-log" class="log-box"></div>
+        <div id="game-log" class="log-box"></div>
 
-        <div style="display:flex; gap:5px; margin-top:10px;">
-            <button class="western-btn secondary" onclick="App.restartGame()">REINICIAR</button>
-            <button class="western-btn danger" onclick="App.goTo('setup')">SAIR</button>
-        </div>
-    </div>
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <button class="western-btn secondary" onclick="App.restartGame()">REINICIAR</button>
+            <button class="western-btn danger" onclick="App.goTo('setup')">SAIR</button>
+        </div>
+    </div>
 
-    <div id="screen-win" class="screen">
-        <div class="paper-panel text-center" style="border-color: var(--gold);">
-            <h1 style="color: #d4af37;">VENCEDOR!</h1>
-            <p id="win-msg" style="font-size: 1.2rem; font-weight: bold;"></p>
-            <div id="win-achievements" style="margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px;"></div>
-        </div>
-        <button class="western-btn primary" onclick="App.restartGame()">JOGAR NOVAMENTE</button>
-        <button class="western-btn secondary" onclick="App.goTo('setup')">MUDAR JOGADORES</button>
-    </div>
+    <div id="screen-win" class="screen">
+        <div class="paper-panel text-center" style="border-color: var(--gold);">
+            <h1 style="color: #d4af37;">VENCEDOR!</h1>
+            <p id="win-msg" style="font-size: 1.2rem; font-weight: bold;"></p>
+            <div id="win-achievements" style="margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px;"></div>
+        </div>
+        <button class="western-btn primary" onclick="App.restartGame()">JOGAR NOVAMENTE</button>
+        <button class="western-btn secondary" onclick="App.goTo('setup')">MUDAR JOGADORES</button>
+    </div>
 
-    <div id="screen-stats" class="screen">
-        <h2 class="text-center" style="color: var(--paper);">LIVRO DE REGISTROS</h2>
-        <div class="chalkboard" id="stats-board" style="max-height:400px; overflow-y:auto;"></div>
-        <div class="mt-2">
-            <button class="western-btn danger" onclick="App.confirmResetStats()">APAGAR EVIDÊNCIAS</button>
-            <button class="western-btn primary" onclick="App.goTo('start')">VOLTAR</button>
-        </div>
-    </div>
+    <div id="screen-stats" class="screen">
+        <h2 class="text-center" style="color: var(--paper);">LIVRO DE REGISTROS</h2>
+        <div class="chalkboard" id="stats-board" style="max-height:400px; overflow-y:auto;"></div>
+        <div class="mt-2">
+            <button class="western-btn danger" onclick="App.confirmResetStats()">APAGAR EVIDÊNCIAS</button>
+            <button class="western-btn primary" onclick="App.goTo('start')">VOLTAR</button>
+        </div>
+    </div>
 
-    <div id="screen-achievements" class="screen">
-        <div class="paper-panel">
-            <h3 id="ach-screen-title" class="text-center">Conquistas de Fulano</h3>
-            <div id="ach-list-content" class="scroll-content"></div>
-        </div>
-        <button class="western-btn primary" onclick="App.goTo('stats')">VOLTAR ÀS ESTATÍSTICAS</button>
-    </div>
+    <div id="screen-achievements" class="screen">
+        <div class="paper-panel">
+            <h3 id="ach-screen-title" class="text-center">Conquistas de Fulano</h3>
+            <div id="ach-list-content" class="scroll-content"></div>
+        </div>
+        <button class="western-btn primary" onclick="App.goTo('stats')">VOLTAR ÀS ESTATÍSTICAS</button>
+    </div>
 </div>
 
 <script type="module">
-    // Importa APENAS o App. O app.js já importa tudo o que precisa (state, logic, audio, etc.)
-    import { App } from './src/js/app.js';
+    // Importa APENAS o App. O app.js já importa tudo o que precisa (state, logic, audio, etc.)
+    import { App } from './src/js/app.js';
 
-    // Joga o App para a janela global para o HTML ver
-    window.App = App;
+    // Joga o App para a janela global para o HTML ver
+    window.App = App;
 
-    // Inicia o jogo
-    window.onload = () => {
-        console.log("Iniciando aplicação...");
-        try {
-            App.init();
-            console.log("Aplicação iniciada com sucesso!");
-        } catch (error) {
-            console.error("Erro fatal ao iniciar o App:", error);
-            alert("Erro ao carregar o jogo. Verifique o console (F12).");
-        }
-        
-    };
+    // Inicia o jogo
+    window.onload = () => {
+        console.log("Iniciando aplicação...");
+        try {
+            App.init();
+            console.log("Aplicação iniciada com sucesso!");
+        } catch (error) {
+            console.error("Erro fatal ao iniciar o App:", error);
+            alert("Erro ao carregar o jogo. Verifique o console (F12).");
+        }
+        
+    };
 </script>
 </body>
 </html>
