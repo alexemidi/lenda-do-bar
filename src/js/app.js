@@ -10,11 +10,12 @@ export const App = {
     currentSlot: null,
     duelMode: false, 
 
-    // --- FUNÇÃO AUXILIAR DE STATUS ---
+    // --- FUNÇÃO AUXILIAR DE STATUS (LAYOUT DIVIDIDO) ---
     updateStatus(emoji, text) {
         const gs = document.getElementById('game-status');
         if (!gs) return;
         
+        // Se passar null, limpa a tela
         if (!emoji && !text) {
             gs.innerHTML = '';
             return;
@@ -26,6 +27,7 @@ export const App = {
         `;
     },
 
+    // --- FUNÇÃO PARA SALVAR CONFIGURAÇÃO ---
     saveConfig() {
         Storage.set('config', {
             massacre: STATE.game.massacreMode,
@@ -35,6 +37,7 @@ export const App = {
 
     init() {
         this.renderSetup();
+        // Garante inicialização do array de slots se estiver vazio ou corrompido
         if (!STATE.slots || STATE.slots.length === 0) {
             STATE.slots = [null,null,null,null,null,null];
         } else if (STATE.slots.filter(Boolean).length === 0) {
@@ -59,6 +62,7 @@ export const App = {
         else this.goTo('start');
     },
 
+    // --- CONFIGURAÇÃO DE MODOS ---
     toggleMassacreConfig() {
         const sw = document.getElementById('massacre-toggle');
         const chaosSw = document.getElementById('chaos-toggle');
@@ -341,13 +345,6 @@ export const App = {
         
         const logBox = document.getElementById('game-log'); 
         if(logBox) logBox.innerHTML = '';
-
-        // --- CORREÇÃO 1: BOTÕES DESABILITADOS (CINZA) INICIALMENTE ---
-        const btnChaos = document.getElementById('btn-chaos-toggle');
-        const btnDuel = document.getElementById('btn-duel-toggle');
-        if(btnChaos) btnChaos.disabled = true;
-        if(btnDuel) btnDuel.disabled = true;
-        // -------------------------------------------------------------
         
         const narr = CONFIG.narradores[STATE.game.narrator];
         const narrEmoji = CONFIG.emojis[STATE.game.narrator] || '💀';
@@ -373,24 +370,56 @@ export const App = {
 
             setTimeout(() => {
                 this.updateStatus(null, null); 
-                
-                // --- CORREÇÃO 1: REATIVAR BOTÕES ---
-                if(btnChaos) btnChaos.disabled = false;
-                if(btnDuel) btnDuel.disabled = false;
-                // -----------------------------------
             }, 2500);
             
         }, 2500);
     },
 
     toggleDuelMode() {
-        if (STATE.game.isShooting || STATE.game.chaos.active) return;
-        this.duelMode = !this.duelMode;
+        // Se já puxou o gatilho, não cancela
+        if (STATE.game.isMassacre && STATE.game.isShooting) return;
+
+        // Cancelamento (Req 1)
+        if (this.duelMode) {
+            this.duelMode = false;
+            STATE.game.protectedIdx = null;
+            STATE.game.isShooting = false;
+            this.updateStatus(null, null);
+            this.renderPlayersList();
+            return;
+        }
+
+        if (STATE.game.chaos.active) return;
+        
+        this.duelMode = true;
+        // Exibe mensagem sem travar o jogo ainda
+        this.updateStatus("🛡️", "Escolha o protegido");
         this.renderPlayersList();
     },
     
     toggleChaosMode() {
-        if (STATE.game.isShooting || STATE.game.chaos.active) return;
+        // Se já está resolvendo os tiros, não cancela
+        if (STATE.game.chaos.active && STATE.game.chaos.currentPickIdx >= STATE.game.chaos.queue.length) return;
+
+        // Cancelamento (Req 2)
+        if (STATE.game.chaos.active) {
+            STATE.game.chaos.active = false;
+            STATE.game.isShooting = false;
+            STATE.game.chaos.queue = [];
+            STATE.game.chaos.targets = {};
+            STATE.game.chaos.votes = {};
+            this.updateStatus(null, null);
+            this.renderPlayersList();
+            
+            // Restaura o info do jogador
+            const pName = STATE.game.players[STATE.game.turnIndex].name;
+            const starterInfo = document.getElementById('starter-info');
+            if(starterInfo) starterInfo.innerHTML = `★ <b>${pName}</b>, é com você.`;
+            return;
+        }
+
+        if (STATE.game.isShooting || this.duelMode) return;
+        
         STATE.game.chaos.active = true;
         STATE.game.isShooting = true; 
         this.duelMode = false;
@@ -416,7 +445,7 @@ export const App = {
         this.log(`😈 ${devilIntro}`);
 
         setTimeout(() => {
-            this.nextChaosPicker();
+            if(STATE.game.chaos.active) this.nextChaosPicker();
         }, 2000);
     },
 
@@ -463,7 +492,7 @@ export const App = {
 
         this.updateStatus("😈", devilMsg);
         this.log(rawMsg);
-        this.renderPlayersList();
+        this.renderPlayersList(); // Isso esconde os botões pois currentPickIdx >= queue
 
         setTimeout(() => {
             const players = STATE.game.players;
@@ -581,12 +610,12 @@ export const App = {
     triggerMassacre(protectedIdx) {
         if (STATE.game.isShooting) return;
         STATE.game.isShooting = true; STATE.game.isMassacre = true; STATE.game.protectedIdx = protectedIdx;
-        this.duelMode = false; 
-        const players = STATE.game.players;
+        // Não desativamos this.duelMode aqui para o botão ainda "existir" na lógica do render
+        // mas ele será oculto visualmente pela lógica do renderPlayersList
+        
         this.renderPlayersList();
         
-        // --- FRASE QUANDO ATIVA O MODO ---
-        this.updateStatus("💀", CONFIG.morte.massacreStart);
+        this.updateStatus("☠️", CONFIG.morte.massacreStart);
         this.log(`☠️ Morte: ${CONFIG.morte.massacreStart}`);
         
         // 1. DELAY INICIAL (300ms)
@@ -595,75 +624,47 @@ export const App = {
 
             // 2. TEMPO DE TENSÃO (3.5 segundos)
             setTimeout(() => {
-                const targets = players.filter((p, i) => i !== protectedIdx && p.alive);
+                const targets = STATE.game.players.filter((p, i) => i !== protectedIdx && p.alive);
                 let victims = [];
                 let survivors = [];
 
-                // --- CORREÇÃO 4: ATUALIZAR CONTADORES IMEDIATAMENTE ---
                 targets.forEach(p => {
                     const isDeath = p.gun.chamber === p.gun.bullet;
-                    p.shotsTaken++; // Sobe contador agora
-
-                    // Atualiza DOM manual
-                    const pIndex = players.indexOf(p);
-                    const pDiv = document.getElementById('game-players-list').children[pIndex];
-                    if(pDiv) {
-                        const counterDiv = pDiv.children[1].children[0];
-                        if(counterDiv) counterDiv.textContent = `${p.shotsTaken}/6`;
-                    }
-                    
+                    p.shotsTaken++;
                     if (isDeath) victims.push(p);
-                    else {
-                        p.gun.chamber++;
-                        survivors.push(p);
-                    }
+                    else survivors.push(p);
                 });
 
                 const hasDeath = victims.length > 0;
 
                 // --- CENÁRIO A: MORTE ---
                 if (hasDeath) {
-                    AudioSys.play('empty'); // Som do click dos sobreviventes
+                    AudioSys.play('empty');
                     this.updateStatus("💨", "CLICK!");
                     
                     setTimeout(() => {
-                        // --- CORREÇÃO 2: EFEITOS IMEDIATOS (Som + Caveira) ---
                         AudioSys.play('shot');
                         this.updateStatus("💥", "POW!");
                         document.body.classList.add('shake-screen');
                         setTimeout(() => document.body.classList.remove('shake-screen'), 500);
 
-                        // Caveira imediata via DOM
-                        victims.forEach(v => {
-                            const vIndex = players.indexOf(v);
-                            const vDiv = document.getElementById('game-players-list').children[vIndex];
-                            if(vDiv) {
-                                const emojiSpan = vDiv.querySelector('.emoji-big');
-                                if(emojiSpan) emojiSpan.textContent = '💀';
-                            }
+                        victims.forEach(p => {
+                            p.alive = false; 
+                            if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
+                            STATE.stats[p.name].hits++;
+                            STATE.stats[p.name]._meta = { ...STATE.stats[p.name]._meta, dieStreak: (STATE.stats[p.name]._meta?.dieStreak || 0) + 1, winStreak: 0 };
+                            Logic.checkAchievements(p.name, { diedOnShot: p.shotsTaken }, true);
                         });
 
-                        // 3. DELAY DE 1 SEGUNDO PARA RISCAR O NOME
-                        setTimeout(() => {
-                            victims.forEach(p => {
-                                p.alive = false; 
-                                if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
-                                STATE.stats[p.name].hits++;
-                                STATE.stats[p.name]._meta = { ...STATE.stats[p.name]._meta, dieStreak: (STATE.stats[p.name]._meta?.dieStreak || 0) + 1, winStreak: 0 };
-                                Logic.checkAchievements(p.name, { diedOnShot: p.shotsTaken }, true);
-                            });
+                        survivors.forEach(p => {
+                            if (p.gun.chamber === 5) Logic.checkAchievements(p.name, { chaosSurvivor: true }, true);
+                            p.gun.chamber++;
+                            if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
+                            STATE.stats[p.name].dodges++;
+                        });
 
-                            survivors.forEach(p => {
-                                if (p.gun.chamber === 6) Logic.checkAchievements(p.name, { chaosSurvivor: true }, true); // Checa se era 5 antes (virou 6)
-                                if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
-                                STATE.stats[p.name].dodges++;
-                                if (p.gun.chamber > 5) p.gun.chamber = 0; // Reseta tambor
-                            });
-
-                            this.renderPlayersList(); // Agora renderiza com vermelho/riscado
-                            this.finishMassacre(victims.length, victims);
-
-                        }, 1000); 
+                        this.renderPlayersList(); 
+                        this.finishMassacre(victims.length, victims);
 
                     }, 1000); 
 
@@ -673,18 +674,15 @@ export const App = {
                     AudioSys.play('empty');
                     this.updateStatus("💨", "CLICK!");
 
-                    setTimeout(() => {
-                        survivors.forEach(p => {
-                            if (p.gun.chamber === 6) Logic.checkAchievements(p.name, { chaosSurvivor: true }, true);
-                            
-                            if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
-                            STATE.stats[p.name].dodges++;
-                            if (p.gun.chamber > 5) p.gun.chamber = 0;
-                        });
+                    survivors.forEach(p => {
+                        if (p.gun.chamber === 5) Logic.checkAchievements(p.name, { chaosSurvivor: true }, true);
+                        p.gun.chamber++;
+                        if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
+                        STATE.stats[p.name].dodges++;
+                    });
 
-                        this.renderPlayersList();
-                        this.finishMassacre(0, []);
-                    }, 1000); 
+                    this.renderPlayersList();
+                    this.finishMassacre(0, []);
                 }
 
             }, 3500); 
@@ -702,30 +700,30 @@ export const App = {
                 if (protectedP && protectedP.alive) Logic.checkAchievements(protectedP.name, { isMassacre: true, massacreDeaths: deathCount }, true);
             }
             
+            // Pega o nome do protegido ANTES de resetar os índices
+            const protectedPlayer = players[STATE.game.protectedIdx];
+            
             STATE.game.lastProtectedIdx = STATE.game.protectedIdx; 
             STATE.game.isMassacre = false; 
             STATE.game.protectedIdx = null;
+            this.duelMode = false; // AGORA sim desligamos o modo duelo
             this.renderPlayersList();
 
             let msg = "";
             let emoji = "☠️";
 
-            // --- CORREÇÃO 3: NOVAS FRASES DA MORTE ---
             if (deathCount === 0) {
-                const lines = CONFIG.morte.massacreNoDeath; 
+                const lines = CONFIG.morte.massacreNoDeath;
                 msg = lines[Math.floor(Math.random() * lines.length)];
             }
             else if (deathCount === 1) { 
-                const victimName = victims[0].name;
-                msg = `Venha, ${victimName}, eu te levo para a luz.`; 
-                this.log(`☠️ ${victimName} foi de arrasta!`); 
+                msg = CONFIG.morte.massacreDeath.replace('{nome}', victims[0].name);
+                this.log(`☠️ ${victims[0].name} foi de arrasta!`); 
             }
             else {
-                const protectedPlayerName = players[STATE.game.lastProtectedIdx].name;
-                msg = `Obrigado, ${protectedPlayerName}! Adiar sua vez é o seu prêmio.`;
+                msg = CONFIG.morte.massacreProtectedThanks.replace('{nome}', protectedPlayer ? protectedPlayer.name : 'Alguém');
                 this.log(`☠️ Massacre! Mortos: ${victims.map(v=>v.name).join(', ')}`);
             }
-            // ----------------------------------------
             
             this.updateStatus(emoji, msg);
 
@@ -759,49 +757,25 @@ export const App = {
 
         setTimeout(() => {
             AudioSys.play('cock'); 
-            
             setTimeout(() => {
-                // --- CORREÇÃO 2 e 4: FEEDBACK IMEDIATO (Contador + Caveira) ---
-                
-                // 1. Calcula lógica
                 const isDeath = p.gun.chamber === p.gun.bullet;
                 
-                // 2. Atualiza dados e HTML do contador AGORA
-                p.shotsTaken++;
-                if (!isDeath) p.gun.chamber++; // Gira se vivo
-
-                const playerDiv = document.getElementById('game-players-list').children[pIndex];
-                if(playerDiv) {
-                    // Estrutura esperada: DivPlayer -> DivRight -> CounterDiv
-                    const counterDiv = playerDiv.children[1].children[0]; 
-                    if(counterDiv) counterDiv.textContent = `${p.shotsTaken}/6`;
-                }
-
                 if (isDeath) {
-                    AudioSys.play('shot');
                     this.updateStatus("💥", "POW!");
                     document.body.classList.add('shake-screen');
                     setTimeout(() => document.body.classList.remove('shake-screen'), 500);
-                    
-                    // Caveira imediata
-                    if(playerDiv) {
-                        const emojiSpan = playerDiv.querySelector('.emoji-big');
-                        if(emojiSpan) emojiSpan.textContent = '💀';
-                    }
                 } else {
                     this.updateStatus("💨", "CLICK!");
-                    AudioSys.play('empty');
                 }
                 
-                // 3. DELAY DE 1 SEGUNDO APENAS PARA O RISCO VERMELHO
-                setTimeout(() => {
-                    STATE.game.mesaShots++;
-                    // Renderiza visualmente a lista completa (para resetar estilos ou aplicar o morto)
-                    
-                    if (isDeath) {
-                        p.alive = false; 
-                        this.renderPlayersList(); // Aplica classe .dead
+                AudioSys.play(isDeath ? 'shot' : 'empty');
 
+                setTimeout(() => {
+                    if (!isDeath) p.gun.chamber++;
+                    p.shotsTaken++; STATE.game.mesaShots++;
+                    this.renderPlayersList();
+
+                    if (isDeath) {
                         const narrConf = CONFIG.narradores[STATE.game.narrator];
                         const killByPerfil = (narrConf.killLines && narrConf.killLines[p.perfil]) ? narrConf.killLines[p.perfil] : narrConf.killLines.default;
                         const narrEmoji = CONFIG.emojis[STATE.game.narrator] || '💀';
@@ -809,16 +783,16 @@ export const App = {
                         this.updateStatus(narrEmoji, killByPerfil);
                         this.log(`${narrEmoji} ${killByPerfil}`);
                         
-                        this.log(`💀 ${p.name} foi de arrasta!`);
+                        p.alive = false; this.log(`💀 ${p.name} foi de arrasta!`);
                         if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
                         STATE.stats[p.name].hits++;
                         STATE.stats[p.name]._meta = { ...STATE.stats[p.name]._meta, dieStreak: (STATE.stats[p.name]._meta?.dieStreak || 0) + 1, winStreak: 0 };
                         
-                        Logic.checkAchievements(p.name, { diedOnShot: p.shotsTaken }, true);
-                        setTimeout(() => { this.checkGameFlow(pIndex); }, 6000);
+                        const events = { diedOnShot: p.shotsTaken };
+                        
+                        Logic.checkAchievements(p.name, events, true);
+                        setTimeout(() => { this.checkGameFlow(pIndex); }, 4000);
                     } else {
-                        this.renderPlayersList(); 
-
                         const deathLine = STATE.game.deathLinesDeck[STATE.game.deathLineIdx % STATE.game.deathLinesDeck.length];
                         STATE.game.deathLineIdx++;
                         
@@ -826,7 +800,6 @@ export const App = {
                         this.log(`☠️ ${deathLine}`);
                         
                         setTimeout(() => {
-                            const frases = CONFIG.perfis[p.perfil];
                             const fraseAfter = frases.afterSurvive[p.lines.afterSurvive++ % frases.afterSurvive.length];
                             
                             this.updateStatus(emoji, fraseAfter);
@@ -835,10 +808,9 @@ export const App = {
                             if (!STATE.stats[p.name]) STATE.stats[p.name] = { wins:0, hits:0, dodges:0 };
                             STATE.stats[p.name].dodges++;
                             
-                            if (p.gun.chamber > 5) { // Checa se rodou de 5 para 6
-                                Logic.checkAchievements(p.name, { didDodgeLastShotBefore: true }, true);
-                                p.gun.chamber = 0; // Reseta
-                            }
+                            Logic.checkAchievements(p.name, { didDodgeLastShotBefore: (p.gun.chamber === 6 || p.gun.chamber === 5) }, true);
+                            
+                            if (p.gun.chamber > 5) p.gun.chamber = 0; 
 
                             setTimeout(() => { 
                                 this.updateStatus(null, null); 
@@ -848,7 +820,7 @@ export const App = {
                     }
                 }, 1000); 
 
-            }, 300);
+            }, 3500);
         }, 300);
     },
 
@@ -929,14 +901,30 @@ export const App = {
         const btnDuel = document.getElementById('btn-duel-toggle');
         const btnChaos = document.getElementById('btn-chaos-toggle');
         
-        if (!STATE.game.isShooting && !STATE.game.chaos.active) {
+        // Lógica de exibição dos botões (Req 2 e 3)
+        // Eles aparecem se: Jogo normal OU (Setup do Massacre) OU (Setup do Caos)
+        // Eles somem se: Ação irreversível começou (Tiros do caos ou Animação do massacre)
+        
+        let showButtons = true;
+
+        // Se massacre começou (animação de tiro), esconde
+        if (STATE.game.isMassacre && STATE.game.isShooting) showButtons = false;
+        
+        // Se Caos entrou na fase de resolução (tiros), esconde.
+        if (STATE.game.chaos.active && STATE.game.chaos.currentPickIdx >= STATE.game.chaos.queue.length) showButtons = false;
+
+        if (showButtons) {
             btnDuel.style.display = STATE.game.massacreMode ? 'block' : 'none';
             btnChaos.style.display = STATE.game.chaosMode ? 'block' : 'none';
+            
+            // Destaque visual
+            btnDuel.style.opacity = this.duelMode ? '1' : '0.7';
+            btnChaos.style.opacity = STATE.game.chaos.active ? '1' : '0.7';
+            btnDuel.style.border = this.duelMode ? '2px solid #fff' : '2px solid #444';
+            btnChaos.style.border = STATE.game.chaos.active ? '2px solid #fff' : '2px solid #7b1fa2';
         } else {
-            if (STATE.game.chaos.active) {
-                btnDuel.style.display = 'none';
-                btnChaos.style.display = 'none';
-            }
+            btnDuel.style.display = 'none';
+            btnChaos.style.display = 'none';
         }
 
         const isChaosSel = STATE.game.chaos.active;
@@ -967,7 +955,7 @@ export const App = {
             } else {
                 if (isChaosSel) {
                     if (isChaosPicker) {
-                        btnHtml = `<button class="western-btn small" style="background:#444; color:#fff;" disabled>🔫 Atirador</button>`;
+                        btnHtml = `<button class="western-btn small" style="background:#444; color:#fff; cursor:default;">🔫 Atirador</button>`;
                     } else {
                         if (pickerIdx !== -1) {
                              btnHtml = `<button class="western-btn btn-aim small" onclick="App.handleChaosPick(${idx})">🎯 Mirar</button>`;
@@ -975,12 +963,12 @@ export const App = {
                              btnHtml = `<span style="font-size:1.5rem">🥶</span>`;
                         }
                     }
-                } else if (STATE.game.isMassacre) {
+                } else if (STATE.game.isMassacre) { // Fase de tiro do massacre
                     if (idx === STATE.game.protectedIdx) btnHtml = `<button class="western-btn btn-protect small" disabled>🕊️ PROTEGIDO</button>`;
                     else btnHtml = `<button class="western-btn btn-fire small" disabled>🔥 FOGO</button>`;
-                } else if (this.duelMode) {
+                } else if (this.duelMode) { // Fase de escolha do massacre
                     btnHtml = `<button class="western-btn btn-protect small" ${STATE.game.isShooting ? 'disabled' : ''} onclick="App.handleShoot(${idx})">🛡️ PROTEGER</button>`;
-                } else {
+                } else { // Jogo normal
                     btnHtml = `<button class="western-btn danger small" ${STATE.game.isShooting ? 'disabled' : ''} onclick="App.handleShoot(${idx})">ATIRAR</button>`;
                 }
             }

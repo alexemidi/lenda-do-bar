@@ -131,6 +131,14 @@ button:disabled { opacity: 0.8; cursor: not-allowed; filter: grayscale(0.2); }
     font-size: 1.2rem;
     margin-left: 8px;
 }
+/* NOVA CLASSE: Estilo Ativo/Cancelável para o botão Massacre */
+.btn-black.active-mode {
+    background: #eee;
+    color: #000;
+    border-color: #fff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
 .btn-purple {
     background: #4a148c;
     color: #fff;
@@ -140,6 +148,13 @@ button:disabled { opacity: 0.8; cursor: not-allowed; filter: grayscale(0.2); }
     padding: 5px 10px;
     font-size: 1.2rem;
     margin-left: 8px;
+}
+/* NOVA CLASSE: Estilo Ativo/Cancelável para o botão Caos */
+.btn-purple.active-mode {
+    background: #e1bee7;
+    color: #4a148c;
+    border-color: #9c27b0;
+    box-shadow: 0 0 10px var(--chaos);
 }
 
 .help-btn {
@@ -249,11 +264,28 @@ input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
 .front { transform: translateX(-50%) rotateY(180deg); } 
 .back { transform: translateX(-50%) rotateY(0deg); background-image: url('../assets/imgs/card-back.png'); }
 
-.narrator-box { 
-    font-style: italic; text-align: center; color: var(--gold); 
-    min-height: 30px; margin-bottom: 5px; text-shadow: 1px 1px 2px #000;
-    font-size: 1.15rem; 
+/* === ALTERADO: Caixa de Narração com Tamanho Fixo === */
+.narrator-box {
+    font-style: italic;
+    text-align: center;
+    color: var(--gold);
+    min-height: 0px; /* Altura mínima reduzida */
+    margin-bottom: 2px; /* Margem reduzida (Req 4) */
+    text-shadow: 1px 1px 2px #000;
+    font-size: 1.15rem;
+    display: flex;         /* Centralizar texto verticalmente */
+    align-items: flex-end; /* Texto mais próximo do status */
+    justify-content: center;
 }
+
+/* === ALTERADO: Remover espaço do Info do Jogador === */
+#starter-info {
+    text-align: center;
+    margin: 5px 0 0 0; /* Remove margem inferior (Req 4) */
+    color: #ccc;
+    font-size: 1.15rem;
+}
+
 .player-card { background: #2b2b2b; color: #eee; border-left: 4px solid #555; padding: 10px; margin-bottom: 8px; display:flex; align-items:center; justify-content:space-between; border-radius:0 4px 4px 0; transition: all 0.3s; }
 .player-card.starter { border-left: 4px solid var(--gold); background: #332a1e; }
 .player-card.chaos-highlight { border-left: 4px solid var(--chaos); background: #2a1b2e; box-shadow: 0 0 10px rgba(156, 39, 176, 0.5); }
@@ -268,14 +300,19 @@ input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    min-height: 5em; /* Altura para acomodar emoji grande */
+    height: 86px; /* Altura fixa para igualar os 2 botões (Req 3) */
     background: rgba(20, 10, 5, 0.4);
     border: 2px solid #3e2723;
     border-radius: 8px;
     padding: 5px;
-    margin-bottom: 8px;
+    margin-bottom: 0; /* Remove margem pois o players-list já tem */
     box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
     flex: 1; 
+    overflow: hidden; /* Garante que texto não estoure */
+}
+
+#game-players-list {
+    margin-top: 10px;
 }
 
 .status-emoji-area {
