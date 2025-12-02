@@ -457,7 +457,8 @@ export const App = {
             return;
         }
         const pickerIdx = queue[currentQueueIdx];
-        const pickerName = STATE.game.players[pickerIdx].name;
+        const pickerName = STATE.game.players[pickerIdx].name; // Nome de quem vai atirar
+        
         const starterInfo = document.getElementById('starter-info');
         if(starterInfo) starterInfo.innerHTML = `<span style="color:var(--chaos-light); text-shadow:0 0 5px var(--chaos)">★ <b>${pickerName}</b> escolha alguém para testar a sorte</span>`;
         
@@ -465,12 +466,20 @@ export const App = {
         const randomTarget = targets[Math.floor(Math.random() * targets.length)];
         
         STATE.game.chaos.devilTarget = randomTarget ? STATE.game.players.indexOf(randomTarget) : null;
+        
         const taunts = CONFIG.diabo.taunts;
         let taunt = taunts[Math.floor(Math.random() * taunts.length)];
+        
+        // Substitui "fulano" pelo nome do alvo sugerido
         taunt = taunt.replace(/fulano/gi, randomTarget ? randomTarget.name : 'alguém');
         
+        // Substitui "Jogador" pelo nome de quem está atirando (REQ ATENDIDO)
+        taunt = taunt.replace(/jogador/gi, pickerName);
+        
         const cleanTaunt = taunt.replace(/👿|😈/g, '').trim();
-        this.updateStatus("👿", cleanTaunt);
+        
+        // Emoji 😈 durante as provocações (REQ ATENDIDO)
+        this.updateStatus("😈", cleanTaunt);
 
         this.renderPlayersList();
     },
@@ -487,12 +496,13 @@ export const App = {
         const starterInfo = document.getElementById('starter-info');
         if(starterInfo) starterInfo.innerHTML = "";
         
+        // Intro do final sempre malvada/feliz
         const rawMsg = CONFIG.diabo.outro;
         const devilMsg = rawMsg.replace(/👿|😈/g, '').trim();
 
         this.updateStatus("😈", devilMsg);
         this.log(rawMsg);
-        this.renderPlayersList(); // Isso esconde os botões pois currentPickIdx >= queue
+        this.renderPlayersList(); 
 
         setTimeout(() => {
             const players = STATE.game.players;
@@ -523,6 +533,7 @@ export const App = {
                     const isBang = (shooter.gun.chamber === shooter.gun.bullet);
                     const targetIdx = STATE.game.chaos.targets[shooterIdx];
                     
+                    // (Lógica de achievements mantida...)
                     if (targetIdx === STATE.game.chaos.devilTarget) {
                         Logic.checkAchievements(shooter.name, { listenedToDevil: true }, true);
                     }
@@ -572,16 +583,26 @@ export const App = {
                 STATE.game.mesaShots++;
                 this.renderPlayersList();
                 
+                // --- LÓGICA DE DUAS CARAS DO DIABO (REQ ATENDIDO) ---
                 let resultMsg = "";
+                let devilEmoji = "😈"; // Padrão: Feliz/Malvado
+
                 const rConf = CONFIG.diabo.results;
+                
                 if (deaths.length === 0) {
+                    // Sem mortes: Diabo Bravo
                     resultMsg = rConf.none[Math.floor(Math.random() * rConf.none.length)];
+                    devilEmoji = "👿"; 
                 }
-                else if (deaths.length < 3) resultMsg = rConf.one[0];
-                else resultMsg = rConf.many[0];
+                else {
+                    // Com mortes: Diabo Feliz
+                    if (deaths.length < 3) resultMsg = rConf.one[0];
+                    else resultMsg = rConf.many[0];
+                    devilEmoji = "😈";
+                }
 
                 const cleanResult = resultMsg.replace(/👿|😈/g, '').trim();
-                this.updateStatus("😈", cleanResult);
+                this.updateStatus(devilEmoji, cleanResult);
 
                 this.log(resultMsg);
                 if (deaths.length > 0) this.log(`💀 Mortos no Caos: ${deaths.map(d=>d.name).join(', ')}`);

@@ -6,19 +6,20 @@ export const DATA_NARRADORES = {
     morte: {
         // Falas após cada "Click" ou "Pow" (falha ou sucesso do tiro no jogo normal)
         clickLines: [
-            "Ainda não.", 
-            "Hoje não.", 
-            "Não dessa vez.", 
-            "Ficou pra depois.", 
-            "Por pouco, hein.",
-            "Passou batido.", 
-            "Quase.", 
-            "Outra hora talvez.", 
-            "Não agora.", 
-            "Escapou."
+            "Sua hora vai chegar.", 
+            "NEu tenho todo o tempo do mundo.", 
+            "O tambor girou a seu favor. Por enquanto.",
+            "Respire. O próximo pode não ser tão gentil.",
+            "Você ganhou segundos. Use-os bem.",
+            "Quase pude tocar sua alma.",
+            "Eu não tenho pressa.",
+            "O destino é inevitável.",
+            "A dança da morte continua.",
+            "A sorte é apenas uma ilusão passageira.",
+            "A vida é frágil, aproveite enquanto pode."
         ],
-        // Fala quando alguém morre no massacre
-        massacreDeath: "Venha, eu te levo para a luz.",
+        // Fala quando APENAS UM morre no massacre (CORRIGIDO)
+        massacreDeath: "Venha, {nome}, eu te levo para a luz.",
         
         // Falas quando ninguém morre no massacre
         massacreNoDeath: [
@@ -29,29 +30,32 @@ export const DATA_NARRADORES = {
         ],
         
         // Fala quando o modo massacre é ativado (botão pressionado)
-        massacreStart: "Vou observar de perto."
+        massacreStart: "Vou assistir isso de perto.",
+
+        // NOVA FALA para múltiplas mortes (agradecendo ao protegido)
+        massacreProtectedThanks: "Obrigado, {nome}! O seu prêmio é mais uma rodada vivo."
     },
 
     // --- Diabo: O outro NPC especial ---
     diabo: {
         intro: "Isso está ficando interessante.",
         taunts: [
-            "👿 Fulano tá rindo demais… acaba com essa alegria dele.",
-            "👿 Se eu fosse você, eu atirava no fulano.",
-            "👿 Fulano tá muito quieto… sempre desconfie dos quietos.",
-            "👿 Ouvi fulano dizendo que você não tem coragem, vai deixar?",
-            "👿 Fulano tá confiante demais. Acaba logo com isso.",
-            "👿 Mira no fulano para eu ver o que acontece.",
-            "👿 Fulano xingou sua mãe, eu não deixava.",
-            "👿 Fulano disse que ia atirar em você.",
-            "👿 Fulano tá tirando onda com sua cara. Vai ficar só olhando?",
-            "👿 Fulano lhe chamou de frouxo ali na mesa… eu mesmo ouvi."
+            "Fulano tá rindo demais… acaba com essa alegria dele.",
+            "Se eu fosse você, eu atirava no fulano.",
+            "Fulano tá muito quieto… sempre desconfie dos quietos.",
+            "Jogador, eu ouvi fulano dizendo que você não tem coragem, vai deixar?",
+            "O Fulano tá confiante demais. Acaba logo com isso.",
+            "Mira no fulano só para eu ver o que acontece.",
+            "Jogador, o Fulano xingou sua mãe, eu não deixava.",
+            "Jogador, o Fulano disse que ia atirar em você.",
+            "Jogador, o Fulano tá tirando onda com sua cara. Vai ficar só olhando?",
+            "Jogador, o Fulano lhe chamou de frouxo ali na mesa… eu mesmo ouvi."
         ],
-        outro: "😈 É assim que eu gosto MuahahaHAHAHA...",
+        outro: "É assim que eu gosto MuahahaHAHAHA...",
         results: {
-            none: ["👿 Que palhaçada foi essa? Esse jogo é ridículo.", "👿 Tá de brincadeira! Ninguém?"],
-            one: ["😈 Eu tenho tantos planos para você..."],
-            many: ["😈 Eu adoro esse jogo hahahaha"]
+            none: ["Que palhaçada foi essa? Esse jogo é ridículo.", "Tá de brincadeira! Ninguém?"],
+            one: ["Eu tenho tantos planos para você..."],
+            many: ["Eu adoro esse jogo hahahaha"]
         }
     },
 
