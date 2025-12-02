@@ -44,6 +44,9 @@ h1, h2, h3, button.western-btn, .western-font {
 .screen { display: none; animation: fadeIn 0.4s ease-out; }
 .screen.active { display: block; }
 
+/* Adicionado position relative para ancorar os botões flutuantes */
+#screen-game { position: relative; }
+
 .text-center { text-align:center; }
 .mt-2 { margin-top:10px; }
 .scroll-content { max-height: 320px; overflow-y: auto; padding-right: 5px; }
@@ -129,16 +132,9 @@ button:disabled { opacity: 0.8; cursor: not-allowed; filter: grayscale(0.2); }
     border-radius: 4px;
     padding: 5px 10px;
     font-size: 1.2rem;
-    margin-left: 8px;
+    /* Margem removida pois será posicionado absolutamente */
+    margin-left: 0; 
 }
-/* NOVA CLASSE: Estilo Ativo/Cancelável para o botão Massacre */
-.btn-black.active-mode {
-    background: #eee;
-    color: #000;
-    border-color: #fff;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-}
-
 .btn-purple {
     background: #4a148c;
     color: #fff;
@@ -147,14 +143,8 @@ button:disabled { opacity: 0.8; cursor: not-allowed; filter: grayscale(0.2); }
     border-radius: 4px;
     padding: 5px 10px;
     font-size: 1.2rem;
-    margin-left: 8px;
-}
-/* NOVA CLASSE: Estilo Ativo/Cancelável para o botão Caos */
-.btn-purple.active-mode {
-    background: #e1bee7;
-    color: #4a148c;
-    border-color: #9c27b0;
-    box-shadow: 0 0 10px var(--chaos);
+    /* Margem removida pois será posicionado absolutamente */
+    margin-left: 0; 
 }
 
 .help-btn {
@@ -264,28 +254,12 @@ input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
 .front { transform: translateX(-50%) rotateY(180deg); } 
 .back { transform: translateX(-50%) rotateY(0deg); background-image: url('../assets/imgs/card-back.png'); }
 
-/* === ALTERADO: Caixa de Narração com Tamanho Fixo === */
-.narrator-box {
-    font-style: italic;
-    text-align: center;
-    color: var(--gold);
-    min-height: 0px; /* Altura mínima reduzida */
-    margin-bottom: 2px; /* Margem reduzida (Req 4) */
-    text-shadow: 1px 1px 2px #000;
-    font-size: 1.15rem;
-    display: flex;         /* Centralizar texto verticalmente */
-    align-items: flex-end; /* Texto mais próximo do status */
-    justify-content: center;
+.narrator-box { 
+    font-style: italic; text-align: center; color: var(--gold); 
+    min-height: 24px; margin-bottom: 2px; text-shadow: 1px 1px 2px #000;
+    font-size: 1.15rem; 
+    display: flex; align-items: flex-end; justify-content: center;
 }
-
-/* === ALTERADO: Remover espaço do Info do Jogador === */
-#starter-info {
-    text-align: center;
-    margin: 5px 0 0 0; /* Remove margem inferior (Req 4) */
-    color: #ccc;
-    font-size: 1.15rem;
-}
-
 .player-card { background: #2b2b2b; color: #eee; border-left: 4px solid #555; padding: 10px; margin-bottom: 8px; display:flex; align-items:center; justify-content:space-between; border-radius:0 4px 4px 0; transition: all 0.3s; }
 .player-card.starter { border-left: 4px solid var(--gold); background: #332a1e; }
 .player-card.chaos-highlight { border-left: 4px solid var(--chaos); background: #2a1b2e; box-shadow: 0 0 10px rgba(156, 39, 176, 0.5); }
@@ -293,33 +267,46 @@ input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
 .emoji-big { font-size: 1.8rem; margin-right: 10px; width: 40px; text-align: center; }
 .log-box { background: rgba(0,0,0,0.5); color:#ccc; font-size:0.85rem; height:80px; overflow-y:auto; padding:5px; margin-top:10px; border-radius:4px; border:1px solid #444; }
 
-/* =========================================
-   NOVO ESTILO DO GAME STATUS (DIVIDIDO)
-   ========================================= */
+/* =========================================================
+   NOVO ESTILO DO GAME STATUS & POSICIONAMENTO DOS BOTÕES
+   ========================================================= */
+
+/* O campo de falas agora ocupa 100% da largura do contêiner flex */
 #game-status {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    height: 86px; /* Altura fixa para igualar os 2 botões (Req 3) */
+    height: 80px; /* Aumentado para dar mais destaque ao texto */
+    width: 100%;
     background: rgba(20, 10, 5, 0.4);
     border: 2px solid #3e2723;
     border-radius: 8px;
     padding: 5px;
-    margin-bottom: 0; /* Remove margem pois o players-list já tem */
+    margin-bottom: 0;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
     flex: 1; 
-    overflow: hidden; /* Garante que texto não estoure */
+    overflow: hidden;
 }
 
-#game-players-list {
-    margin-top: 10px;
+/* Hack para posicionar os botões (Duelo/Caos) que estão no HTML 
+   dentro do mesmo div pai do #game-status.
+   Selecionamos o div irmão adjacente ao #game-status.
+*/
+#game-status + div {
+    position: absolute;
+    top: 75px;  /* Posicionado na altura da carta */
+    right: 10px;
+    flex-direction: column;
+    gap: 10px !important; /* Espaço entre os botões */
+    margin-left: 0 !important;
+    z-index: 20;
 }
 
 .status-emoji-area {
-    width: 70px; /* Largura fixa */
-    font-size: 2.8rem; /* Emoji grande */
+    width: 70px;
+    font-size: 2.8rem;
     text-align: center;
-    border-right: 2px dashed rgba(255, 183, 0, 0.3); /* Linha divisória */
+    border-right: 2px dashed rgba(255, 183, 0, 0.3);
     margin-right: 10px;
     flex-shrink: 0;
     display: flex;
@@ -332,15 +319,31 @@ input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
 .status-text-area {
     flex: 1;
     text-align: center;
-    font-size: 1.15rem;
+    font-size: 1.15rem; /* Fonte ajustada */
     color: var(--gold);
     line-height: 1.3;
     font-weight: bold;
     text-shadow: 1px 1px 2px #000;
     padding-right: 5px;
+    display: flex;            /* Centraliza verticalmente */
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
-/* ========================================= */
 
+/* Remove margem superior do info do starter para colar no Narrador */
+#starter-info {
+    text-align:center; 
+    margin: 5px 0 0 0; 
+    color:#ccc; 
+    font-size:1.15rem;
+}
+
+#game-players-list {
+    margin-top: 10px;
+}
+
+/* ========================================= */
 
 /* Estatísticas e Banco de Dados */
 .chalkboard { background: #1a1a1a; border: 8px solid #5d4037; color: rgba(255,255,255,0.9); font-family: 'Courier Prime', monospace; padding: 15px; border-radius: 6px; }
