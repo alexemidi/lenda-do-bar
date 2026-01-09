@@ -1,0 +1,103 @@
+:root {
+    --fundo-madeira: #1a120b;
+    --fundo-feltro: #2c3e50;
+    --papel: #e6dcc3;
+    --papel-escuro: #cbb892;
+    --ouro: #ffb700;
+    --ouro-antigo: #CFB53B;
+    --ouro-claro: #f7e6a1;
+    --sangue: #8a0303;
+    --tinta: #2b2b2b;
+    --sombra: rgba(0, 0, 0, 0.6);
+    --caos: #9c27b0;
+    --caos-claro: #e1bee7;
+    --fundo-massacre: #111;
+    --luz-massacre: #444;
+    --toxico: #39FF14;
+    --toxico-escuro: #006400;
+    --dev-cyan: #00bcd4;
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+}
+
+body {
+    font-family: 'Roboto Slab', serif;
+    background-color: var(--fundo-madeira);
+    background-image: radial-gradient(circle, #2e2218 0%, #0d0905 100%);
+    color: var(--papel);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding: 15px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Rye', serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 10px 0;
+}
+
+#contenedor-aplicativo {
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+}
+
+.tela {
+    display: none;
+    animation: aparecer 0.4s ease-out;
+}
+
+.tela.ativa {
+    display: block;
+}
+
+.texto-centralizado {
+    text-align: center;
+}
+
+.mt-2 {
+    margin-top: 10px;
+}
+
+.conteudo-rolagem {
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.conteudo-rolagem::-webkit-scrollbar {
+    width: 6px;
+}
+
+.conteudo-rolagem::-webkit-scrollbar-thumb {
+    background: #8d6e63;
+    border-radius: 3px;
+}
+
+/* Utilitários de Cor de Fundo */
+.fundo-azul {
+    background: #455a64;
+}
+
+.fundo-vermelho {
+    background: #c62828;
+}
+
+.oculto {
+    display: none !important;
+}

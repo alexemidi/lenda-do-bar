@@ -1,0 +1,320 @@
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulsarChama {
+    0% {
+        box-shadow: 0 0 6px rgba(255, 140, 0, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 14px rgba(255, 69, 0, 0.9);
+    }
+
+    100% {
+        box-shadow: 0 0 6px rgba(255, 140, 0, 0.4);
+    }
+}
+
+@keyframes pulsarCaos {
+    0% {
+        box-shadow: 0 0 6px rgba(156, 39, 176, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 14px rgba(156, 39, 176, 0.9);
+    }
+
+    100% {
+        box-shadow: 0 0 6px rgba(156, 39, 176, 0.4);
+    }
+}
+
+@keyframes pulsarDose {
+    0% {
+        box-shadow: 0 0 6px rgba(207, 181, 59, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 14px rgba(207, 181, 59, 0.9);
+    }
+
+    100% {
+        box-shadow: 0 0 6px rgba(207, 181, 59, 0.4);
+    }
+}
+
+@keyframes pulsarToxico {
+    0% {
+        box-shadow: 0 0 6px rgba(57, 255, 20, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 14px rgba(57, 255, 20, 0.9);
+    }
+
+    100% {
+        box-shadow: 0 0 6px rgba(57, 255, 20, 0.4);
+    }
+}
+
+@keyframes pulsarOuro {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--ouro-antigo);
+    }
+
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px var(--ouro-antigo);
+    }
+}
+
+@keyframes pulsarRoxo {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--caos);
+    }
+
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px var(--caos);
+    }
+}
+
+@keyframes pulsarVermelho {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--sangue);
+    }
+
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px var(--sangue);
+    }
+}
+
+@keyframes girarCarta {
+    0% {
+        transform: rotateY(0deg);
+    }
+
+    100% {
+        transform: rotateY(540deg);
+    }
+}
+
+@keyframes tremer {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+.tremer-tela {
+    animation: tremer 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+.animacao-virada {
+    animation: girarCarta 6s ease-in-out forwards;
+}
+
+@keyframes embaralhar {
+    0% {
+        transform: translateX(0) rotate(0);
+    }
+
+    25% {
+        transform: translateX(40px) rotate(15deg);
+    }
+
+    50% {
+        transform: translateX(0) rotate(0);
+        z-index: 1;
+    }
+
+    75% {
+        transform: translateX(-40px) rotate(-15deg);
+    }
+
+    100% {
+        transform: translateX(0) rotate(0);
+    }
+}
+
+.pulsar {
+    animation: pulsar 1.5s infinite;
+    color: var(--ouro);
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 #000;
+}
+
+@keyframes pulsar {
+    0% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    100% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+}
+
+@keyframes shake-emoji {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-3px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(3px);
+    }
+}
+
+.emoji-shake {
+    animation: shake-emoji 0.7s ease-in-out;
+}
+
+/* Anima��o de tremor para emoji quando alvo no modo Caos */
+@keyframes tremer-emoji {
+
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-2px, -1px) rotate(-2deg);
+    }
+
+    20% {
+        transform: translate(2px, 1px) rotate(2deg);
+    }
+
+    30% {
+        transform: translate(-2px, 1px) rotate(-1deg);
+    }
+
+    40% {
+        transform: translate(2px, -1px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-1px, 2px) rotate(-2deg);
+    }
+
+    60% {
+        transform: translate(1px, -2px) rotate(2deg);
+    }
+
+    70% {
+        transform: translate(-2px, -1px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(2px, 1px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(-1px, -2px) rotate(-2deg);
+    }
+}
+
+.emoji-alvo-caos {
+    animation: tremer-emoji 0.5s ease-in-out infinite;
+    display: inline-block;
+}
+
+.emoji-aliviado {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(1.15);
+    display: inline-block;
+    animation: none !important;
+}
+
+@keyframes flutuar {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.emoji-flutuar {
+    animation: flutuar 2s ease-in-out infinite;
+    display: inline-block;
+    transition: all 0.5s ease;
+}
+
+.emoji-transformar {
+    transition: all 0.5s ease;
+    display: inline-block;
+}
+
+@keyframes spin-360 {
+    from {
+        transform: rotateY(0deg);
+    }
+
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+.emoji-spin {
+    animation: spin-360 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    display: inline-block;
+}

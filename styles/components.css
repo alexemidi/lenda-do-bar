@@ -1,0 +1,578 @@
+/* Painel de Papel */
+.painel-papel {
+    background: var(--papel);
+    color: var(--tinta);
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px #5c4a35, 0 0 0 8px #1a120b, 0 10px 20px var(--sombra);
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.painel-papel::after,
+.painel-papel::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    background: #3e2723;
+    border-radius: 50%;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.painel-papel::before {
+    left: 10px;
+}
+
+.painel-papel::after {
+    right: 10px;
+}
+
+/* Bot√µes */
+button {
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s, background-color 0.3s, color 0.3s;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+button:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+    filter: grayscale(0.2);
+}
+
+.botao-velho-oeste,
+.fonte-velho-oeste {
+    font-family: 'Rye', serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.botao-velho-oeste {
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+    background: linear-gradient(to bottom, #5d4037, #3e2723);
+    color: #ffecd2;
+    border: 2px solid #8d6e63;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 0 #000;
+    box-shadow: 0 4px 0 #281813;
+}
+
+.botao-velho-oeste.primario {
+    background: linear-gradient(to bottom, #d4af37, #aa8c2c);
+    color: #2e2218;
+    border-color: #fdd835;
+}
+
+.botao-velho-oeste.perigo {
+    background: linear-gradient(to bottom, #c62828, #8e0000);
+    border-color: #e57373;
+}
+
+.botao-velho-oeste.secundario {
+    background: linear-gradient(to bottom, #455a64, #263238);
+    border-color: #78909c;
+}
+
+.botao-velho-oeste.pequeno {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    width: auto;
+}
+
+.botao-velho-oeste.btn-proteger {
+    background: #2196F3;
+    border-color: #64B5F6;
+    color: white;
+}
+
+.botao-velho-oeste.btn-atirar {
+    background: linear-gradient(to bottom, #ff5722, #bf360c);
+    border-color: #ff8a65;
+    color: #fff;
+}
+
+.botao-velho-oeste.btn-mirar {
+    background: linear-gradient(to bottom, #7b1fa2, #4a148c);
+    border-color: #ce93d8;
+    color: #fff;
+    box-shadow: 0 4px 0 #38006b;
+}
+
+.botao-velho-oeste.btn-ouro {
+    background: linear-gradient(to bottom, var(--ouro-antigo), #8c7b28);
+    border-color: var(--ouro-claro);
+    color: #1a120b;
+    text-shadow: none;
+    font-weight: bold;
+}
+
+.botao-velho-oeste.btn-alvo {
+    background: linear-gradient(to bottom, #e6dcc3, #cbb892);
+    border-color: #5d4037;
+    color: #1a120b;
+    text-shadow: none;
+    font-weight: bold;
+}
+
+.botao-velho-oeste.botao-dev-skip {
+    background: linear-gradient(to bottom, #0097a7, #006064);
+    border-color: #4dd0e1;
+    color: white;
+    margin-top: 15px;
+    text-shadow: none;
+    font-size: 0.9rem;
+    padding: 8px;
+}
+
+.botao-velho-oeste.perigo:disabled,
+.botao-velho-oeste.btn-alvo:disabled {
+    background: #555;
+    border-color: #333;
+    color: #aaa;
+    filter: none;
+    box-shadow: none;
+}
+
+/* Bot√µes de Modo Especiais */
+.btn-preto,
+.btn-roxo,
+.btn-ouro-antigo {
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 1.2rem;
+    margin-left: 0;
+    transition: all 0.2s;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.btn-preto {
+    background: var(--fundo-massacre);
+    color: #fff;
+    border: 2px solid var(--luz-massacre);
+    box-shadow: 0 4px 0 #000;
+}
+
+.btn-preto.modo-ativo {
+    background: var(--sangue);
+    border-color: #fff;
+    box-shadow: 0 0 15px var(--sangue);
+    animation: pulsarVermelho 1.5s infinite;
+}
+
+.btn-roxo {
+    background: var(--caos);
+    color: #fff;
+    border: 2px solid var(--caos-claro);
+    box-shadow: 0 4px 0 #230b42;
+}
+
+.btn-roxo.modo-ativo {
+    background: var(--caos);
+    border-color: #fff;
+    box-shadow: 0 0 15px var(--caos);
+    animation: pulsarRoxo 1.5s infinite;
+}
+
+.btn-ouro-antigo {
+    background: var(--ouro-antigo);
+    color: #1A120B;
+    border: 2px solid var(--ouro-claro);
+    box-shadow: 0 4px 0 #8c7b28;
+}
+
+.btn-ouro-antigo.modo-ativo {
+    background: #E6BE08;
+    border-color: #fff;
+    box-shadow: 0 0 15px var(--ouro-antigo);
+    animation: pulsarOuro 1.5s infinite;
+}
+
+.botao-ajuda {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: var(--papel);
+    color: var(--tinta);
+    font-weight: bold;
+    font-size: 1.2rem;
+    border: 2px solid #3e2723;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 50;
+}
+
+.botao-mini {
+    width: 32px;
+    height: 32px;
+    font-weight: bold;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    color: white;
+}
+
+/* Modals */
+.sobreposicao-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.sobreposicao-modal.ativa {
+    display: flex;
+    opacity: 1;
+}
+
+.sobreposicao-modal.saindo {
+    opacity: 0;
+}
+
+.poster-procurado {
+    background: var(--papel);
+    color: var(--tinta);
+    width: 90%;
+    max-width: 320px;
+    padding: 20px;
+    text-align: center;
+    border: 4px solid #3e2723;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    transform: rotate(-2deg);
+}
+
+/* Notifica√ß√µes */
+.notificacao-conquista {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid var(--ouro);
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s, top 0.5s;
+    width: 90%;
+    max-width: 350px;
+    box-shadow: 0 5px 15px #000;
+}
+
+.notificacao-conquista.mostrar {
+    opacity: 1;
+    top: 40px;
+}
+
+.notificacao-simples {
+    position: fixed;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid var(--sangue);
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-family: 'Rye', serif;
+    text-align: center;
+    z-index: 3000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    box-shadow: 0 0 20px rgba(138, 3, 3, 0.6);
+    white-space: nowrap;
+}
+
+.notificacao-simples.mostrar {
+    opacity: 1;
+}
+
+/* Switches / Interruptores */
+.contenedor-interruptor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 12px auto;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 2px solid #5d4037;
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+    width: fit-content;
+}
+
+.rotulo-massacre {
+    font-family: 'Rye', serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-align: right;
+}
+
+.interruptor {
+    position: relative;
+    display: inline-block;
+    width: 54px;
+    height: 28px;
+}
+
+.interruptor input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.controle-deslizante {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, #5d4037, #3e2723);
+    transition: .4s;
+    border: 2px solid #3e2723;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.controle-deslizante:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #cbb892;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+    transition: .4s;
+}
+
+.controle-deslizante.redondo {
+    border-radius: 34px;
+}
+
+.controle-deslizante.redondo:before {
+    border-radius: 50%;
+}
+
+input:checked+.controle-deslizante {
+    background: radial-gradient(circle at 20% 50%, #ffe0b2, #ff9800, #bf360c);
+    border-color: #ffb74d;
+}
+
+input:checked+.controle-deslizante:before {
+    transform: translateX(24px);
+    background-color: #fff3e0;
+}
+
+input:disabled+.controle-deslizante {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Efeitos dos Switches */
+.contenedor-interruptor:not(.estilo-caos):not(.estilo-dose):not(.estilo-trapaca):not(.estilo-dev):has(input:checked) {
+    border-color: #ffb700;
+    animation: pulsarChama 1.4s infinite ease-in-out;
+}
+
+.contenedor-interruptor:not(.estilo-caos):not(.estilo-dose):not(.estilo-trapaca):not(.estilo-dev):has(input:checked) .rotulo-massacre {
+    color: #ffb700;
+}
+
+.contenedor-interruptor.estilo-caos:has(input:checked) {
+    border-color: var(--caos);
+    animation: pulsarCaos 1.4s infinite ease-in-out;
+}
+
+.contenedor-interruptor.estilo-caos:has(input:checked) .rotulo-massacre {
+    color: var(--caos-claro);
+}
+
+.contenedor-interruptor.estilo-caos input:checked+.controle-deslizante {
+    background: radial-gradient(circle at 20% 50%, #e1bee7, #9c27b0, #4a148c);
+    border-color: #ce93d8;
+}
+
+.contenedor-interruptor.estilo-dose:has(input:checked) {
+    border-color: var(--ouro-antigo);
+    animation: pulsarDose 1.4s infinite ease-in-out;
+}
+
+.contenedor-interruptor.estilo-dose:has(input:checked) .rotulo-massacre {
+    color: var(--ouro-antigo);
+}
+
+.contenedor-interruptor.estilo-dose input:checked+.controle-deslizante {
+    background: radial-gradient(circle at 20% 50%, var(--ouro-claro), var(--ouro-antigo), #8c7b28);
+    border-color: var(--ouro-claro);
+}
+
+.contenedor-interruptor.estilo-trapaca:has(input:checked) {
+    border-color: var(--toxico);
+    animation: pulsarToxico 1.4s infinite ease-in-out;
+}
+
+.contenedor-interruptor.estilo-trapaca:has(input:checked) .rotulo-massacre {
+    color: var(--toxico);
+}
+
+.contenedor-interruptor.estilo-trapaca input:checked+.controle-deslizante {
+    background: radial-gradient(circle at 20% 50%, #ccffcc, var(--toxico), var(--toxico-escuro));
+    border-color: #b2ffb2;
+    box-shadow: 0 0 10px var(--toxico);
+}
+
+.contenedor-interruptor.estilo-dev:has(input:checked) {
+    border-color: var(--dev-cyan);
+}
+
+.contenedor-interruptor.estilo-dev:has(input:checked) .rotulo-massacre {
+    color: var(--dev-cyan);
+}
+
+.contenedor-interruptor.estilo-dev input:checked+.controle-deslizante {
+    background: radial-gradient(circle at 20% 50%, #e0f7fa, #00bcd4, #006064);
+    border-color: #80deea;
+}
+
+/* Slots de Jogador */
+.linha-slot {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px dashed #8d6e63;
+}
+
+.nome-slot {
+    flex: 1;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Banco de Dados */
+.linha-bd {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.botao-nome-bd {
+    flex: 1;
+    text-align: left;
+    padding: 10px;
+    border-radius: 6px;
+    background: linear-gradient(#455a64, #2f434a);
+    color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.botao-remover-bd {
+    width: auto;
+    height: 42px;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: linear-gradient(#c62828, #8e0000);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Quadro Giz */
+.quadro-giz {
+    background: #1a1a1a;
+    border: 8px solid #5d4037;
+    color: rgba(255, 255, 255, 0.9);
+    font-family: 'Courier Prime', monospace;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.texto-giz {
+    color: #eee;
+    border-bottom: 1px dashed #555;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+/* AnimaÁ„o para alvos no Modo Caos */
+@keyframes shake-alvo {
+    0%, 100% { transform: translate(0, 0) scale(1.1); }
+    25% { transform: translate(-2px, -2px) scale(1.1); }
+    50% { transform: translate(2px, 2px) scale(1.1); }
+    75% { transform: translate(-2px, 2px) scale(1.1); }
+}
+
+.shake-alvo {
+    animation: shake-alvo 0.2s infinite;
+    display: inline-block;
+}
+
+/* Bot„o Detetive na tela de jogo */
+.btn-detetive-conferir {
+    background: #1a120b;
+    border: 2px solid var(--ouro);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    transition: all 0.2s;
+    pointer-events: auto;
+}
+
+.btn-detetive-conferir:hover {
+    transform: scale(1.1);
+    background: #2e2218;
+}
+
+.btn-detetive-conferir:active {
+    transform: scale(0.95);
+}

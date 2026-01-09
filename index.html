@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lenda do Bar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Rye&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/screens.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/devView.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍺</text></svg>">
+    <script type="module" src="scripts/main.js"></script>
+</head>
+
+<body>
+    <div id="contenedor-aplicativo">
+        <div id="notificacaoSistema" class="notificacao-simples"></div>
+
+        <div id="modalPersonalizado" class="sobreposicao-modal">
+            <div class="poster-procurado">
+                <h2 id="tituloModal" style="border-bottom: 2px solid #000; padding-bottom:5px;">AVISO</h2>
+                <p id="mensagemModal" style="font-size: 1.1rem; margin: 15px 0;">Mensagem aqui</p>
+                <div id="acoesModal" style="display: flex; gap: 10px; justify-content: center;"></div>
+            </div>
+        </div>
+
+        <div id="notificacaoConquista" class="notificacao-conquista">
+            <span id="emojiConquista" style="font-size: 2rem;">🏆</span>
+            <div style="text-align: left;">
+                <div id="nomeJogadorConquista" style="color: var(--ouro); font-weight: bold; font-size: 0.9rem;">JOGADOR
+                </div>
+                <div style="font-size: 0.8rem; text-transform: uppercase;">Desbloqueou:</div>
+                <div id="nomeConquista" style="font-weight: bold;">Nome da Conquista</div>
+            </div>
+        </div>
+
+
+        <div id="tela-inicio" class="tela ativa">
+            <div class="painel-papel texto-centralizado">
+                <h1 style="font-size: 2.2rem; color: #3e2723; margin-bottom: 5px;">LENDA</h1>
+                <h2 style="font-size: 1.5rem; color: var(--sangue);">DO BAR</h2>
+                <p style="font-style: italic; margin-top: 10px;">"A verdade liberta, mas a mentira embebeda."</p>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <button class="botao-velho-oeste primario" onclick="Aplicativo.irPara('configuracao')">JOGAR</button>
+                <button class="botao-velho-oeste secundario"
+                    onclick="Aplicativo.irPara('estatisticas')">ESTATÍSTICAS</button>
+                <button class="botao-velho-oeste secundario" onclick="Aplicativo.irPara('regras')">REGRAS</button>
+            </div>
+        </div>
+
+        <div id="tela-regras" class="tela">
+            <div class="painel-papel">
+                <h2 class="texto-centralizado" style="border-bottom: 2px solid #000;">COMO JOGAR</h2>
+                <div class="conteudo-rolagem" style="font-size: 0.95rem; line-height: 1.5;">
+                    <p><b>1. A Ordem:</b> Calma que aqui é uma bagunça organizada. Coloque os jogadores no sentido
+                        anti-horário, ou seja, o próximo jogador é da sua direita (a mão que você escreve, meu amor 😘):
+                    </p>
+                    <p><b>2. O Baralho:</b> Cada jogador recebe 5 cartas. Usem um baralho físico composto por:</p>
+                    <ul>
+                        <li><b>Até 4 jogadores - 20 cartas:<br></b> 6&nbsp;Reis, 6&nbsp;Damas, 6&nbsp;Ases e
+                            2&nbsp;Coringas<br>Ou troca um coringa por 1 especial (Opcional).</li>
+                        <li><b>5 jogadores - 25 cartas:<br></b> 7&nbsp;Reis, 7&nbsp;Damas, 7&nbsp;Ases e
+                            4&nbsp;Coringas. <br> até 2&nbsp;especiais* (Opcionais).</li>
+                        <li><b>6 jogadores - 30 cartas:<br></b> 8&nbsp;Reis, 8&nbsp;Damas, 8&nbsp;Ases, 4&nbsp;Coringas
+                            e 2&nbsp;especiais<br> Ou 2&nbsp;Coringas + 4 especiais.</li>
+                        <li><b>7 jogadores - 35 cartas:<br></b> 8&nbsp;Reis, 8&nbsp;Damas, 8&nbsp;Ases, 2&nbsp;Coringas
+                            e 9&nbsp;especiais (Massacre + Caos + Dose habilitados).</li>
+                    </ul>
+                    <p><b>3. A Rodada:</b> O jogo sorteia a carta da mesa (ex: Rei). O jogador da vez deve jogar de 1 a
+                        3 cartas viradas para baixo e anunciar: "Um Rei", "Dois Reis", etc.</p>
+                    <p><b>4. O Coringa:</b> Esse vale para qualquer carta da mesa.<br>Vai salvar sua vida.<br> <b>Obs:
+                        </b>Nos modos especiais, você substitui um coringa pela carta do modo especial escolhido.<br>
+                        Por exemplo, Valete ou carta 8.</p>
+                    <p><b>5. O Blefe:</b> O jogador antes de você pode blefar ou falar a verdade. Se você acreditar nele
+                        anuncie sua jogada colocando suas por cima. Mas se duvida grite "MENTIRA!" desafiando ele a
+                        revelar as cartas.<br> <b>OBS:</b> Apenas o jogador seguinte pode desafiar o anterior.</p>
+                    <p><b>6. O Desafio:</b>
+                        <br>- Se era <b>MENTIRA</b>: O mentiroso puxa o gatilho da própria arma.
+                        <br>- Se era <b>VERDADE</b>: O acusador puxa o gatilho da própria arma.
+                    </p>
+                    <p><b>7. O Disparo:</b> É uma roleta russa. Ouviu o clique? Sorte sua. Ouviu o tiro? Fim de jogo. A
+                        cada puxada de gatilho, o baralho é misturado novamente e a vez passa para o companheiro à
+                        direita. Por isso, os jogadores ficam na ordem desde a seleção.</p>
+                    <p><b>8. Quem paga a conta:</b> Essa parte é opcional cada jogador eliminado pode pagar uma prenda
+                        ou como estão em um bar...</p>
+                    <div
+                        style="text-align: center; margin: 15px 0; border-top: 1px dashed #555; border-bottom: 1px dashed #555; padding: 5px;">
+                        <h3 style="margin: 0; color: var(--sangue);">ESPECIAIS</h3>
+                    </div>
+                    <p><b>9. Modo Massacre:</b> Nesse modo, o Valete (J) toca o terror. Se ele for jogado e alguém
+                        desafiar TODOS na mesa entram no duelo exceto quem jogou o Valete.</p>
+                    <p><b>10. Modo Caos:</b> Jogou um 8 e duvidaram? O Caos reina. É um tiroteio generalizado onde cada
+                        um escolhe seu alvo. O mal vai tentar te influenciar, mas a decisão é sua.</p>
+                    <p><b>11. Modo Dose Dupla:</b> Jogou o 2 e duvidaram? O <b>DESAFIANTE</b> vira o Vingador e usa sua
+                        arma para 2 disparos seguidos contra alvos. Ele pode até atirar em si mesmo para limpar câmaras
+                        vazias e testar a sorte.</p>
+                </div>
+            </div>
+            <p class="texto-centralizado" style="font-size: 0.8rem; margin-top: 20px; opacity: 0.5;">
+                <span onclick="Aplicativo.irPara('dev')" style="cursor: pointer; font-size: 1.2rem;"
+                    title="Área de Desenvolvedor">🛠️</span>
+            </p>
+            <button class="botao-velho-oeste primario" onclick="Aplicativo.irPara('inicio')">VOLTAR</button>
+        </div>
+
+        <div id="tela-dev" class="tela">
+            <div class="painel-papel painel-dev-config">
+                <h2 class="texto-centralizado titulo-dev">🛠️ DESENVOLVEDOR</h2>
+                <p class="texto-centralizado subtitulo-dev">Ferramentas de debug e testes rápidos</p>
+
+                <div class="secao-switches-dev">
+                    <div class="contenedor-interruptor estilo-dev-premium">
+                        <span class="rotulo-dev-switch">MODO DEV</span>
+                        <label class="interruptor-premium">
+                            <input type="checkbox" id="interruptor-dev" onchange="Aplicativo.alternarModoDev()">
+                            <span class="alavanca-deslizante"></span>
+                        </label>
+                    </div>
+
+                    <div class="contenedor-interruptor estilo-dev-premium" id="container-direto">
+                        <span class="rotulo-dev-switch">DIRETO</span>
+                        <label class="interruptor-premium">
+                            <input type="checkbox" id="interruptor-direto" disabled
+                                onchange="Aplicativo.alternarModoDireto()">
+                            <span class="alavanca-deslizante"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="caixa-blueprint-dev">
+                    <p><b>MODO DEV:</b> Marcadores táticos ativados no HUD.</p>
+                    <p><b>DIRETO:</b> Protocolos de salto temporal (sem transições).</p>
+                </div>
+            </div>
+
+            <div class="botoes-acao-dev">
+                <button class="botao-velho-oeste primario" onclick="Aplicativo.iniciarTestes()">Ir para o jogo</button>
+                <button class="botao-velho-oeste secundario" onclick="Aplicativo.irPara('inicio')">VOLTAR</button>
+            </div>
+        </div>
+
+        <div id="tela-configuracao" class="tela">
+            <div class="painel-papel">
+                <h2 class="texto-centralizado">JOGADORES</h2>
+                <!-- Indicador de modo dev ativo -->
+                <div id="dev-indicator-config"
+                    style="position: absolute; top: 25px; right: 25px; font-size: 1.5rem; display: none;"
+                    title="Modo Desenvolvedor Ativo">🛠️</div>
+                <p class="texto-centralizado" style="font-size: 0.9rem;">Os jogadores devem estar organizados no sentido
+                    anti-horário.</p>
+                <div id="contenedor-slots" class="mt-2"></div>
+
+                <div id="area-interruptores-configuracao"
+                    style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                    <div class="contenedor-interruptor" style="margin:0;">
+                        <span class="rotulo-massacre">MASSACRE</span>
+                        <label class="interruptor">
+                            <input type="checkbox" id="interruptor-massacre" checked
+                                onchange="Aplicativo.alternarModo('massacre')">
+                            <span class="controle-deslizante redondo"></span>
+                        </label>
+                    </div>
+
+                    <div class="contenedor-interruptor estilo-caos" style="margin:0;">
+                        <span class="rotulo-massacre">CAOS</span>
+                        <label class="interruptor">
+                            <input type="checkbox" id="interruptor-caos" onchange="Aplicativo.alternarModo('caos')">
+                            <span class="controle-deslizante redondo"></span>
+                        </label>
+                    </div>
+
+                    <div class="contenedor-interruptor estilo-dose" style="margin:0;">
+                        <span class="rotulo-massacre">DOSE DUPLA</span>
+                        <label class="interruptor">
+                            <input type="checkbox" id="interruptor-dose" onchange="Aplicativo.alternarModo('dose')">
+                            <span class="controle-deslizante redondo"></span>
+                        </label>
+                    </div>
+
+                    <div class="contenedor-interruptor estilo-trapaca" style="margin:0;">
+                        <span class="rotulo-massacre">TRAPACEIRO</span>
+                        <label class="interruptor">
+                            <input type="checkbox" id="interruptor-trapaca"
+                                onchange="Aplicativo.alternarModo('trapaca')">
+                            <span class="controle-deslizante redondo"></span>
+                        </label>
+                    </div>
+                </div>
+
+
+            </div>
+            <button id="botao-iniciar-partida" class="botao-velho-oeste primario" disabled
+                onclick="Aplicativo.confirmarOrdem()">INICIAR PARTIDA</button>
+            <button class="botao-velho-oeste perigo" onclick="Aplicativo.irPara('inicio')">VOLTAR</button>
+        </div>
+
+        <div id="tela-revelacao" class="tela">
+            <h2 id="nome-jogador-revelacao" class="instrucao-revelacao"
+                style="color: var(--papel); font-size: 1.5rem; text-shadow: 2px 2px 0 #000; margin-bottom: 10px;">Nome
+                do Jogador</h2>
+            <p id="texto-instrucao-revelacao"
+                style="color: #ccc; margin-bottom: 5px; font-size: 1.2rem; min-height: 1.4em;">Toque na carta para
+                revelar seu papel</p>
+
+            <div class="contenedor-carta-revelacao" onclick="Aplicativo.manipularCliqueRevelacao()">
+                <div class="virador-revelacao" id="virador-carta-revelacao">
+                    <div class="frente-revelacao"></div>
+                    <div class="verso-revelacao">
+                        <div id="titulo-papel-revelacao" class="titulo-papel"></div>
+                        <div id="descricao-papel-revelacao" class="descricao-papel"></div>
+                    </div>
+                </div>
+            </div>
+            <button id="btn-pular-revelacao" class="botao-velho-oeste botao-dev-skip" style="display:none;"
+                onclick="Aplicativo.pularEtapa('revelacao')">⏩ PULAR REVELAÇÃO</button>
+        </div>
+
+        <div id="tela-carregamento" class="tela">
+            <div class="contenedor-carregamento">
+                <h2 class="pulsar">EMBARALHANDO</h2>
+                <div class="animacao-carta">
+                    <div class="carta-anim"></div>
+                    <div class="carta-anim"></div>
+                    <div class="carta-anim"></div>
+                </div>
+                <div id="info-configuracao-baralho" class="info-baralho-carregamento"></div>
+                <button id="btn-pular-carregamento" class="botao-velho-oeste botao-dev-skip" style="display:none;"
+                    onclick="Aplicativo.pularEtapa('carregamento')">⏩ PULAR</button>
+            </div>
+        </div>
+
+        <div id="tela-banco-dados" class="tela">
+            <div class="painel-papel">
+                <h3>Adicionar Jogador</h3>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="entrada-novo-jogador" placeholder="Nome..."
+                        style="flex:1; padding:8px; font-family: inherit; color: #000;"
+                        onkeydown="if(event.key === 'Enter') Aplicativo.adicionarNovoJogadorBD()">
+                    <button class="botao-velho-oeste secundario" style="width:auto; margin:0;"
+                        onclick="Aplicativo.adicionarNovoJogadorBD()">+</button>
+                </div>
+                <hr style="border-color:#aaa; margin:15px 0;">
+                <h3>Salvos:</h3>
+                <div id="lista-bd" style="max-height:200px; overflow-y:auto;"></div>
+            </div>
+            <button class="botao-velho-oeste perigo"
+                onclick="Aplicativo.renderizarConfiguracao(); Aplicativo.irPara('configuracao')">CANCELAR</button>
+        </div>
+
+        <div id="tela-rotacao" class="tela">
+            <div class="texto-centralizado">
+                <h2 id="titulo-rotacao" style="color: var(--ouro); text-shadow: 2px 2px 0 #000;">A CARTA DA MESA É...
+                </h2>
+                <div class="preenchimento-contenedor-carta">
+                    <div class="contenedor-virada">
+                        <div class="virador" id="virador-carta">
+                            <div class="frente" id="frente-carta-rotacao"></div>
+                            <div class="verso"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="narrador-rotacao" class="caixa-narrador" style="margin-top: 10px;"></div>
+                <button id="btn-pular-rotacao" class="botao-velho-oeste botao-dev-skip" style="display:none;"
+                    onclick="Aplicativo.pularEtapa('rotacao')">⏩ PULAR ANIMAÇÃO</button>
+            </div>
+        </div>
+
+        <div id="tela-jogo" class="tela">
+            <button class="botao-ajuda" onclick="Aplicativo.irPara('regras')">?</button>
+
+            <div class="info-mesa">
+                <div id="info-mesa-jogo" style="color: var(--papel); font-weight: bold; font-size: 1.2rem;">Mesa de ?
+                </div>
+            </div>
+
+            <div class="contenedor-principal-carta">
+                <div class="exibicao-carta" id="carta-mesa-jogo"></div>
+            </div>
+            <div id="info-iniciante" style="text-align:center; margin:5px 0; color:#ccc; font-size:1.15rem;"></div>
+
+            <div id="area-narrador-jogo" class="caixa-narrador"></div>
+
+            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+                <div id="status-jogo"
+                    style="min-height: 3.5em; display:flex; align-items:center; justify-content:center;"></div>
+
+                <div style="display:flex; flex-direction: column; gap: 6px; margin-left: 8px;">
+                    <button id="botao-alternar-caos" class="btn-roxo" onclick="Aplicativo.alternarModoCaos()"
+                        style="margin:0;">🌀</button>
+                    <button id="botao-alternar-duelo" class="btn-preto" onclick="Aplicativo.alternarModoDuelo()"
+                        style="margin:0;">⚔️</button>
+                    <button id="botao-alternar-dose" class="btn-ouro-antigo" onclick="Aplicativo.alternarDoseDupla()"
+                        style="margin:0;">🍻</button>
+                </div>
+            </div>
+
+            <div id="lista-jogadores-jogo"></div>
+
+            <div style="display:flex; gap:5px; margin-top:10px;">
+                <button class="botao-velho-oeste secundario" onclick="Aplicativo.reiniciarJogo()">REINICIAR</button>
+                <button class="botao-velho-oeste perigo" onclick="Aplicativo.irPara('configuracao')">SAIR</button>
+            </div>
+        </div>
+
+        <div id="tela-vitoria" class="tela">
+            <div class="painel-papel texto-centralizado" style="border-color: var(--ouro);">
+                <h1 style="color: #d4af37;">VENCEDOR!</h1>
+                <p id="mensagem-vitoria" style="font-size: 1.2rem; font-weight: bold;"></p>
+                <div id="conquistas-vitoria" style="margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px;">
+                </div>
+            </div>
+            <button class="botao-velho-oeste primario" onclick="Aplicativo.reiniciarJogo()">JOGAR NOVAMENTE</button>
+            <button class="botao-velho-oeste secundario" onclick="Aplicativo.irPara('configuracao')">MUDAR
+                JOGADORES</button>
+        </div>
+
+        <div id="tela-estatisticas" class="tela">
+            <h2 class="texto-centralizado" style="color: var(--papel);">LIVRO DE REGISTROS</h2>
+            <div class="quadro-giz" id="quadro-estatisticas" style="max-height:400px; overflow-y:auto;"></div>
+            <div class="mt-2">
+                <button class="botao-velho-oeste perigo" onclick="Aplicativo.confirmarResetEstatisticas()">APAGAR
+                    EVIDÊNCIAS</button>
+                <button class="botao-velho-oeste primario" onclick="Aplicativo.irPara('inicio')">VOLTAR</button>
+            </div>
+        </div>
+
+        <div id="tela-conquistas" class="tela">
+            <div class="painel-papel">
+                <h3 id="titulo-tela-conquistas" class="texto-centralizado">Conquistas de Fulano</h3>
+                <div id="conteudo-lista-conquistas" class="conteudo-rolagem"></div>
+            </div>
+            <button class="botao-velho-oeste primario" onclick="Aplicativo.irPara('estatisticas')">VOLTAR ÀS
+                ESTATÍSTICAS</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
